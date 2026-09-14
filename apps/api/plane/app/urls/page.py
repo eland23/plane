@@ -11,9 +11,42 @@ from plane.app.views import (
     PagesDescriptionViewSet,
     PageVersionEndpoint,
     PageDuplicateEndpoint,
+    WorkspaceWikiViewSet,
+    WorkspaceWikiDescriptionViewSet,
 )
 
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/pages/",
+        WorkspaceWikiViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-wiki-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/",
+        WorkspaceWikiViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
+        name="workspace-wiki-page",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/archive/",
+        WorkspaceWikiViewSet.as_view({"post": "archive", "delete": "unarchive"}),
+        name="workspace-wiki-archive",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/lock/",
+        WorkspaceWikiViewSet.as_view({"post": "lock", "delete": "unlock"}),
+        name="workspace-wiki-lock",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/access/",
+        WorkspaceWikiViewSet.as_view({"post": "access"}),
+        name="workspace-wiki-access",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/description/",
+        WorkspaceWikiDescriptionViewSet.as_view({"get": "retrieve", "patch": "partial_update"}),
+        name="workspace-wiki-description",
+    ),
+
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages-summary/",
         PageViewSet.as_view({"get": "summary"}),
