@@ -55,11 +55,9 @@ export function WikiEditor() {
       debounce(async (html: string, json: object) => {
         if (!slug || !id || readOnly) return;
         try {
-          const document = editorRef.current?.getDocument();
           await workspaceWikiService.updateDescription(slug, id, {
             description_html: html,
             description_json: json,
-            description_binary: encodeBinary(document?.binary ?? null),
           });
         } catch {
           setToast({ type: TOAST_TYPE.ERROR, title: "Could not save page" });
@@ -221,7 +219,7 @@ export function WikiEditor() {
               workspaceId={workspaceId}
               workspaceSlug={slug}
               displayConfig={displayConfig}
-              containerClassName="h-full p-0 pb-64"
+              containerClassName="h-full p-0 pb-64 border-none"
               handleEditorReady={setEditorReady}
               ref={editorRef}
             />
@@ -234,7 +232,7 @@ export function WikiEditor() {
               workspaceId={workspaceId}
               workspaceSlug={slug}
               displayConfig={displayConfig}
-              containerClassName="h-full p-0 pb-64"
+              containerClassName="h-full p-0 pb-64 border-none"
               handleEditorReady={setEditorReady}
               ref={editorRef}
               searchMentionCallback={searchMentionCallback}
@@ -247,14 +245,4 @@ export function WikiEditor() {
       </div>
     </div>
   );
-}
-
-function encodeBinary(binary: Uint8Array | null): string {
-  if (!binary || binary.length === 0) return "";
-  let result = "";
-  const chunk = 0x8000;
-  for (let index = 0; index < binary.length; index += chunk) {
-    result += String.fromCharCode(...binary.subarray(index, index + chunk));
-  }
-  return btoa(result);
 }

@@ -50,7 +50,6 @@ export class WorkspaceWikiService extends APIService {
     data: {
       description_html: string;
       description_json?: object;
-      description_binary?: string;
     }
   ): Promise<void> {
     return this.patch(`/api/workspaces/${workspaceSlug}/pages/${pageId}/description/`, data).then(
