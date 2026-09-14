@@ -37,6 +37,7 @@ export const linearCycleMetrics = (cycle: ICycle): TLinearCycleMetrics => {
   const started = details.started_issues || 0;
   const completed = details.completed_issues || 0;
   const successPercent = scope > 0 ? Math.round((completed / scope) * 100) : 0;
+  // Capacity is estimate-points completion when the cycle has estimates; otherwise completed/scope.
   const estimateTotal = details.total_estimate_points || 0;
   const estimateDone = details.completed_estimate_points || 0;
   const capacityPercent =
@@ -72,4 +73,42 @@ export const kindLabel = (kind: TLinearCycleKind): string => {
   if (kind === "upcoming") return "Upcoming";
   if (kind === "completed") return "Completed";
   return "Planned";
+};
+
+export const LINEAR_CYCLE_GROUP_ORDER: TLinearCycleKind[] = ["current", "upcoming", "planned", "completed"];
+
+export const groupCycleIds = (
+  cycleIds: string[],
+  getCycle: (id: string) => ICycle | undefined
+): { kind: TLinearCycleKind; ids: string[] }[] => {
+  const buckets: Record<TLinearCycleKind, string[]> = {
+    current: [],
+    upcoming: [],
+    planned: [],
+    completed: [],
+  };
+  const seen = new Set<string>();
+  for (const id of cycleIds) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const cycle = getCycle(id);
+    if (!cycle) continue;
+    buckets[linearCycleKind(cycle)].push(id);
+  }
+
+  const byStart = (direction: 1 | -1) => (leftId: string, rightId: string) => {
+    const left = getCycle(leftId);
+    const right = getCycle(rightId);
+    if (!left || !right) return 0;
+    return direction * (cycleSortTime(left) - cycleSortTime(right));
+  };
+
+  buckets.upcoming.sort(byStart(1));
+  buckets.planned.sort(byStart(1));
+  buckets.completed.sort(byStart(-1));
+
+  return LINEAR_CYCLE_GROUP_ORDER.filter((kind) => buckets[kind].length > 0).map((kind) => ({
+    kind,
+    ids: buckets[kind],
+  }));
 };
