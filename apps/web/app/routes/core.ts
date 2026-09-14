@@ -47,6 +47,10 @@ export const coreRoutes: RouteConfigEntry[] = [
   // ALL APP ROUTES
   // ========================================================================
   layout("./(all)/layout.tsx", [
+    // Bare /wiki is not a workspace slug; send the user into their last workspace.
+    route("wiki", "./(all)/wiki/page.tsx"),
+    route("wiki/:pageId", "./(all)/wiki/[pageId]/page.tsx"),
+
     // ======================================================================
     // WORKSPACE-SCOPED ROUTES
     // ======================================================================
@@ -103,6 +107,12 @@ export const coreRoutes: RouteConfigEntry[] = [
         // Stickies
         layout("./(all)/[workspaceSlug]/(projects)/stickies/layout.tsx", [
           route(":workspaceSlug/stickies", "./(all)/[workspaceSlug]/(projects)/stickies/page.tsx"),
+        ]),
+
+        // Workspace wiki
+        layout("./(all)/[workspaceSlug]/(projects)/wiki/layout.tsx", [
+          route(":workspaceSlug/wiki", "./(all)/[workspaceSlug]/(projects)/wiki/page.tsx"),
+          route(":workspaceSlug/wiki/:pageId", "./(all)/[workspaceSlug]/(projects)/wiki/[pageId]/page.tsx"),
         ]),
 
         // Workspace Views
