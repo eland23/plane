@@ -44,8 +44,16 @@ export class WorkspaceWikiService extends APIService {
     return this.patch(`/api/workspaces/${workspaceSlug}/pages/${pageId}/`, data).then((response) => response?.data);
   }
 
-  async updateDescription(workspaceSlug: string, pageId: string, description_html: string): Promise<void> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/pages/${pageId}/description/`, { description_html }).then(
+  async updateDescription(
+    workspaceSlug: string,
+    pageId: string,
+    data: {
+      description_html: string;
+      description_json?: object;
+      description_binary?: string;
+    }
+  ): Promise<void> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/pages/${pageId}/description/`, data).then(
       (response) => response?.data
     );
   }
