@@ -14,7 +14,7 @@ import { CycleQuickActions } from "@/components/cycles/quick-actions";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { LinearBurnupChart } from "./burnup-chart";
-import { formatRailDate, kindLabel, linearCycleMetrics } from "./metrics";
+import { formatRailDate, linearCycleMetrics } from "./metrics";
 
 type Props = {
   cycleId: string;
@@ -110,7 +110,6 @@ export const LinearCycleRow = observer(function LinearCycleRow(props: Props) {
           </div>
           <div className="flex shrink-0 flex-col items-end gap-1 pt-0.5">
             <div className="flex items-center gap-3">
-              <span className="text-[12px] text-placeholder">{kindLabel(metrics.kind)}</span>
               {metrics.kind === "completed" ? (
                 <>
                   <Stat label="" value={`${metrics.successPercent}% success`} tone={metrics.successPercent >= 70 ? "success" : "danger"} />
