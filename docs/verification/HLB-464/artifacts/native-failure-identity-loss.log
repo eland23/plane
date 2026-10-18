@@ -1,0 +1,20 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__ test_import_link_identity_is_scoped_unique_and_manual_links_are_preserved ___
+
+link_scope = (<Workspace: Migration fixture>, <Project: FAS fixture <Migration fixture>>, <Issue: Original FAS issue <FAS fixture>>)
+
+    def test_import_link_identity_is_scoped_unique_and_manual_links_are_preserved(link_scope):
+        workspace, project, issue = link_scope
+        manual = IssueLink.objects.create(project=project, issue=issue, url='https://example.invalid/manual')
+        imported = IssueLink.objects.create(project=project, issue=issue, url='https://example.invalid/source',
+            external_source='linear:fixture-org', external_id='source-attachment-1')
+>       with pytest.raises(IntegrityError), transaction.atomic():
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'django.db.utils.IntegrityError'>
+
+plane/tests/contract/test_import_link_identity.py:24: Failed
+- generated xml file: /evidence/identity-loss-final/failure-identity-loss.xml --
+=========================== short test summary info ============================
+FAILED plane/tests/contract/test_import_link_identity.py::test_import_link_identity_is_scoped_unique_and_manual_links_are_preserved
+1 failed, 6 deselected in 8.20s

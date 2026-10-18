@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="2.255" timestamp="2026-10-18T22:23:48.001398+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_linear_actors" name="test_original_inactive_actor_is_archived_without_invitation_and_verified_on_readback" time="0.802"><failure message="AssertionError: assert (False is False and 'Importer' == 'Inactive fixture author'&#10;  &#10;  - Inactive fixture author&#10;  + Importer)">tmp_path = PosixPath('/isolated-contract/fixtures/test_original_inactive_actor_i0')
+
+    def test_original_inactive_actor_is_archived_without_invitation_and_verified_on_readback(tmp_path):
+        from linear_actors import export_actors, read_actors
+        from linear_coverage import read_bundle
+        issues, associations = snapshot(tmp_path/'source', extra_fields={'creator': {'id': ACTOR}})
+        provider=Actors();output=tmp_path/'actors'
+        result=export_actors(provider,issues,associations,output)
+        assert result['counts']=={'archived':1,'blocked':0}
+        assert len(provider.calls)==1 and provider.calls[0][1]=={'id':ACTOR}
+        assert all('mutation' not in q.lower() for q,_ in provider.calls)
+        actors,manifest_hash=read_actors(output,read_bundle(issues,associations))
+&gt;       assert actors[ACTOR]['active'] is False and actors[ACTOR]['name']=='Inactive fixture author'
+E       AssertionError: assert (False is False and 'Importer' == 'Inactive fixture author'
+E
+E         - Inactive fixture author
+E         + Importer)
+
+tools/tests/test_linear_actors.py:40: AssertionError</failure></testcase></testsuite></testsuites>
