@@ -8,6 +8,7 @@ on:
       - tools/linear_coverage.py
       - tools/linear_assets.py
       - tools/linear_actors.py
+      - tools/verify_linear_actors.py
       - tools/linear_import_plan.py
       - tools/plane_snapshot.py
       - tools/verify_linear_import_plan.py

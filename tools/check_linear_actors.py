@@ -41,7 +41,7 @@ def main():
             shutil.copyfile(tools / "tests/test_linear_associations.py", root / "tools/tests/test_linear_associations.py")
             shutil.copyfile(tools / "linear_coverage.py", root / "tools/linear_coverage.py")
             shutil.copyfile(tools / "tests/test_linear_coverage.py", root / "tools/tests/test_linear_coverage.py")
-            for name_to_copy in ['linear_assets.py','plane_snapshot.py','verify_linear_import_plan.py']:
+            for name_to_copy in ['linear_assets.py','plane_snapshot.py','verify_linear_import_plan.py','verify_linear_actors.py']:
                 shutil.copyfile(tools / name_to_copy, root / 'tools' / name_to_copy)
             shutil.copyfile(tools / 'tests/test_linear_assets.py', root / 'tools/tests/test_linear_assets.py')
             command = [sys.executable, "-m", "pytest", "-q", "tools/tests/test_linear_actors.py", "-o", "addopts=",

@@ -39,6 +39,8 @@ def test_original_inactive_actor_is_archived_without_invitation_and_verified_on_
     actors,manifest_hash=read_actors(output,read_bundle(issues,associations))
     assert actors[ACTOR]['active'] is False and actors[ACTOR]['name']=='Inactive fixture author'
     assert len(manifest_hash)==64
+    from verify_linear_actors import verify
+    assert verify(issues,output)=={'archived_actors':1,'inactive_actors':1,'verified_issue_references':{'creator':6,'assignee':0},'accounts_created':0,'invitations_sent':0}
     assert output.stat().st_mode & 0o777==0o700
     assert all(p.stat().st_mode & 0o777==0o600 for p in output.iterdir())
     before=(output/'manifest.json').read_bytes()
