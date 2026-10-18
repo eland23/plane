@@ -117,3 +117,6 @@ packages/i18n/src/types/keys.generated.ts
 
 # Local security notes (not for version control)
 /security/
+
+# Local hook telemetry; keep security policy/rubric files trackable.
+.abide/events.jsonl
