@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="37" time="162.425" timestamp="2026-10-18T22:58:27.812849+00:00" hostname="13c5a988609b"><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_lifecycle_exact_values_clear_order_archive_and_delete" time="7.070" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_assignment_replaces_one_value_and_delete_conflicts_until_clear" time="1.364" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_validation_keeps_saved_record_usable[values0]" time="0.505" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_validation_keeps_saved_record_usable[values1]" time="0.466" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_validation_keeps_saved_record_usable[values2]" time="0.442" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_validation_keeps_saved_record_usable[values3]" time="0.463" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_validation_keeps_saved_record_usable[values4]" time="0.467" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_validation_keeps_saved_record_usable[values5]" time="0.493" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_validation_keeps_saved_record_usable[values6]" time="0.477" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_validation_keeps_saved_record_usable[values7]" time="0.444" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_validation_keeps_saved_record_usable[values8]" time="0.556" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_validation_keeps_saved_record_usable[values9]" time="0.469" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_validation_keeps_saved_record_usable[values10]" time="0.432" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_authorization_denies_reads_and_writes[viewer]" time="0.418" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_authorization_denies_reads_and_writes[inactive-workspace]" time="0.417" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_authorization_denies_reads_and_writes[inactive-project]" time="0.407" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_authorization_denies_reads_and_writes[outsider]" time="0.422" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_authorization_denies_reads_and_writes[inactive-user]" time="0.344" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_rejects_foreign_module_issue_and_archived_target" time="1.140" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_native_milestone_source_identity_is_paired_unique_and_retained" time="0.320" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_direct_scope_and_identity_rebinding_are_rejected" time="0.368" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_foreign_workspace_and_unjoined_project_are_unavailable" time="0.528" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_issue_assignment_database_is_single_valued_and_archiving_retains_membership" time="0.806" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_assignment_can_be_cleared_after_membership_removal[False]" time="0.729" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_assignment_can_be_cleared_after_membership_removal[True]" time="0.638" /><testcase classname="plane.tests.contract.test_import_link_identity" name="test_import_link_identity_is_scoped_unique_and_manual_links_are_preserved" time="0.322" /><testcase classname="plane.tests.contract.test_import_link_identity" name="test_ordinary_link_serializer_cannot_rebind_import_identity" time="0.215" /><testcase classname="plane.tests.contract.test_import_link_identity" name="test_partial_or_empty_source_binding_is_rejected_by_database" time="0.185" /><testcase classname="plane.tests.contract.test_import_link_identity" name="test_bound_source_identity_cannot_be_rewritten_by_a_direct_update" time="0.143" /><testcase classname="plane.tests.contract.test_import_link_identity" name="test_source_identity_can_exist_in_another_workspace_but_cannot_be_moved" time="0.350" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_schema_reverse_refuses_to_discard_native_data" time="19.251" /><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_assignment_and_delete_serialize_without_losing_membership" time="4.147" /><testcase classname="plane.tests.contract.test_import_link_identity" name="test_schema_roundtrip_preserves_manual_links_and_refuses_to_drop_bound_identity" time="72.415" /><testcase classname="plane.tests.contract.test_import_link_identity" name="test_concurrent_import_commits_before_reversal_check_and_identity_is_preserved" time="41.374"><failure message="AssertionError: reversal did not reach the competing-write boundary&#10;assert False">link_scope = (&lt;Workspace: Migration fixture&gt;, &lt;Project: FAS fixture &lt;Migration fixture&gt;&gt;, &lt;Issue: Original FAS issue &lt;FAS fixture&gt;&gt;)
+
+    @pytest.mark.django_db(transaction=True)
+    def test_concurrent_import_commits_before_reversal_check_and_identity_is_preserved(link_scope):
+        import threading
+        import time
+        from django.db import connection, connections
+        from django.db.migrations.executor import MigrationExecutor
+        _, project, issue=link_scope
+        inserted,commit=threading.Event(),threading.Event()
+        results={}
+        def writer():
+            try:
+                with transaction.atomic():
+                    row=IssueLink.objects.create(project_id=project.pk,issue_id=issue.pk,url='https://example.invalid/concurrent',
+                        external_source='linear:fixture-org',external_id='concurrent-attachment')
+                    results['link']=row.pk;inserted.set()
+                    if not commit.wait(20):raise RuntimeError('Writer release timeout')
+            except Exception as error:results['writer_error']=type(error).__name__
+            finally:connections.close_all()
+        def reverse():
+            try:
+                with connections['default'].cursor() as cursor:
+                    cursor.execute("SET application_name = 'hlb464_reverse_contract'")
+                MigrationExecutor(connections['default']).migrate([
+                    ('db','0122_alter_draftissue_assignees_alter_issue_assignees_and_more')])
+                results['reverse']='applied'
+            except RuntimeError as error:
+                results['reverse']='blocked' if 'Cannot remove imported link identities' in str(error) else 'unexpected'
+            except Exception as error:results['reverse_error']=type(error).__name__
+            finally:connections.close_all()
+        write_thread=threading.Thread(target=writer)
+        reverse_thread=threading.Thread(target=reverse)
+        write_thread.start()
+        try:
+            assert inserted.wait(10),'writer did not reach the intended boundary'
+            reverse_thread.start()
+            waiting=False;deadline=time.monotonic()+15
+            while time.monotonic()&lt;deadline and reverse_thread.is_alive():
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE application_name='hlb464_reverse_contract' AND wait_event_type='Lock')")
+                    waiting=cursor.fetchone()[0]
+                if waiting:break
+                time.sleep(0.02)
+&gt;           assert waiting,'reversal did not reach the competing-write boundary'
+E           AssertionError: reversal did not reach the competing-write boundary
+E           assert False
+
+plane/tests/contract/test_import_link_identity.py:150: AssertionError</failure></testcase><testcase classname="plane.tests.unit.test_import_link_fields" name="test_native_link_retains_original_source_identity_and_api_marks_it_read_only[IssueLinkSerializer0]" time="0.018" /><testcase classname="plane.tests.unit.test_import_link_fields" name="test_native_link_retains_original_source_identity_and_api_marks_it_read_only[IssueLinkSerializer1]" time="0.015" /><testcase classname="plane.tests.unit.test_import_link_fields" name="test_native_link_retains_original_source_identity_and_api_marks_it_read_only[IssueLinkSerializer2]" time="0.019" /></testsuite></testsuites>

@@ -1,0 +1,28 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_milestone_assignment_replaces_one_value_and_delete_conflicts_until_clear _
+
+scope = (<User: milestone <milestone@example.invalid>>, <Workspace: Milestone fixture>, <Project: FAS <Milestone fixture>>, <Module: Wardrobe None None>, <Issue: FAS-2 original <FAS>>)
+
+    def test_milestone_assignment_replaces_one_value_and_delete_conflicts_until_clear(scope):
+        from plane.db.models import IssueMilestone
+        user, _, project, module, issue = scope
+        first = create_milestone(user,module.id,{'name':'First'})
+        second = create_milestone(user,module.id,{'name':'Second'})
+        other = Issue.objects.create(project=project,name='FAS-5 unrelated')
+        ModuleIssue.objects.create(project=project,module=module,issue=other)
+        assign_milestone(user,module.id,issue.id,first.id)
+        assign_milestone(user,module.id,other.id,first.id)
+        assign_milestone(user,module.id,issue.id,second.id)
+        assert IssueMilestone.objects.get(issue=issue).milestone_id == second.id
+        assert IssueMilestone.objects.get(issue=other).milestone_id == first.id
+>       with pytest.raises(MilestoneConflict): delete_milestone(user,module.id,second.id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'plane.app.services.milestones.MilestoneConflict'>
+
+plane/tests/contract/test_module_milestones.py:59: Failed
+- generated xml file: /evidence/milestone-reference-fault/failure-reference-loss.xml -
+=========================== short test summary info ============================
+FAILED plane/tests/contract/test_module_milestones.py::test_milestone_assignment_replaces_one_value_and_delete_conflicts_until_clear
+1 failed, 26 deselected in 8.95s
+{"exit": 1, "expected_failure": true, "intended_assertion_detected": true, "source_restored": true, "fixture_rows_after": [0, 0], "original_source_sha256": "f526c6c1cd4fa655a1adb7a27fcb32a679ce3575de241a569c25139cc693bcd9", "fault_source_sha256": "6823a46d2e553503920661e083c100ff0ea472a4c654f2615bc644c87636fadb", "accepted": true}

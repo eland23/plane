@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="8.969" timestamp="2026-10-18T22:57:06.863041+00:00" hostname="13c5a988609b"><testcase classname="plane.tests.contract.test_module_milestones" name="test_milestone_assignment_replaces_one_value_and_delete_conflicts_until_clear" time="7.844"><failure message="Failed: DID NOT RAISE &lt;class 'plane.app.services.milestones.MilestoneConflict'&gt;">scope = (&lt;User: milestone &lt;milestone@example.invalid&gt;&gt;, &lt;Workspace: Milestone fixture&gt;, &lt;Project: FAS &lt;Milestone fixture&gt;&gt;, &lt;Module: Wardrobe None None&gt;, &lt;Issue: FAS-2 original &lt;FAS&gt;&gt;)
+
+    def test_milestone_assignment_replaces_one_value_and_delete_conflicts_until_clear(scope):
+        from plane.db.models import IssueMilestone
+        user, _, project, module, issue = scope
+        first = create_milestone(user,module.id,{'name':'First'})
+        second = create_milestone(user,module.id,{'name':'Second'})
+        other = Issue.objects.create(project=project,name='FAS-5 unrelated')
+        ModuleIssue.objects.create(project=project,module=module,issue=other)
+        assign_milestone(user,module.id,issue.id,first.id)
+        assign_milestone(user,module.id,other.id,first.id)
+        assign_milestone(user,module.id,issue.id,second.id)
+        assert IssueMilestone.objects.get(issue=issue).milestone_id == second.id
+        assert IssueMilestone.objects.get(issue=other).milestone_id == first.id
+&gt;       with pytest.raises(MilestoneConflict): delete_milestone(user,module.id,second.id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'plane.app.services.milestones.MilestoneConflict'&gt;
+
+plane/tests/contract/test_module_milestones.py:59: Failed</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,60 @@
+.................................F...                                    [100%]
+=================================== FAILURES ===================================
+_ test_concurrent_import_commits_before_reversal_check_and_identity_is_preserved _
+
+link_scope = (<Workspace: Migration fixture>, <Project: FAS fixture <Migration fixture>>, <Issue: Original FAS issue <FAS fixture>>)
+
+    @pytest.mark.django_db(transaction=True)
+    def test_concurrent_import_commits_before_reversal_check_and_identity_is_preserved(link_scope):
+        import threading
+        import time
+        from django.db import connection, connections
+        from django.db.migrations.executor import MigrationExecutor
+        _, project, issue=link_scope
+        # Remove later empty schemas before timing this migration's lock boundary.
+        # Their historical-state rendering is not part of the identity race.
+        MigrationExecutor(connection).migrate([('db','0123_issue_link_source_identity')])
+        inserted,commit=threading.Event(),threading.Event()
+        results={}
+        def writer():
+            try:
+                with transaction.atomic():
+                    row=IssueLink.objects.create(project_id=project.pk,issue_id=issue.pk,url='https://example.invalid/concurrent',
+                        external_source='linear:fixture-org',external_id='concurrent-attachment')
+                    results['link']=row.pk;inserted.set()
+                    if not commit.wait(20):raise RuntimeError('Writer release timeout')
+            except Exception as error:results['writer_error']=type(error).__name__
+            finally:connections.close_all()
+        def reverse():
+            try:
+                with connections['default'].cursor() as cursor:
+                    cursor.execute("SET application_name = 'hlb464_reverse_contract'")
+                MigrationExecutor(connections['default']).migrate([
+                    ('db','0122_alter_draftissue_assignees_alter_issue_assignees_and_more')])
+                results['reverse']='applied'
+            except RuntimeError as error:
+                results['reverse']='blocked' if 'Cannot remove imported link identities' in str(error) else 'unexpected'
+            except Exception as error:results['reverse_error']=type(error).__name__
+            finally:connections.close_all()
+        write_thread=threading.Thread(target=writer)
+        reverse_thread=threading.Thread(target=reverse)
+        write_thread.start()
+        try:
+            assert inserted.wait(10),'writer did not reach the intended boundary'
+            reverse_thread.start()
+            waiting=False;deadline=time.monotonic()+15
+            while time.monotonic()<deadline and reverse_thread.is_alive():
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE application_name='hlb464_reverse_contract' AND wait_event_type='Lock')")
+                    waiting=cursor.fetchone()[0]
+                if waiting:break
+                time.sleep(0.02)
+>           assert waiting,'reversal did not reach the competing-write boundary'
+E           AssertionError: reversal did not reach the competing-write boundary
+E           assert False
+
+plane/tests/contract/test_import_link_identity.py:153: AssertionError
+-------- generated xml file: /evidence/milestone-restored-verified.xml ---------
+=========================== short test summary info ============================
+FAILED plane/tests/contract/test_import_link_identity.py::test_concurrent_import_commits_before_reversal_check_and_identity_is_preserved
+1 failed, 36 passed in 166.68s (0:02:46)
