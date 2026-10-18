@@ -85,7 +85,8 @@ def test_schema_roundtrip_preserves_manual_links_and_refuses_to_drop_bound_ident
         assert imported.external_id=='source-attachment-1'
         assert manual.url=='https://example.invalid/manual'
     finally:
-        MigrationExecutor(connection).migrate([after])
+        restore = MigrationExecutor(connection)
+        restore.migrate(restore.loader.graph.leaf_nodes())
 
 
 def test_source_identity_can_exist_in_another_workspace_but_cannot_be_moved(link_scope):
@@ -111,7 +112,11 @@ def test_concurrent_import_commits_before_reversal_check_and_identity_is_preserv
     from django.db import connection, connections
     from django.db.migrations.executor import MigrationExecutor
     _, project, issue=link_scope
+    # Remove later empty schemas before timing this migration's lock boundary.
+    # Their historical-state rendering is not part of the identity race.
+    MigrationExecutor(connection).migrate([('db','0123_issue_link_source_identity')])
     inserted,commit=threading.Event(),threading.Event()
+    prepared,start_reverse=threading.Event(),threading.Event()
     results={}
     def writer():
         try:
@@ -122,12 +127,20 @@ def test_concurrent_import_commits_before_reversal_check_and_identity_is_preserv
                 if not commit.wait(20):raise RuntimeError('Writer release timeout')
         except Exception as error:results['writer_error']=type(error).__name__
         finally:connections.close_all()
+    def before_guard_lock(execute, sql, params, many, context):
+        # Schedule at the real database boundary, after Django has rendered
+        # historical states and all intermediate reverse-operation states.
+        if sql.startswith('LOCK TABLE') and '"issue_links"' in sql:
+            prepared.set()
+            if not start_reverse.wait(30):raise RuntimeError('Reversal start timeout')
+        return execute(sql, params, many, context)
     def reverse():
         try:
             with connections['default'].cursor() as cursor:
                 cursor.execute("SET application_name = 'hlb464_reverse_contract'")
-            MigrationExecutor(connections['default']).migrate([
-                ('db','0122_alter_draftissue_assignees_alter_issue_assignees_and_more')])
+            with connections['default'].execute_wrapper(before_guard_lock):
+                MigrationExecutor(connections['default']).migrate([
+                    ('db','0122_alter_draftissue_assignees_alter_issue_assignees_and_more')])
             results['reverse']='applied'
         except RuntimeError as error:
             results['reverse']='blocked' if 'Cannot remove imported link identities' in str(error) else 'unexpected'
@@ -135,10 +148,14 @@ def test_concurrent_import_commits_before_reversal_check_and_identity_is_preserv
         finally:connections.close_all()
     write_thread=threading.Thread(target=writer)
     reverse_thread=threading.Thread(target=reverse)
-    write_thread.start()
+    reverse_thread.start()
     try:
+        # The execution wrapper waits immediately before the actual guard lock.
+        # Only the actual SQL lock race belongs inside the short wait window.
+        assert prepared.wait(180),('reversal preparation failed',results)
+        write_thread.start()
         assert inserted.wait(10),'writer did not reach the intended boundary'
-        reverse_thread.start()
+        start_reverse.set()
         waiting=False;deadline=time.monotonic()+15
         while time.monotonic()<deadline and reverse_thread.is_alive():
             with connection.cursor() as cursor:
@@ -146,13 +163,15 @@ def test_concurrent_import_commits_before_reversal_check_and_identity_is_preserv
                 waiting=cursor.fetchone()[0]
             if waiting:break
             time.sleep(0.02)
-        assert waiting,'reversal did not reach the competing-write boundary'
+        assert waiting,('reversal did not reach the competing-write boundary',results)
         commit.set();write_thread.join(20);reverse_thread.join(20)
         assert not write_thread.is_alive() and not reverse_thread.is_alive()
         assert 'writer_error' not in results and 'reverse_error' not in results
         assert results['reverse']=='blocked'
         assert IssueLink.objects.get(pk=results['link']).external_id=='concurrent-attachment'
     finally:
-        commit.set();write_thread.join(20)
-        if reverse_thread.ident is not None:reverse_thread.join(20)
-        MigrationExecutor(connection).migrate([('db','0123_issue_link_source_identity')])
+        start_reverse.set();commit.set()
+        if write_thread.ident is not None:write_thread.join(20)
+        if reverse_thread.ident is not None:reverse_thread.join(180)
+        restore = MigrationExecutor(connection)
+        restore.migrate(restore.loader.graph.leaf_nodes())

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="9.919" timestamp="2026-10-18T22:57:53.538619+00:00" hostname="13c5a988609b"><testcase classname="plane.tests.contract.test_module_milestones" name="test_native_milestone_source_identity_is_paired_unique_and_retained" time="8.214"><failure message="Failed: DID NOT RAISE &lt;class 'django.db.utils.IntegrityError'&gt;">scope = (&lt;User: milestone &lt;milestone@example.invalid&gt;&gt;, &lt;Workspace: Milestone fixture&gt;, &lt;Project: FAS &lt;Milestone fixture&gt;&gt;, &lt;Module: Wardrobe None None&gt;, &lt;Issue: FAS-2 original &lt;FAS&gt;&gt;)
+
+    def test_native_milestone_source_identity_is_paired_unique_and_retained(scope):
+        from plane.db.models import ModuleMilestone
+        _,_,project,module,_=scope
+        row=ModuleMilestone.objects.create(project=project,module=module,name='Imported',
+            external_source='linear:fixture',external_id='milestone-uuid')
+        for values in [{'external_source':'linear:fixture'}, {'external_source':'','external_id':''},
+                       {'external_source':'linear:fixture','external_id':'milestone-uuid'}]:
+&gt;           with pytest.raises(IntegrityError),transaction.atomic():
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE &lt;class 'django.db.utils.IntegrityError'&gt;
+
+plane/tests/contract/test_module_milestones.py:126: Failed</failure></testcase></testsuite></testsuites>

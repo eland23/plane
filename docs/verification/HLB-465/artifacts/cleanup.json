@@ -1,0 +1,24 @@
+{
+  "native_readback": {
+    "users": 0,
+    "workspaces": 0,
+    "projects": 0,
+    "modules": 0,
+    "issues": 0,
+    "issue_links": 0,
+    "module_milestones": 0,
+    "issue_milestones": 0,
+    "milestone_identity_unique": true,
+    "issue_single_value": true,
+    "milestone_trigger": true,
+    "migration_0124": true
+  },
+  "cli_runners_removed": true,
+  "editor_fixture_roots_removed": true,
+  "retained_dependencies": [
+    "plane-hlb464-db",
+    "plane-hlb464-redis"
+  ],
+  "cleanup_pass": true,
+  "catalog_note": "The active-issue uniqueness rule is a partial unique index, verified in pg_index rather than pg_constraint."
+}
