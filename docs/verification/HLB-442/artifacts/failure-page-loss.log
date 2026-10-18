@@ -1,0 +1,19 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____________ test_export_retains_every_page_and_archived_payload ______________
+
+exporter = <module 'linear_export' from '/var/tmp/linear-export-contract-gjofdg6h/tools/linear_export.py'>
+tmp_path = PosixPath('/var/tmp/linear-export-contract-gjofdg6h/fixtures/test_export_retains_every_page0')
+
+    def test_export_retains_every_page_and_archived_payload(exporter, tmp_path):
+        source = Provider([page([issue(2)], True, "next"), page([issue(11, archivedAt="2026-01-01T00:00:00Z")])])
+        destination = tmp_path / "private-export"
+        result = exporter.export_issues(source, TEAM, destination)
+>       assert result["issue_count"] == 2
+E       assert 1 == 2
+
+tools/tests/test_linear_export.py:52: AssertionError
+- generated xml file: /var/tmp/plane-HLB442-evidence-final/failure-page-loss.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_linear_export.py::test_export_retains_every_page_and_archived_payload
+1 failed, 29 deselected in 0.79s
