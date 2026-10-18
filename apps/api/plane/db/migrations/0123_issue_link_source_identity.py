@@ -49,6 +49,7 @@ class Migration(migrations.Migration):
                     IF OLD.external_source IS NOT NULL AND (
                         NEW.external_source IS DISTINCT FROM OLD.external_source
                         OR NEW.external_id IS DISTINCT FROM OLD.external_id
+                        OR NEW.workspace_id IS DISTINCT FROM OLD.workspace_id
                     ) THEN
                         RAISE EXCEPTION 'Imported link identity cannot be changed'
                             USING ERRCODE = '23514';
@@ -57,7 +58,7 @@ class Migration(migrations.Migration):
                 END;
                 $$;
                 CREATE TRIGGER issue_link_identity_immutable
-                    BEFORE UPDATE OF external_source, external_id ON issue_links
+                    BEFORE UPDATE OF external_source, external_id, workspace_id ON issue_links
                     FOR EACH ROW EXECUTE FUNCTION plane_issue_link_identity_immutable();
             """,
             reverse_sql="""

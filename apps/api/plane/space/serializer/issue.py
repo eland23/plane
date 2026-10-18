@@ -123,6 +123,8 @@ class IssueLinkSerializer(BaseSerializer):
         model = IssueLink
         fields = "__all__"
         read_only_fields = [
+            "external_source",
+            "external_id",
             "workspace",
             "project",
             "created_by",
