@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="2.527" timestamp="2026-10-18T22:22:28.938003+00:00" hostname="5538e01cd252"><testcase classname="plane.tests.unit.test_import_link_fields" name="test_native_link_retains_original_source_identity_and_api_marks_it_read_only" time="0.609"><failure message="TypeError: IssueLink() got unexpected keyword arguments: 'external_source', 'external_id'">def test_native_link_retains_original_source_identity_and_api_marks_it_read_only():
+&gt;       link=IssueLink(title='Original resource',url='https://example.invalid/original',
+                       external_source='linear:fixture-org',external_id='original-attachment')
+
+plane/tests/unit/test_import_link_fields.py:7:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;[RelatedObjectDoesNotExist('IssueLink has no issue.') raised in repr()] IssueLink object at 0x7f57ef52cb30&gt;
+args = ()
+kwargs = {'external_id': 'original-attachment', 'external_source': 'linear:fixture-org'}
+cls = &lt;class 'plane.db.models.issue.IssueLink'&gt;, opts = &lt;Options for IssueLink&gt;
+_setattr = &lt;built-in function setattr&gt;, _DEFERRED = &lt;Deferred field&gt;
+fields_iter = &lt;tuple_iterator object at 0x7f57ef58c0d0&gt;, val = {}
+field = &lt;django.db.models.fields.json.JSONField: metadata&gt;
+is_related_object = False, property_names = frozenset({'pk'})
+
+    def __init__(self, *args, **kwargs):
+        # Alias some things as locals to avoid repeat global lookups
+        cls = self.__class__
+        opts = self._meta
+        _setattr = setattr
+        _DEFERRED = DEFERRED
+        if opts.abstract:
+            raise TypeError("Abstract models cannot be instantiated.")
+
+        pre_init.send(sender=cls, args=args, kwargs=kwargs)
+
+        # Set up the storage for instance state
+        self._state = ModelState()
+
+        # There is a rather weird disparity here; if kwargs, it's set, then args
+        # overrides it. It should be one or the other; don't duplicate the work
+        # The reason for the kwargs check is that standard iterator passes in by
+        # args, and instantiation for iteration is 33% faster.
+        if len(args) &gt; len(opts.concrete_fields):
+            # Daft, but matches old exception sans the err msg.
+            raise IndexError("Number of args exceeds number of fields")
+
+        if not kwargs:
+            fields_iter = iter(opts.concrete_fields)
+            # The ordering of the zip calls matter - zip throws StopIteration
+            # when an iter throws it. So if the first iter throws it, the second
+            # is *not* consumed. We rely on this, so don't change the order
+            # without changing the logic.
+            for val, field in zip(args, fields_iter):
+                if val is _DEFERRED:
+                    continue
+                _setattr(self, field.attname, val)
+        else:
+            # Slower, kwargs-ready version.
+            fields_iter = iter(opts.fields)
+            for val, field in zip(args, fields_iter):
+                if val is _DEFERRED:
+                    continue
+                _setattr(self, field.attname, val)
+                if kwargs.pop(field.name, NOT_PROVIDED) is not NOT_PROVIDED:
+                    raise TypeError(
+                        f"{cls.__qualname__}() got both positional and "
+                        f"keyword arguments for field '{field.name}'."
+                    )
+
+        # Now we're left with the unprocessed fields that *must* come from
+        # keywords, or default.
+
+        for field in fields_iter:
+            is_related_object = False
+            # Virtual field
+            if field.column is None or field.generated:
+                continue
+            if kwargs:
+                if isinstance(field.remote_field, ForeignObjectRel):
+                    try:
+                        # Assume object instance was passed in.
+                        rel_obj = kwargs.pop(field.name)
+                        is_related_object = True
+                    except KeyError:
+                        try:
+                            # Object instance wasn't passed in -- must be an ID.
+                            val = kwargs.pop(field.attname)
+                        except KeyError:
+                            val = field.get_default()
+                else:
+                    try:
+                        val = kwargs.pop(field.attname)
+                    except KeyError:
+                        # This is done with an exception rather than the
+                        # default argument on pop because we don't want
+                        # get_default() to be evaluated, and then not used.
+                        # Refs #12057.
+                        val = field.get_default()
+            else:
+                val = field.get_default()
+
+            if is_related_object:
+                # If we are passed a related instance, set it using the
+                # field.name instead of field.attname (e.g. "user" instead of
+                # "user_id") so that the object gets properly cached (and type
+                # checked) by the RelatedObjectDescriptor.
+                if rel_obj is not _DEFERRED:
+                    _setattr(self, field.name, rel_obj)
+            else:
+                if val is not _DEFERRED:
+                    _setattr(self, field.attname, val)
+
+        if kwargs:
+            property_names = opts._property_names
+            unexpected = ()
+            for prop, value in kwargs.items():
+                # Any remaining kwargs must correspond to properties or virtual
+                # fields.
+                if prop in property_names:
+                    if value is not _DEFERRED:
+                        _setattr(self, prop, value)
+                else:
+                    try:
+                        opts.get_field(prop)
+                    except FieldDoesNotExist:
+                        unexpected += (prop,)
+                    else:
+                        if value is not _DEFERRED:
+                            _setattr(self, prop, value)
+            if unexpected:
+                unexpected_names = ", ".join(repr(n) for n in unexpected)
+&gt;               raise TypeError(
+                    f"{cls.__name__}() got unexpected keyword arguments: "
+                    f"{unexpected_names}"
+                )
+E               TypeError: IssueLink() got unexpected keyword arguments: 'external_source', 'external_id'
+
+/usr/local/lib/python3.12/site-packages/django/db/models/base.py:569: TypeError</failure></testcase></testsuite></testsuites>

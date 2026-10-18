@@ -1,0 +1,27 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_original_inactive_actor_is_archived_without_invitation_and_verified_on_readback _
+
+tmp_path = PosixPath('/isolated-contract/fixtures/test_original_inactive_actor_i0')
+
+    def test_original_inactive_actor_is_archived_without_invitation_and_verified_on_readback(tmp_path):
+        from linear_actors import export_actors, read_actors
+        from linear_coverage import read_bundle
+        issues, associations = snapshot(tmp_path/'source', extra_fields={'creator': {'id': ACTOR}})
+        provider=Actors();output=tmp_path/'actors'
+        result=export_actors(provider,issues,associations,output)
+        assert result['counts']=={'archived':1,'blocked':0}
+        assert len(provider.calls)==1 and provider.calls[0][1]=={'id':ACTOR}
+        assert all('mutation' not in q.lower() for q,_ in provider.calls)
+        actors,manifest_hash=read_actors(output,read_bundle(issues,associations))
+>       assert actors[ACTOR]['active'] is False and actors[ACTOR]['name']=='Inactive fixture author'
+E       AssertionError: assert (False is False and 'Importer' == 'Inactive fixture author'
+E
+E         - Inactive fixture author
+E         + Importer)
+
+tools/tests/test_linear_actors.py:40: AssertionError
+- generated xml file: /var/tmp/hlb464-actor-controls-verified/failure-original-author.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_linear_actors.py::test_original_inactive_actor_is_archived_without_invitation_and_verified_on_readback
+1 failed, 5 deselected in 2.23s

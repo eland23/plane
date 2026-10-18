@@ -1,0 +1,24 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____ test_issue_association_discovers_document_when_team_projects_are_empty ____
+
+associations = <module 'linear_associations' from '/var/tmp/linear-association-contract-0yhstq7q/tools/linear_associations.py'>
+tmp_path = PosixPath('/var/tmp/linear-association-contract-0yhstq7q/fixtures/test_issue_association_discove0')
+
+    def test_issue_association_discovers_document_when_team_projects_are_empty(associations, tmp_path):
+        source = Source()
+        issues = tmp_path / 'issues'
+        base.export_issues(source, TEAM, issues)
+        output = tmp_path / 'associations'
+        result = associations.export_associations(source, issues, output)
+        assert result['status'] == 'COMPLETE_FOR_ASSOCIATIONS'
+>       assert result['counts'].get('document', 0) == 1
+E       AssertionError: assert 0 == 1
+E        +  where 0 = <built-in method get of dict object at 0x789780f59f00>('document', 0)
+E        +    where <built-in method get of dict object at 0x789780f59f00> = {'project': 1, 'team': 1}.get
+
+tools/tests/test_linear_associations.py:58: AssertionError
+- generated xml file: /var/tmp/plane-HLB443-evidence-final-v2/failure-document-edge.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_linear_associations.py::test_issue_association_discovers_document_when_team_projects_are_empty
+1 failed, 22 deselected in 1.11s

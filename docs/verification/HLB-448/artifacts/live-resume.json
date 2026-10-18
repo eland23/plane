@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "scope_requests_service": 1,
+  "metadata_requests": 0,
+  "asset_requests": 0,
+  "checkpoint_byte_identical": true,
+  "inputs_unchanged": true,
+  "new_source_observation": false,
+  "cli_exit": 0,
+  "cli_stdout": {
+    "status": "COMPLETE_FOR_DISCOVERED_ASSETS",
+    "attachment_pages": 801,
+    "assets": 25,
+    "archived": 25
+  }
+}

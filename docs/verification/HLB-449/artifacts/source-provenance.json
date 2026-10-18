@@ -1,0 +1,17 @@
+{
+  "application_test_revision": "3ecbbda39aec37bf6513b73759c50a0ba16032b3",
+  "destination_container": "plane-app-api-1",
+  "destination_host": "192.168.1.129",
+  "destination_image": "plane-backend:homelab",
+  "destination_image_id": "sha256:f2470ea68b74b1746bc31a20112dac63e67f55e84e2580b30b03da8af49d2d7d",
+  "execution": "editor CLI; collector runs in existing remote container; no service/deployment",
+  "planner_manifest_sha256": "effbda107b8a77c182069c4dd7333e34376f63849636d6dddf7916593e1f8b97",
+  "private_inputs_and_outputs_in_git": false,
+  "run_finished_utc": "2026-10-18T22:06:37.623445+00:00",
+  "source_inputs": {
+    "HLB-447-associations-20261018": "7344409fd11c8cbefd6d440fbefeb779a196a192af5d82581e36692d662dd9c4",
+    "HLB-447-comparison-20261018": "f30acebfa322eb52c07340fee4fa5328d68ce86db7d9cb2cf26d843d903413e7",
+    "HLB-447-issues-20261018": "84466937c411c00de37fc2f67ea5391ba7cd0a124a7eaf018e2eb7e7ad874398",
+    "HLB-448-assets-final-20261018": "ba80f9cdcd22445fe9b770d240ec1981b1fda1af5f9758c8b2af151acadc341a"
+  }
+}

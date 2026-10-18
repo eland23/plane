@@ -1,0 +1,18 @@
+{
+  "plan": {
+    "verified_issue_count": 801,
+    "destination_unchanged": true,
+    "tables_compared": 110,
+    "can_import": false
+  },
+  "actors": {
+    "archived_actors": 2,
+    "inactive_actors": 1,
+    "verified_issue_references": {
+      "creator": 801,
+      "assignee": 137
+    },
+    "accounts_created": 0,
+    "invitations_sent": 0
+  }
+}

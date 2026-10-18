@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.899" timestamp="2026-10-18T22:05:48.837576+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_linear_import_plan" name="test_reserved_number_collision_blocks_and_correction_restores_identical_plan" time="0.738"><failure message="AssertionError: assert {'code': 'NUMBER_COLLISION', 'sequence_id': 11, 'source_uuid': '10000000-0000-0000-0000-000000000011'} in [{'code': 'IGNORED_NUMBER_COLLISION', 'sequence_id': 11, 'source_uuid': '10000000-0000-0000-0000-000000000011'}]">planner = &lt;module 'linear_import_plan' from '/isolated-contract/tools/linear_import_plan.py'&gt;
+tmp_path = PosixPath('/isolated-contract/fixtures/test_reserved_number_collision0')
+
+    def test_reserved_number_collision_blocks_and_correction_restores_identical_plan(planner,tmp_path):
+        source=inputs(tmp_path);dest=destination()
+        dest['rows']['projects']=[{'id':PROJECT,'workspace_id':WS,'identifier':'FAS'}]
+        dest['rows']['issue_sequences']=[{'id':'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','project_id':PROJECT,'issue_id':None,'sequence':11,'deleted':True}]
+        blocked=planner.plan_import(*source,Destination(dest),WS,tmp_path/'blocked',target_project=PROJECT)
+&gt;       assert {'code':'NUMBER_COLLISION','source_uuid':IDS[2],'sequence_id':11} in blocked['blockers']
+E       AssertionError: assert {'code': 'NUMBER_COLLISION', 'sequence_id': 11, 'source_uuid': '10000000-0000-0000-0000-000000000011'} in [{'code': 'IGNORED_NUMBER_COLLISION', 'sequence_id': 11, 'source_uuid': '10000000-0000-0000-0000-000000000011'}]
+
+tools/tests/test_linear_import_plan.py:90: AssertionError</failure></testcase></testsuite></testsuites>

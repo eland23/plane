@@ -1,0 +1,20 @@
+{
+  "source_revision": "337c3334837dd2dabed880b8c34e3700c8a9ed1d",
+  "status": "COMPLETE_FOR_ISSUES",
+  "issues": 801,
+  "pages": 17,
+  "archived_issues": 0,
+  "boundary_references": 0,
+  "unique_ids": true,
+  "team_boundaries_valid": true,
+  "all_page_checksums_valid": true,
+  "terminal_page_observed": true,
+  "private_modes_verified": true,
+  "resume_scope_requests": 1,
+  "resume_issue_requests": 0,
+  "atomic_snapshot": false,
+  "export_started_at": "2026-10-18T19:55:14.708016+00:00",
+  "export_finished_at": "2026-10-18T19:55:24.887418+00:00",
+  "verified_at": "2026-10-18T19:55:40.136495+00:00",
+  "full_migration_backup": false
+}

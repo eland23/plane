@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="8.219" timestamp="2026-10-18T22:40:34.478089+00:00" hostname="5a2162287a8b"><testcase classname="plane.tests.contract.test_import_link_identity" name="test_import_link_identity_is_scoped_unique_and_manual_links_are_preserved" time="6.651"><failure message="Failed: DID NOT RAISE &lt;class 'django.db.utils.IntegrityError'&gt;">link_scope = (&lt;Workspace: Migration fixture&gt;, &lt;Project: FAS fixture &lt;Migration fixture&gt;&gt;, &lt;Issue: Original FAS issue &lt;FAS fixture&gt;&gt;)
+
+    def test_import_link_identity_is_scoped_unique_and_manual_links_are_preserved(link_scope):
+        workspace, project, issue = link_scope
+        manual = IssueLink.objects.create(project=project, issue=issue, url='https://example.invalid/manual')
+        imported = IssueLink.objects.create(project=project, issue=issue, url='https://example.invalid/source',
+            external_source='linear:fixture-org', external_id='source-attachment-1')
+&gt;       with pytest.raises(IntegrityError), transaction.atomic():
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'django.db.utils.IntegrityError'&gt;
+
+plane/tests/contract/test_import_link_identity.py:24: Failed</failure></testcase></testsuite></testsuites>

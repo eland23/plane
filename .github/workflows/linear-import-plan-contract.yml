@@ -1,0 +1,46 @@
+name: Linear import plan contracts
+
+on:
+  pull_request:
+    paths:
+      - tools/linear_export.py
+      - tools/linear_associations.py
+      - tools/linear_coverage.py
+      - tools/linear_assets.py
+      - tools/linear_import_plan.py
+      - tools/plane_snapshot.py
+      - tools/verify_linear_import_plan.py
+      - tools/check_linear_import_plan.py
+      - tools/tests/test_linear_associations.py
+      - tools/tests/test_linear_coverage.py
+      - tools/tests/test_linear_assets.py
+      - tools/tests/test_linear_import_plan.py
+      - .github/workflows/linear-import-plan-contract.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: linear-import-plan-contract-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - run: python3 -m pip install pytest==8.4.2
+      - name: Pass, detect data loss, restore and repeat
+        run: python3 tools/check_linear_import_plan.py --output "$RUNNER_TEMP/linear-import-plan-evidence"
+      - name: Save sanitized synthetic evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: linear-import-plan-contract-${{ github.sha }}
+          path: ${{ runner.temp }}/linear-import-plan-evidence
+          if-no-files-found: error
+          retention-days: 30

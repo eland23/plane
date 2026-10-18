@@ -1,0 +1,1 @@
+{"contract": "milestone", "fixture_table": "module_milestones", "exit": 1, "expected_failure": true, "intended_assertion_detected": true, "constraint_restored": true, "fixture_link_rows_after": 0, "accepted": true}

@@ -1,0 +1,27 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______ test_checksum_and_malformed_resume_rejection_preserves_manifest ________
+
+associations = <module 'linear_associations' from '/var/tmp/linear-association-contract-1u3v_u1j/tools/linear_associations.py'>
+tmp_path = PosixPath('/var/tmp/linear-association-contract-1u3v_u1j/fixtures/test_checksum_and_malformed_re0')
+
+    def test_checksum_and_malformed_resume_rejection_preserves_manifest(associations, tmp_path):
+        source = Source()
+        issues = setup_issues(source, tmp_path)
+        output = tmp_path / 'out'
+        associations.export_associations(source, issues, output)
+        saved = output / 'manifest.json'
+        original = saved.read_bytes()
+        page = output / 'page-000001.json'
+        corrupted = json.loads(page.read_text())
+        corrupted['data']['entity']['fields'][0]['name'] = 'tampered_schema_field'
+        page.write_text(json.dumps(corrupted))
+        with pytest.raises(base.SourceError, match='CHECKSUM_MISMATCH'):
+>           associations.export_associations(Source(), issues, output, resume=True)
+E           Failed: DID NOT RAISE <class 'linear_export.SourceError'>
+
+tools/tests/test_linear_associations.py:195: Failed
+- generated xml file: /var/tmp/plane-HLB443-evidence-final-v2/failure-checksum.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_linear_associations.py::test_checksum_and_malformed_resume_rejection_preserves_manifest
+1 failed, 22 deselected in 1.31s

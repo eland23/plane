@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.927" timestamp="2026-10-18T19:54:43.830557+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_linear_export" name="test_resume_detects_tampering_and_scope_changes" time="0.177"><failure message="Failed: DID NOT RAISE &lt;class 'linear_export.SourceError'&gt;">exporter = &lt;module 'linear_export' from '/var/tmp/linear-export-contract-8u6owzqy/tools/linear_export.py'&gt;
+tmp_path = PosixPath('/var/tmp/linear-export-contract-8u6owzqy/fixtures/test_resume_detects_tampering_0')
+
+    def test_resume_detects_tampering_and_scope_changes(exporter, tmp_path):
+        directory = tmp_path / "out"
+        exporter.export_issues(Provider([page([issue(2)])]), TEAM, directory)
+        raw = json.loads((directory / "page-000001.json").read_text())
+        raw["data"]["issues"]["nodes"][0]["title"] = "Tampered fixture"
+        (directory / "page-000001.json").write_text(json.dumps(raw))
+        with pytest.raises(exporter.SourceError, match="CHECKSUM_MISMATCH"):
+&gt;           exporter.export_issues(Provider([]), TEAM, directory, resume=True)
+E           Failed: DID NOT RAISE &lt;class 'linear_export.SourceError'&gt;
+
+tools/tests/test_linear_export.py:123: Failed</failure></testcase></testsuite></testsuites>

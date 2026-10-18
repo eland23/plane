@@ -1,0 +1,69 @@
+name: Linear source actors contracts
+
+on:
+  pull_request:
+    paths:
+      - tools/linear_export.py
+      - tools/linear_associations.py
+      - tools/linear_coverage.py
+      - tools/linear_assets.py
+      - tools/linear_actors.py
+      - tools/verify_linear_actors.py
+      - tools/linear_import_plan.py
+      - tools/plane_snapshot.py
+      - tools/verify_linear_import_plan.py
+      - tools/check_linear_actors.py
+      - tools/tests/test_linear_associations.py
+      - tools/tests/test_linear_coverage.py
+      - tools/tests/test_linear_assets.py
+      - tools/tests/test_link_fault_guard.py
+      - tools/tests/test_linear_actors.py
+      - tools/tests/test_linear_import_plan.py
+      - apps/api/plane/db/models/issue.py
+      - apps/api/plane/db/migrations/0123_issue_link_source_identity.py
+      - apps/api/plane/app/serializers/issue.py
+      - apps/api/plane/api/serializers/issue.py
+      - apps/api/plane/space/serializer/issue.py
+      - apps/api/plane/tests/contract/test_import_link_identity.py
+      - apps/api/plane/tests/unit/test_import_link_fields.py
+      - apps/api/plane/tests/run_link_identity_fault.py
+      - apps/api/plane/tests/run_milestone_command_fault.py
+      - docs/verification/HLB-464/**
+      - apps/api/plane/app/services/milestones.py
+      - apps/api/plane/db/models/milestone.py
+      - apps/api/plane/db/migrations/0124_module_milestones.py
+      - apps/api/plane/tests/contract/test_module_milestones.py
+      - docs/verification/HLB-465/**
+      - .github/workflows/linear-actors-contract.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: linear-actors-contract-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - run: python3 -m pip install pytest==8.4.2
+      - name: Pass, detect data loss, restore and repeat
+        run: python3 tools/check_linear_actors.py --output "$RUNNER_TEMP/linear-actors-evidence"
+      - name: Reject unsafe native fault targets before framework startup
+        run: python3 -m pytest tools/tests/test_link_fault_guard.py -q -o addopts= --basetemp="$RUNNER_TEMP/native-fault-guard" --junitxml="$RUNNER_TEMP/linear-actors-evidence/native-fault-guard.xml"
+      - name: Compile native milestone command and migration definitions
+        run: python3 -m compileall -q apps/api/plane/app/services/milestones.py apps/api/plane/db/models/milestone.py apps/api/plane/db/migrations/0124_module_milestones.py apps/api/plane/tests/contract/test_module_milestones.py
+      - name: Save sanitized synthetic evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: linear-actors-contract-${{ github.sha }}
+          path: ${{ runner.temp }}/linear-actors-evidence
+          if-no-files-found: error
+          retention-days: 30

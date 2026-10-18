@@ -1,0 +1,13 @@
+{
+  "exit": 1,
+  "expected_failure": true,
+  "intended_assertion_detected": true,
+  "source_restored": true,
+  "fixture_rows_after": [
+    0,
+    0
+  ],
+  "original_source_sha256": "f526c6c1cd4fa655a1adb7a27fcb32a679ce3575de241a569c25139cc693bcd9",
+  "fault_source_sha256": "6823a46d2e553503920661e083c100ff0ea472a4c654f2615bc644c87636fadb",
+  "accepted": true
+}

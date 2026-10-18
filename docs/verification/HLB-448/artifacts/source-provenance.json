@@ -1,0 +1,14 @@
+{
+  "source_revision": "1d6579e8f1371b1ceab707acbd2793a5aa6fb5c8",
+  "files": {
+    "tools/linear_assets.py": "abf30c993488eb40dbd5f09d5f31365a1f8fbc6be778ab0822e894cf48bbce80",
+    "tools/check_linear_assets.py": "8f010c5bb51e6c309739969de831f4ce8e54e9b05355b83c0974a08816ca4cf4",
+    "tools/tests/test_linear_assets.py": "5817bb94ed3524c80079a0bab4c37c2d49beb5e3825e9ac6665ea63c1ec60c26"
+  },
+  "python": "3.9.2",
+  "pytest": "8.4.2",
+  "query_validated_against_official_sdk_schema": true,
+  "query_validation_errors": 0,
+  "hosted_services_started": false,
+  "destination_writes": 0
+}

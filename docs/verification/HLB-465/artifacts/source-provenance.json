@@ -1,0 +1,8 @@
+{
+  "known_state_and_faults": "0efd1f1d7ea80e5acd37f3d48ddc3bccfbfbbc7f",
+  "final_restored": "540a4f6cc5b1da368c6b18719b013d029dedcc41",
+  "native_implementation_and_milestone_test_definitions_unchanged": true,
+  "fixture_schema_sha256": "4dd0722b6bb19801f818dc1a534710b415f32b636f1c4b610a38325687ed0acc",
+  "backend_dependency_image": "sha256:f2470ea68b74b1746bc31a20112dac63e67f55e84e2580b30b03da8af49d2d7d",
+  "host": "192.168.1.130"
+}

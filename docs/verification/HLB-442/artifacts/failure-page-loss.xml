@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.821" timestamp="2026-10-18T19:54:35.424085+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_linear_export" name="test_export_retains_every_page_and_archived_payload" time="0.106"><failure message="assert 1 == 2">exporter = &lt;module 'linear_export' from '/var/tmp/linear-export-contract-gjofdg6h/tools/linear_export.py'&gt;
+tmp_path = PosixPath('/var/tmp/linear-export-contract-gjofdg6h/fixtures/test_export_retains_every_page0')
+
+    def test_export_retains_every_page_and_archived_payload(exporter, tmp_path):
+        source = Provider([page([issue(2)], True, "next"), page([issue(11, archivedAt="2026-01-01T00:00:00Z")])])
+        destination = tmp_path / "private-export"
+        result = exporter.export_issues(source, TEAM, destination)
+&gt;       assert result["issue_count"] == 2
+E       assert 1 == 2
+
+tools/tests/test_linear_export.py:52: AssertionError</failure></testcase></testsuite></testsuites>

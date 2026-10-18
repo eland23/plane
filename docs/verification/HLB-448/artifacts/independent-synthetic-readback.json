@@ -1,0 +1,19 @@
+{
+  "all_page_hashes_and_terminal_scopes_verified": true,
+  "archived": 2,
+  "asset_candidates": 2,
+  "attachment_pages": 6,
+  "attachment_records": 1,
+  "blob_hashes_sizes_private_modes_verified": true,
+  "blocked": 0,
+  "finished_at": "2026-10-18T21:41:01.512968+00:00",
+  "full_migration_backup": false,
+  "issue_scopes": 6,
+  "partial_files_absent": true,
+  "reference_links": 6,
+  "source_bindings_verified": true,
+  "started_at": "2026-10-18T21:41:01.428930+00:00",
+  "status": "PASS",
+  "unique_blobs": 1,
+  "synthetic_fixture": true
+}

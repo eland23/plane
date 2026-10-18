@@ -1,0 +1,14 @@
+{
+  "actor_source_revision": "1ef8b8c734ab349cb919caa5e68ef2a21114788a",
+  "live_plan_manifest_sha256": "debb2d1c2cd9a637728a0b114ba7309f06013a5d1b7c695ee5e3e0f750f4d1c8",
+  "native_dependency_image_id": "sha256:f2470ea68b74b1746bc31a20112dac63e67f55e84e2580b30b03da8af49d2d7d",
+  "native_fault_and_restored_revision": "f9628559988dfd32724bb60d10cd0a6bb32d665e",
+  "native_known_state_revision": "0e0cf4be8f351c69130f382b52d2832b43ecd860",
+  "native_source_files_unchanged_since_known_state": true,
+  "native_target": "192.168.1.130; plane-hlb464-db / test_plane_fixture_snapshot",
+  "postgres_image_digest": "sha256:468d34fefd6338031787c7b8e94078975b3aaf4d66c7ead25c39cd3ba46a15c6",
+  "schema_fixture_data_tables": [
+    "public.django_migrations"
+  ],
+  "schema_fixture_sha256": "4dd0722b6bb19801f818dc1a534710b415f32b636f1c4b610a38325687ed0acc"
+}

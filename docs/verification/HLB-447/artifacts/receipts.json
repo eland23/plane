@@ -1,0 +1,30 @@
+[
+  {
+    "run": "pass-known-state",
+    "exit": 0,
+    "expected_failure": false,
+    "accepted": true,
+    "fixtures_removed": true
+  },
+  {
+    "run": "failure-modified-field",
+    "exit": 1,
+    "expected_failure": true,
+    "accepted": true,
+    "fixtures_removed": true
+  },
+  {
+    "run": "failure-removed-edge",
+    "exit": 1,
+    "expected_failure": true,
+    "accepted": true,
+    "fixtures_removed": true
+  },
+  {
+    "run": "restore-and-repeat",
+    "exit": 0,
+    "expected_failure": false,
+    "accepted": true,
+    "fixtures_removed": true
+  }
+]
