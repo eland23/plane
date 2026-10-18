@@ -25,7 +25,7 @@ ATTACHMENTS = '''query AssetAttachments($id: String!, $after: String) {
   pageInfo { hasNextPage endCursor }
  } }
 }'''
-PROFILE = hashlib.sha256(ATTACHMENTS.encode()).hexdigest()
+PROFILE = hashlib.sha256(Path(__file__).read_bytes() + ATTACHMENTS.encode()).hexdigest()
 
 
 def checkpoint(directory, manifest):
@@ -139,13 +139,8 @@ def discover(bundle, attachments):
         for field, value in record.items():
             scan(value, [kind, key, field])
     for node in attachments:
-        url = node['url']
-        try:
-            parsed = urlsplit(url)
-            reference = parsed.scheme == 'https' and parsed.hostname == 'github.com' and bool(re.fullmatch(r'/[^/]+/[^/]+/(pull|issues)/\d+', parsed.path))
-        except ValueError:
-            reference = False
-        add(url, ['attachment', node['id'], 'url'], not reference)
+        # Linear Attachment is an external-resource link; approved uploads become assets in add().
+        add(node['url'], ['attachment', node['id'], 'url'], False)
         scan(node.get('metadata', {}), ['attachment', node['id'], 'metadata'])
     if len(candidates) > 10000 or len(references) > 100000:
         raise SourceError('ASSET_COUNT_LIMIT')
@@ -255,7 +250,13 @@ def export_assets(source, fetcher, issues, associations, destination, resume=Fal
             if not isinstance(entry,dict) or entry.get('status') not in {'PENDING','BLOCKED','ARCHIVED'} or not isinstance(entry.get('url'),str) or entry.get('key') != hashlib.sha256(entry['url'].encode()).hexdigest() or entry['key'] in keys:
                 raise SourceError('ASSET_MANIFEST_SHAPE')
             keys.add(entry['key'])
+            if entry['status']=='BLOCKED':
+                if entry.get('code') != 'ASSET_URL_DENIED':raise SourceError('ASSET_MANIFEST_SHAPE')
+                try:approved_url(entry['url'])
+                except SourceError:pass
+                else:raise SourceError('ASSET_MANIFEST_SHAPE')
             if entry['status']=='ARCHIVED':
+                approved_url(entry['url'])
                 sha=entry['sha256']
                 if not isinstance(sha,str) or not re.fullmatch('[0-9a-f]{64}',sha) or entry['file'] != 'sha256-'+sha or type(entry['size']) is not int or entry['size'] < 0 or entry.get('reference') != 'asset:sha256:'+sha:raise SourceError('ASSET_MANIFEST_SHAPE')
                 if blob_hash(directory / entry['file'],max_asset_bytes) != (entry['size'],sha):raise SourceError('ASSET_CHECKSUM_MISMATCH')
@@ -269,6 +270,12 @@ def export_assets(source, fetcher, issues, associations, destination, resume=Fal
             expected, expected_references = discover(bundle,nodes)
             if {(e['key'],e['url'],json.dumps(e['owners'])) for e in expected} != {(e['key'],e['url'],json.dumps(e['owners'])) for e in manifest['assets']} or manifest['references'] != expected_references:
                 raise SourceError('ASSET_MANIFEST_SHAPE')
+        if manifest['status'].startswith('COMPLETE'):
+            statuses = {e['status'] for e in manifest['assets']}
+            expected_status = 'COMPLETE_WITH_BLOCKED_ASSETS' if 'BLOCKED' in statuses else 'COMPLETE_FOR_DISCOVERED_ASSETS'
+            if 'PENDING' in statuses or manifest['status'] != expected_status:
+                raise SourceError('ASSET_MANIFEST_SHAPE')
+            return manifest  # completed readback is not a new source observation
         writable=True;manifest['status']='RUNNING';manifest.pop('failure_code',None);checkpoint(directory,manifest)
         while index < len(issue_ids):
             if len(manifest['pages']) >= max_pages:raise SourceError('ASSET_PAGE_LIMIT')

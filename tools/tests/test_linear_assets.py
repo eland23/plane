@@ -70,9 +70,11 @@ def test_asset_bytes_hash_durable_reference_and_pr_link_are_preserved(assets,tmp
 def test_completed_asset_resume_verifies_bytes_without_redownload(assets,tmp_path):
     inputs=fixture(tmp_path);output=tmp_path/'assets';opener=Opener()
     first=assets.export_assets(Metadata(),assets.AssetHTTP('secret',opener=opener),*inputs,output)
+    checkpoint=(output/'manifest.json').read_bytes()
     source=Metadata();again=Opener()
     second=assets.export_assets(source,assets.AssetHTTP('secret',opener=again),*inputs,output,resume=True)
     assert len(source.calls)==1 and not again.calls
+    assert (output/'manifest.json').read_bytes()==checkpoint
     assert first['assets']==second['assets']
     assert second['status']=='COMPLETE_FOR_DISCOVERED_ASSETS'
 
@@ -260,3 +262,20 @@ def test_lock_and_no_overwrite_preserve_existing_source_and_assets(assets,tmp_pa
             assets.export_assets(Metadata(),assets.AssetHTTP('secret',opener=Opener()),*inputs,output,resume=True)
     assert (output/'manifest.json').read_bytes()==saved
     assert all(p.read_bytes()==raw for p,raw in originals.items())
+
+
+@pytest.mark.parametrize('url',['https://github.com/example/project/actions/runs/42',
+ 'https://app.notion.com/page', 'http://192.168.1.130:3100/preview'])
+def test_external_attachment_resources_remain_links_without_fetch(assets,tmp_path,url):
+    class External(Metadata):
+        def __call__(self,q,v):
+            result=super().__call__(q,v)
+            if 'AssetAttachments' in q:
+                for node in result['data']['issue']['attachments']['nodes']:node['url']=url
+            return result
+    inputs=fixture(tmp_path);opener=Opener()
+    result=assets.export_assets(External(),assets.AssetHTTP('secret',opener=opener),*inputs,tmp_path/'assets')
+    assert result['status']=='COMPLETE_FOR_DISCOVERED_ASSETS'
+    assert len(result['assets'])==1
+    assert any(r['url']==url and r['owner'][0]=='attachment' for r in result['references'])
+    assert all(r.full_url==IMAGE for r in opener.calls)

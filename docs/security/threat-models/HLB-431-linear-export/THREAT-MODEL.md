@@ -105,7 +105,7 @@ controlled DNS name). Response final URL/status are checked. No arbitrary URL,
 external PR fetch, source mutation, content execution or destination write.
 
 Private attachment pages validate issue/team/UUID/cursor identity before commit.
-The output binds verified issue/association archives and a static query profile.
+The output binds verified issue/association archives and a query/implementation fingerprint.
 Resume replays saved pages and verifies every committed blob hash/size/private
 mode before writable checkpoint state. Exclusive locking prevents concurrent
 writers; inputs are read-only. URLs, signed query strings and raw attachment
@@ -124,7 +124,7 @@ provider checksum unless an independent expected digest is separately available.
 
 Markdown/HTML images and recognized rich-content image fields become required
 asset candidates; unsupported hosts/data-image payloads remain explicit blocked
-assets. External issue/PR references remain links. Discovery covers current
+assets. External-resource attachment references remain links, per the provider Attachment schema; only approved uploads and required content-image locations become downloaded assets. Discovery covers current
 verified source payloads plus paginated issue attachment metadata. Unexported
 comments/history and nonstandard content syntax remain coverage gaps in later
 content/export work, not a full-backup or native rendering claim. Durable local

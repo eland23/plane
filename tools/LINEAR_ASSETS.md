@@ -12,8 +12,8 @@ python3 tools/linear_assets.py --issues /private/issues --associations /private/
 Only exact HTTPS uploads.linear.app URLs receive the source authorization header.
 This matches Linear's [file storage authentication documentation](https://linear.app/developers/file-storage-authentication).
 Redirects, proxies, other hosts/schemes/ports, userinfo, fragments, control
-characters and backslashes are denied. External GitHub PR/issue attachments
-remain references. Unsupported required image/file URLs become explicit blocked
+characters and backslashes are denied. External-resource attachments (PRs, documents, build pages and plain URLs)
+remain references; the official SDK schema defines Attachment.url as a link destination. Unsupported required image/file URLs become explicit blocked
 entries and cause exit3; they are never silently considered preserved.
 
 Metadata pages and the URL→source-owner→blob mapping are private0700/0600 files.
@@ -36,7 +36,7 @@ conservative operation guard, not Plane runtime sizing.
 
 Resume checks source manifests/profile, metadata provenance/scope/cursors/hashes,
 all saved asset mappings, sizes/checksums and budgets before changing a completed
-checkpoint. Rejected resumes preserve it byte-for-byte. A completed resume reads
+checkpoint. Rejected resumes preserve it byte-for-byte. A completed resume preserves its checkpoint byte-for-byte, reads
 source scope once and makes no metadata/asset requests. Controlled failures and
 cancellation remove in-flight files; committed assets/pages remain available.
 CLI exit0 means all discovered assets archived,3 means blocked assets,2 means
