@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "exit": 1,
+  "stdout": {
+    "status": "COMPLETE_WITH_READINESS_BLOCKERS",
+    "delta_counts": {
+      "added_entities": 0,
+      "modified_fields": 2,
+      "tombstone_candidates": 0,
+      "added_edges": 0,
+      "removed_edges": 0,
+      "schema_fields_added": 0,
+      "schema_fields_removed": 0
+    },
+    "coverage_fields": 1100,
+    "cutover_ready": false
+  },
+  "input_manifests_unchanged": true,
+  "semantic_repeat_identical": true,
+  "no_provider_requests": true
+}

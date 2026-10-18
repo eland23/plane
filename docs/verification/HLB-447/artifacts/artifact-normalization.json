@@ -1,0 +1,15 @@
+{
+  "normalization": "Remove trailing horizontal whitespace only; native pytest assertions/counts preserved",
+  "files": [
+    {
+      "file": "failure-removed-edge.xml",
+      "native_sha256": "aaa05b97c11e1156f1adadff3cf6a6b7774f2fadc7f3ddc60fda6d71cb03f3bf",
+      "git_sha256": "0006f960680aaaff30e7ac48253cb26014f6c4609d4a8e8418931282af9d46a5"
+    },
+    {
+      "file": "failure-removed-edge.log",
+      "native_sha256": "dbb80376e520d5c5298032f373d76b41c6d053fa942e2714ecd831da2f2529cd",
+      "git_sha256": "4897b6d46de382d2a1427c728ff3a64e7328bcc844418c4ae29254d6d21768da"
+    }
+  ]
+}
