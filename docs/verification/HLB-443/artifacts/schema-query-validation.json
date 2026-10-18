@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "query_profiles": 25,
+  "errors": 0,
+  "validator": "graphql-core 3.2.11",
+  "schema_sha256": "3a98f6dcca0140d7d50c3989dbcf8fb73485714f7ef2345e31044fd9d3775f0e",
+  "schema_source": "https://raw.githubusercontent.com/linear/linear/master/packages/sdk/src/schema.graphql",
+  "retrieved_date": "2026-10-18",
+  "live_permission_proof": false
+}

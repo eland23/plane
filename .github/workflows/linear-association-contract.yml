@@ -1,0 +1,38 @@
+name: Linear association contracts
+
+on:
+  pull_request:
+    paths:
+      - tools/linear_export.py
+      - tools/linear_associations.py
+      - tools/check_linear_associations.py
+      - tools/tests/test_linear_associations.py
+      - .github/workflows/linear-association-contract.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: linear-association-contract-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - run: python3 -m pip install pytest==8.4.2
+      - name: Pass, detect data loss, restore and repeat
+        run: python3 tools/check_linear_associations.py --output "$RUNNER_TEMP/linear-association-evidence"
+      - name: Save sanitized synthetic evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: linear-association-contract-${{ github.sha }}
+          path: ${{ runner.temp }}/linear-association-evidence
+          if-no-files-found: error
+          retention-days: 30

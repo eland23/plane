@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "provider_scope_requests": 1,
+  "provider_graph_requests": 0,
+  "pages_unchanged": 1015,
+  "issue_input_manifest_unchanged": true,
+  "counts": {
+    "team": 1,
+    "project": 9,
+    "cycle": 19,
+    "label": 46,
+    "state": 6,
+    "membership": 2,
+    "team_reference": 1,
+    "initiative": 3,
+    "milestone": 25,
+    "projectUpdate": 36,
+    "user": 1,
+    "document": 10,
+    "project_reference": 8
+  }
+}

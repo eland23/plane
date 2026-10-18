@@ -26,3 +26,36 @@ source tests alone. No live token or private payload belongs in this document.
 Subsequent association/asset/import/cutover tickets must extend this model before
 crossing their new trust boundaries. Full migration completion requires native
 destination behavior and revision-bound evidence, not just an export file.
+
+## HLB-443 association-export delta
+
+The issue archive is a read-only input, independently checked for private modes,
+query fingerprint, exact team, page checksums, unique UUIDs and terminal coverage.
+The derived archive is a separate private directory; it binds its checkpoint to
+the exact input manifest and exporter bytes. Resume replays verified pages before
+allowing checkpoint changes. Rejected checkpoints remain unchanged.
+
+All source-derived identifiers pass UUID validation and enter GraphQL variables.
+Only static endpoint/field definitions select queries; response content is data,
+never rendered or executed. Project-associated initiative membership yields
+foreign project UUID stubs only; those projects are never traversed. Team-bearing
+cycles/states/memberships and labels/documents reject foreign teams. Scope and
+parent mismatch fails before a page is committed. Introspection records field
+names without interpreting absent/unread fields as unused. Schema-visible fields
+and original observed issue field presence have explicit coverage entries;
+unread custom usage remains disposition-required under HLB-447.
+
+Raw pages include documents/update bodies and actor data, so only protected
+storage retains them. CI receives synthetic fixtures and sanitized summaries.
+No document/attachment URL is fetched, no source or destination record mutated,
+and no credential is exported. Request/page, response, archive and free-disk
+budgets limit work. Complete resume makes only a scope request and replays local
+pages; no new provider pages are fetched. Every exported association has an
+explicit edge and the raw page records its parent connection/cursor.
+
+Residuals: source permissions bound visibility; non-atomic source changes,
+unknown/unexposed fields, sub-document/history/comment traversal and final delta
+reconciliation require later coverage disposition. A source GraphQL/permission
+error stops with a failed checkpoint, never a full-completeness claim. Local
+root/operators remain trusted; crash-orphan recovery preserves files for an
+operator rather than deleting private records. No new formal risk acceptance.

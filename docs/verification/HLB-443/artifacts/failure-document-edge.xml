@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.123" timestamp="2026-10-18T20:55:41.598232+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_linear_associations" name="test_issue_association_discovers_document_when_team_projects_are_empty" time="0.653"><failure message="AssertionError: assert 0 == 1&#10; +  where 0 = &lt;built-in method get of dict object at 0x789780f59f00&gt;('document', 0)&#10; +    where &lt;built-in method get of dict object at 0x789780f59f00&gt; = {'project': 1, 'team': 1}.get">associations = &lt;module 'linear_associations' from '/var/tmp/linear-association-contract-0yhstq7q/tools/linear_associations.py'&gt;
+tmp_path = PosixPath('/var/tmp/linear-association-contract-0yhstq7q/fixtures/test_issue_association_discove0')
+
+    def test_issue_association_discovers_document_when_team_projects_are_empty(associations, tmp_path):
+        source = Source()
+        issues = tmp_path / 'issues'
+        base.export_issues(source, TEAM, issues)
+        output = tmp_path / 'associations'
+        result = associations.export_associations(source, issues, output)
+        assert result['status'] == 'COMPLETE_FOR_ASSOCIATIONS'
+&gt;       assert result['counts'].get('document', 0) == 1
+E       AssertionError: assert 0 == 1
+E        +  where 0 = &lt;built-in method get of dict object at 0x789780f59f00&gt;('document', 0)
+E        +    where &lt;built-in method get of dict object at 0x789780f59f00&gt; = {'project': 1, 'team': 1}.get
+
+tools/tests/test_linear_associations.py:58: AssertionError</failure></testcase></testsuite></testsuites>
