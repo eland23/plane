@@ -27,6 +27,7 @@ on:
       - apps/api/plane/tests/contract/test_import_link_identity.py
       - apps/api/plane/tests/unit/test_import_link_fields.py
       - apps/api/plane/tests/run_link_identity_fault.py
+      - apps/api/plane/tests/run_milestone_command_fault.py
       - docs/verification/HLB-464/**
       - apps/api/plane/app/services/milestones.py
       - apps/api/plane/db/models/milestone.py

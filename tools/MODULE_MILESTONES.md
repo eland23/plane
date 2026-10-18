@@ -26,6 +26,7 @@ Inside that fixed runner, execute:
 
 ```
 python -m pytest plane/tests/contract/test_module_milestones.py -q -o addopts= -p no:cacheprovider --reuse-db --migrations --junitxml=/evidence/milestone-pass.xml
+python plane/tests/run_milestone_command_fault.py --output /evidence/new-milestone-reference-fault
 python plane/tests/run_link_identity_fault.py --contract milestone --output /evidence/new-milestone-fault
 python -m pytest plane/tests/contract/test_module_milestones.py -q -o addopts= -p no:cacheprovider --reuse-db --migrations --junitxml=/evidence/milestone-restored.xml
 python manage.py makemigrations --check --dry-run --skip-checks
@@ -43,3 +44,5 @@ python3 -m pytest tools/tests/test_link_fault_guard.py -q -o addopts=
 
 Raw installed schema stays root-only outside Git. No .129 schema/import/cutover,
 full application sizing, native browser UI or HTTP authorization proof is implied.
+
+The reference-loss control removes the actual delete guard in memory, runs the unchanged normal assignment/delete assertion, and restores original command definitions in finally. Source files remain read-only. Assignment cleanup remains available after membership removal or issue soft deletion, so users can recover and delete an otherwise referenced milestone.
