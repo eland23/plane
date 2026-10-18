@@ -127,16 +127,20 @@ def test_concurrent_import_commits_before_reversal_check_and_identity_is_preserv
                 if not commit.wait(20):raise RuntimeError('Writer release timeout')
         except Exception as error:results['writer_error']=type(error).__name__
         finally:connections.close_all()
-    def reverse_progress(action, migration=None, *args):
-        if action=='unapply_start' and migration.app_label=='db' and migration.name=='0123_issue_link_source_identity':
+    def before_guard_lock(execute, sql, params, many, context):
+        # Schedule at the real database boundary, after Django has rendered
+        # historical states and all intermediate reverse-operation states.
+        if sql.startswith('LOCK TABLE') and '"issue_links"' in sql:
             prepared.set()
             if not start_reverse.wait(30):raise RuntimeError('Reversal start timeout')
+        return execute(sql, params, many, context)
     def reverse():
         try:
             with connections['default'].cursor() as cursor:
                 cursor.execute("SET application_name = 'hlb464_reverse_contract'")
-            MigrationExecutor(connections['default'], progress_callback=reverse_progress).migrate([
-                ('db','0122_alter_draftissue_assignees_alter_issue_assignees_and_more')])
+            with connections['default'].execute_wrapper(before_guard_lock):
+                MigrationExecutor(connections['default']).migrate([
+                    ('db','0122_alter_draftissue_assignees_alter_issue_assignees_and_more')])
             results['reverse']='applied'
         except RuntimeError as error:
             results['reverse']='blocked' if 'Cannot remove imported link identities' in str(error) else 'unexpected'
@@ -146,7 +150,7 @@ def test_concurrent_import_commits_before_reversal_check_and_identity_is_preserv
     reverse_thread=threading.Thread(target=reverse)
     reverse_thread.start()
     try:
-        # Public progress callback waits after historical-state preparation.
+        # The execution wrapper waits immediately before the actual guard lock.
         # Only the actual SQL lock race belongs inside the short wait window.
         assert prepared.wait(180),('reversal preparation failed',results)
         write_thread.start()
