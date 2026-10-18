@@ -116,6 +116,7 @@ def test_concurrent_import_commits_before_reversal_check_and_identity_is_preserv
     # Their historical-state rendering is not part of the identity race.
     MigrationExecutor(connection).migrate([('db','0123_issue_link_source_identity')])
     inserted,commit=threading.Event(),threading.Event()
+    prepared,start_reverse=threading.Event(),threading.Event()
     results={}
     def writer():
         try:
@@ -126,11 +127,15 @@ def test_concurrent_import_commits_before_reversal_check_and_identity_is_preserv
                 if not commit.wait(20):raise RuntimeError('Writer release timeout')
         except Exception as error:results['writer_error']=type(error).__name__
         finally:connections.close_all()
+    def reverse_progress(action, migration=None, *args):
+        if action=='unapply_start' and migration.app_label=='db' and migration.name=='0123_issue_link_source_identity':
+            prepared.set()
+            if not start_reverse.wait(30):raise RuntimeError('Reversal start timeout')
     def reverse():
         try:
             with connections['default'].cursor() as cursor:
                 cursor.execute("SET application_name = 'hlb464_reverse_contract'")
-            MigrationExecutor(connections['default']).migrate([
+            MigrationExecutor(connections['default'], progress_callback=reverse_progress).migrate([
                 ('db','0122_alter_draftissue_assignees_alter_issue_assignees_and_more')])
             results['reverse']='applied'
         except RuntimeError as error:
@@ -139,10 +144,14 @@ def test_concurrent_import_commits_before_reversal_check_and_identity_is_preserv
         finally:connections.close_all()
     write_thread=threading.Thread(target=writer)
     reverse_thread=threading.Thread(target=reverse)
-    write_thread.start()
+    reverse_thread.start()
     try:
+        # Public progress callback waits after historical-state preparation.
+        # Only the actual SQL lock race belongs inside the short wait window.
+        assert prepared.wait(180),('reversal preparation failed',results)
+        write_thread.start()
         assert inserted.wait(10),'writer did not reach the intended boundary'
-        reverse_thread.start()
+        start_reverse.set()
         waiting=False;deadline=time.monotonic()+15
         while time.monotonic()<deadline and reverse_thread.is_alive():
             with connection.cursor() as cursor:
@@ -150,14 +159,15 @@ def test_concurrent_import_commits_before_reversal_check_and_identity_is_preserv
                 waiting=cursor.fetchone()[0]
             if waiting:break
             time.sleep(0.02)
-        assert waiting,'reversal did not reach the competing-write boundary'
+        assert waiting,('reversal did not reach the competing-write boundary',results)
         commit.set();write_thread.join(20);reverse_thread.join(20)
         assert not write_thread.is_alive() and not reverse_thread.is_alive()
         assert 'writer_error' not in results and 'reverse_error' not in results
         assert results['reverse']=='blocked'
         assert IssueLink.objects.get(pk=results['link']).external_id=='concurrent-attachment'
     finally:
-        commit.set();write_thread.join(20)
-        if reverse_thread.ident is not None:reverse_thread.join(20)
+        start_reverse.set();commit.set()
+        if write_thread.ident is not None:write_thread.join(20)
+        if reverse_thread.ident is not None:reverse_thread.join(180)
         restore = MigrationExecutor(connection)
         restore.migrate(restore.loader.graph.leaf_nodes())
