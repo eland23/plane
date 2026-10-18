@@ -108,10 +108,10 @@ def list_milestones(actor, module_id, include_archived=False):
 @transaction.atomic
 def assign_milestone(actor, module_id, issue_id, milestone_id):
     module = _scope(actor,module_id)
-    issue = Issue.objects.select_for_update().filter(pk=issue_id,project_id=module.project_id,
+    issues = Issue.all_objects if milestone_id is None else Issue.objects
+    issue = issues.select_for_update().filter(pk=issue_id,project_id=module.project_id,
         workspace_id=module.workspace_id).first()
-    if not issue or not ModuleIssue.objects.filter(module=module,issue=issue,
-        project_id=module.project_id,workspace_id=module.workspace_id).exists():
+    if not issue:
         raise PermissionDenied('Milestone scope unavailable')
     existing = IssueMilestone.objects.filter(issue=issue).first()
     if milestone_id is None:
@@ -121,6 +121,9 @@ def assign_milestone(actor, module_id, issue_id, milestone_id):
         IssueMilestone.objects.filter(issue=issue).update(deleted_at=timezone.now(),
             updated_by_id=actor.pk,updated_at=timezone.now())
         return None
+    if not ModuleIssue.objects.filter(module=module,issue=issue,project_id=module.project_id,
+        workspace_id=module.workspace_id).exists():
+        raise PermissionDenied('Milestone scope unavailable')
     target = _milestone(module,milestone_id)
     if target.archived_at is not None:raise ValidationError('Unarchive the milestone before assigning issues')
     if existing:

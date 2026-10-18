@@ -231,3 +231,19 @@ def test_issue_assignment_database_is_single_valued_and_archiving_retains_member
     update_milestone(user,module.id,first.id,{'archived':True,'status':'cancelled'})
     assert IssueMilestone.objects.get(issue=issue).milestone_id==first.id
     with pytest.raises(MilestoneConflict):delete_milestone(user,module.id,first.id)
+
+
+@pytest.mark.parametrize('remove_issue',[False,True])
+def test_milestone_assignment_can_be_cleared_after_membership_removal(scope,remove_issue):
+    from django.utils import timezone
+    from plane.db.models import IssueMilestone
+    user,_,_,module,issue=scope
+    row=create_milestone(user,module.id,{'name':'Recoverable'})
+    assign_milestone(user,module.id,issue.id,row.id)
+    ModuleIssue.objects.filter(module=module,issue=issue).update(deleted_at=timezone.now())
+    if remove_issue:Issue.objects.filter(pk=issue.pk).update(deleted_at=timezone.now())
+    with pytest.raises(MilestoneConflict):delete_milestone(user,module.id,row.id)
+    assign_milestone(user,module.id,issue.id,None)
+    assert not IssueMilestone.objects.filter(issue=issue).exists()
+    delete_milestone(user,module.id,row.id)
+    assert list_milestones(user,module.id,include_archived=True)==[]
