@@ -1,0 +1,51 @@
+{
+  "actor_manifest_sha256": "521ad266606b69bd54f7a430f363b9e396e686d8ba25816ac09c06639a9a9f39",
+  "blockers_by_code": {
+    "DESTINATION_NAME_COLLISION": 2,
+    "MISSING_SCHEMA_COLUMN": 2,
+    "MISSING_SCHEMA_TABLE": 2
+  },
+  "can_import": false,
+  "counts": {
+    "attachment": 555,
+    "cycle": 19,
+    "document": 10,
+    "initiative": 3,
+    "issue": 801,
+    "label": 46,
+    "membership": 2,
+    "milestone": 25,
+    "project": 9,
+    "projectUpdate": 36,
+    "project_reference": 8,
+    "state": 6,
+    "team": 1,
+    "team_reference": 1,
+    "user": 2
+  },
+  "destination_after": "4c19b2bf44c9131777f00988b0484293e68a205d7984ffcb016ac4d1594465be",
+  "destination_before": "4c19b2bf44c9131777f00988b0484293e68a205d7984ffcb016ac4d1594465be",
+  "destination_unchanged": true,
+  "migration_gates": [
+    "owner_field_dispositions_required",
+    "native_import_evidence_required",
+    "verified_cutoff_required",
+    "delta_requires_reconciliation",
+    "authorized_importer_and_native_verification_required"
+  ],
+  "next_sequence_id": 814,
+  "proposed_counts": {
+    "cycle": 19,
+    "initiative": 3,
+    "issue": 801,
+    "issue_attachment": 25,
+    "label": 46,
+    "milestone": 25,
+    "module": 9,
+    "page": 10,
+    "project": 1,
+    "reference_link": 530,
+    "state": 6
+  },
+  "unresolved_references": 0
+}
