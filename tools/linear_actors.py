@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+from datetime import datetime, timezone
 
 from linear_export import LinearHTTP, SourceError, graphql, identity, manifest_file, outside_git, private_file
 from linear_associations import read_private
@@ -14,15 +15,19 @@ ACTOR_QUERY = '''query ExportActor($id: String!) {
  user(id: $id) { id name displayName email active createdAt updatedAt archivedAt organization { id } }
 }'''
 PROFILE = hashlib.sha256(Path(__file__).read_bytes() + ACTOR_QUERY.encode()).hexdigest()
-ACTOR_FIELDS = {'creator', 'assignee', 'owner', 'lead', 'updatedBy', 'user'}
+ACTOR_FIELDS = {
+    'issue': ('creator', 'assignee'), 'project': ('lead',), 'initiative': ('owner',),
+    'document': ('creator', 'updatedBy'), 'membership': ('user',),
+    'projectUpdate': ('user',), 'initiativeUpdate': ('user',),
+}
 
 
 def referenced_actors(bundle):
     result = {key for kind, key in bundle['entities'] if kind == 'user'}
-    for record in bundle['entities'].values():
-        for field, value in record.items():
-            parts = field.split('.')
-            if len(parts) >= 2 and parts[-1] == 'id' and parts[-2] in ACTOR_FIELDS and value:
+    for (kind, _), record in bundle['entities'].items():
+        for field in ACTOR_FIELDS.get(kind, ()):
+            value = record.get(field+'.id')
+            if value:
                 result.add(identity(value))
     if len(result) > 10000:
         raise SourceError('ACTOR_BUDGET')
@@ -53,7 +58,8 @@ def export_actors(source, issues, associations, destination):
     manifest = {'schema_version': 1, 'source_fingerprint': bundle['fingerprint'],
                 'organization_id': bundle['organization_id'], 'team_id': bundle['team_id'],
                 'profile': PROFILE, 'status': 'RUNNING', 'actors': [],
-                'atomic_snapshot': False, 'accounts_created': 0, 'invitations_sent': 0}
+                'atomic_snapshot': False, 'accounts_created': 0, 'invitations_sent': 0,
+                'export_started_at': datetime.now(timezone.utc).isoformat()}
     manifest_file(directory, manifest)
     total = 0
     try:
@@ -83,6 +89,7 @@ def export_actors(source, issues, associations, destination):
         manifest['counts'] = {'archived': sum(e['status']=='ARCHIVED' for e in manifest['actors']),
                               'blocked': sum(e['status']=='BLOCKED' for e in manifest['actors'])}
         manifest['status'] = 'COMPLETE_WITH_BLOCKED_ACTORS' if manifest['counts']['blocked'] else 'COMPLETE_FOR_REFERENCED_ACTORS'
+        manifest['export_finished_at'] = datetime.now(timezone.utc).isoformat()
         manifest_file(directory, manifest)
         return manifest
     except (SourceError, OSError, KeyError, ValueError, TypeError, KeyboardInterrupt) as error:

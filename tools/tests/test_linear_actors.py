@@ -87,3 +87,28 @@ def test_verified_actor_supplement_resolves_original_creator_in_dry_run_and_reje
     with pytest.raises(SourceError,match='ACTOR_CHECKSUM'):
         plan_import(*source,reader,WS,tmp_path/'bad',actors=directory)
     assert reader.calls==0
+
+
+def test_untrusted_rich_content_cannot_expand_actor_lookup_scope(tmp_path):
+    from linear_actors import export_actors
+    source=snapshot(tmp_path/'source',extra_fields={'creator':{'id':ACTOR},'descriptionData':{'user':{'id':'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee'}}})
+    provider=Actors();result=export_actors(provider,*source,tmp_path/'actors')
+    assert [variables['id'] for _,variables in provider.calls]==[ACTOR]
+    assert result['counts']['archived']==1
+
+
+def test_unavailable_actor_stays_a_blocker_and_cancelled_archive_is_not_consumable(tmp_path):
+    from linear_actors import export_actors,read_actors
+    from linear_coverage import read_bundle
+    from linear_import_plan import plan_import
+    from test_linear_import_plan import inputs,Destination,WS
+    source=inputs(tmp_path,extra_fields={'creator':{'id':ACTOR}})
+    actors=tmp_path/'denied';export_actors(Actors(denied=True),*source[:2],actors)
+    report=plan_import(*source,Destination(),WS,tmp_path/'plan',actors=actors)
+    assert {'code':'SOURCE_ACTOR_UNAVAILABLE','source_uuid':ACTOR} in report['blockers']
+    assert len(report['unresolved_references'])==6
+    def cancel(query,variables):raise KeyboardInterrupt()
+    with pytest.raises(SourceError,match='CANCELLED'):
+        export_actors(cancel,*source[:2],tmp_path/'cancelled')
+    with pytest.raises(SourceError,match='INCOMPLETE_ACTOR_INPUT'):
+        read_actors(tmp_path/'cancelled',read_bundle(*source[:2]))
