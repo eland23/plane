@@ -1,6 +1,6 @@
 # Verification evidence: HLB-442 Linear issue export
 
-Status: **PASS for the bounded issue-export source; INCOMPLETE for the full child/epic acceptance rows**.
+Status: **PASS for HLB-442 issue export; parent HLB-431 remains INCOMPLETE**.
 Author: Codex. Independent Standards and Spec/security source reviews: PASS.
 Spec: [HLB-442](https://linear.app/fashionfindrs/issue/HLB-442), parent [HLB-431](https://linear.app/fashionfindrs/issue/HLB-431).
 Policy: FashionFindrs `docs/testing/POLICY.md` and `REPORT-TEMPLATE.md`.
@@ -22,8 +22,8 @@ Policy: FashionFindrs `docs/testing/POLICY.md` and `REPORT-TEMPLATE.md`.
 
 30 contract cases pass. Two parent behavior rows are only partially covered here;
 association traversal and cutoff/delta reconciliation remain unproven. These are
-existing planned child ownership, not approved waivers. This ticket stays open
-for the broader repeated acceptance rows; no full-backup claim follows from it.
+existing planned child ownership, not waived requirements. HLB-442 is complete
+for its issue-export scope; no full-backup claim follows from it.
 
 ## Provenance and reproduction
 
@@ -112,7 +112,7 @@ Execution costs: no model/provider-generation calls in tests/export; token usage
 estimated cost and billed cost unavailable. No cache/replay claim; completed
 resume replayed verified local pages and fetched scope only.
 
-Source Standards and Spec/security PASS after fixes. Full child acceptance remains
-INCOMPLETE pending association/final-delta ownership and reviewer disposition;
-HLB-442 is not Done and no import/cutover authorization follows from this result.
+Source Standards and Spec/security PASS after fixes. Independent Spec review confirms HLB-442 acceptance within its issue-export scope;
+association/final-delta requirements remain owned by HLB-443/HLB-447. Parent
+HLB-431 remains incomplete and no import/cutover authorization follows from this result.
 Threat model: `docs/security/threat-models/HLB-431-linear-export/THREAT-MODEL.md`.
