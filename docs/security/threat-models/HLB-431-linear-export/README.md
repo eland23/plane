@@ -21,3 +21,28 @@ this comparison. Stored sequence counters/blob filesystem state are not covered.
 The independent receipt checker checks issue IDs/counts/number/module placement
 and saved snapshot checksums without trusting the planner's issue transformation.
 Native import writes, access-control rendering and rollback remain later tickets.
+
+## HLB-464 actor and native resource identity delta
+
+FF-C-PII-MINIMIZE / FF-C-SECRETS-HYGIENE: typed actor references from verified
+archives are the only source-derived lookup inputs; rich-content user-shaped
+objects cannot expand scope. Fixed read-only Linear queries verify organization
+and UUID before protected payload persistence. Profile/source/page hashes,
+private modes, response/count budgets and named denied outcomes are checked
+before destination reads. Console/CI receipts contain counts, not actor emails
+or names. No account/invitation/provider mutation path is introduced.
+
+Native IssueLink identity is nullable for manual links, complete and unique per
+workspace for imports, and immutable once bound. All ordinary app/public/Space
+serializer paths expose source fields read-only. PostgreSQL enforces uniqueness
+across tombstones and rejects direct source/workspace rebinding. Static migration
+SQL and quoted historical table names introduce no client SQL interpolation.
+Reverse checks take ACCESS EXCLUSIVE before inspecting bindings and refuse
+provenance loss under a competing import transaction.
+
+Prove with dry_run_no_write/reconciliation_detects_loss source contracts and
+content_attribution_roundtrip native serialization/constraint contracts. Native
+database tests run only on synthetic .130 fixtures; schema/migration-bookkeeping
+capture from .129 is read-only and excludes user/business rows. No production
+schema/import mutation occurs. The source actor supplement is an additional
+read window; final cutoff and actor/native timeline reconciliation remain open.

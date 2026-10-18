@@ -18,6 +18,15 @@ on:
       - tools/tests/test_linear_assets.py
       - tools/tests/test_linear_actors.py
       - tools/tests/test_linear_import_plan.py
+      - apps/api/plane/db/models/issue.py
+      - apps/api/plane/db/migrations/0123_issue_link_source_identity.py
+      - apps/api/plane/app/serializers/issue.py
+      - apps/api/plane/api/serializers/issue.py
+      - apps/api/plane/space/serializer/issue.py
+      - apps/api/plane/tests/contract/test_import_link_identity.py
+      - apps/api/plane/tests/unit/test_import_link_fields.py
+      - apps/api/plane/tests/run_link_identity_fault.py
+      - docs/verification/HLB-464/**
       - .github/workflows/linear-actors-contract.yml
   workflow_dispatch:
 
