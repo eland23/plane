@@ -17,7 +17,7 @@ def main():
     tools = Path(__file__).resolve().parent
     cases = [
         ("pass-known-state", None, None, None),
-        ("failure-document-edge", "        for field, child in LINKS.get(kind, []):", 
+        ("failure-document-edge", "        for field, child in LINKS.get(kind, []):",
          "        for field, child in LINKS.get(kind, []):\n            if kind == 'issue' and field == 'documents':\n                continue",
          "issue_association_discovers_document"),
         ("failure-checksum", "if hashlib.sha256(raw).hexdigest() != record.get('sha256'):",
