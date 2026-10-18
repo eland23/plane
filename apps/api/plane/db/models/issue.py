@@ -373,8 +373,27 @@ class IssueLink(ProjectBaseModel):
     url = models.TextField()
     issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="issue_link")
     metadata = models.JSONField(default=dict)
+    # Original resource identity is independent of its mutable display URL.
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "external_source", "external_id"],
+                name="issue_link_source_identity_unique",
+            ),
+            models.CheckConstraint(
+                condition=(
+                    Q(external_source__isnull=True, external_id__isnull=True)
+                    | (
+                        Q(external_source__isnull=False, external_id__isnull=False)
+                        & ~Q(external_source="") & ~Q(external_id="")
+                    )
+                ),
+                name="issue_link_source_identity_complete",
+            ),
+        ]
         verbose_name = "Issue Link"
         verbose_name_plural = "Issue Links"
         db_table = "issue_links"

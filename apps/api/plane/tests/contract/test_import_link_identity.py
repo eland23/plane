@@ -49,3 +49,13 @@ def test_partial_or_empty_source_binding_is_rejected_by_database(link_scope):
     for source,key in [('linear:fixture-org',None),(None,'source-attachment-1'),('','')]:
         with pytest.raises(IntegrityError), transaction.atomic():
             IssueLink.objects.create(project=project,issue=issue,url='https://example.invalid/invalid',external_source=source,external_id=key)
+
+
+def test_bound_source_identity_cannot_be_rewritten_by_a_direct_update(link_scope):
+    _, project, issue=link_scope
+    imported=IssueLink.objects.create(project=project,issue=issue,url='https://example.invalid/source',
+        external_source='linear:fixture-org',external_id='source-attachment-1')
+    with pytest.raises(IntegrityError), transaction.atomic():
+        IssueLink.objects.filter(pk=imported.pk).update(external_id='different-source')
+    imported.refresh_from_db()
+    assert imported.external_id=='source-attachment-1'
