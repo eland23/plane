@@ -16,6 +16,7 @@ on:
       - tools/tests/test_linear_associations.py
       - tools/tests/test_linear_coverage.py
       - tools/tests/test_linear_assets.py
+      - tools/tests/test_link_fault_guard.py
       - tools/tests/test_linear_actors.py
       - tools/tests/test_linear_import_plan.py
       - apps/api/plane/db/models/issue.py
@@ -48,6 +49,8 @@ jobs:
       - run: python3 -m pip install pytest==8.4.2
       - name: Pass, detect data loss, restore and repeat
         run: python3 tools/check_linear_actors.py --output "$RUNNER_TEMP/linear-actors-evidence"
+      - name: Reject unsafe native fault targets before framework startup
+        run: python3 -m pytest tools/tests/test_link_fault_guard.py -q -o addopts= --basetemp="$RUNNER_TEMP/native-fault-guard" --junitxml="$RUNNER_TEMP/linear-actors-evidence/native-fault-guard.xml"
       - name: Save sanitized synthetic evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

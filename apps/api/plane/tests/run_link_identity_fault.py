@@ -4,19 +4,28 @@ Run only in the isolated .130 runner, against its synthetic snapshot fixture.
 """
 import argparse
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
+from urllib.parse import urlsplit
 
-import django
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", required=True, type=Path)
     output = parser.parse_args().output
+    target = urlsplit(os.environ.get("DATABASE_URL", ""))
+    if (
+        target.scheme not in {"postgres", "postgresql"} or target.hostname != "plane-hlb464-db"
+        or target.path != "/plane_fixture_snapshot" or target.query or target.fragment
+    ):
+        print(json.dumps({"code": "ISOLATED_FIXTURE_REQUIRED"}))
+        return 2
     output.mkdir(parents=True, exist_ok=False)
+    import django
     django.setup()
     from django.conf import settings
     import psycopg
