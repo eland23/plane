@@ -3,6 +3,11 @@ from django.db import migrations, models
 
 def protect_imported_identity_on_reverse(apps, schema_editor):
     link = apps.get_model("db", "IssueLink")
+    # Held until the atomic reversal commits: no import can bind between this
+    # check and the DDL that removes provenance.
+    schema_editor.execute(
+        f"LOCK TABLE {schema_editor.quote_name(link._meta.db_table)} IN ACCESS EXCLUSIVE MODE"
+    )
     if link._base_manager.using(schema_editor.connection.alias).filter(external_source__isnull=False).exists():
         raise RuntimeError(
             "Cannot remove imported link identities; restore a compatible backup or retain this schema."

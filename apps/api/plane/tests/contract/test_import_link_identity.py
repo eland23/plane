@@ -102,3 +102,57 @@ def test_source_identity_can_exist_in_another_workspace_but_cannot_be_moved(link
         IssueLink.objects.filter(pk=movable.pk).update(workspace_id=other.id)
     movable.refresh_from_db()
     assert movable.workspace_id==workspace.id
+
+
+@pytest.mark.django_db(transaction=True)
+def test_concurrent_import_commits_before_reversal_check_and_identity_is_preserved(link_scope):
+    import threading
+    import time
+    from django.db import connection, connections
+    from django.db.migrations.executor import MigrationExecutor
+    _, project, issue=link_scope
+    inserted,commit=threading.Event(),threading.Event()
+    results={}
+    def writer():
+        try:
+            with transaction.atomic():
+                row=IssueLink.objects.create(project_id=project.pk,issue_id=issue.pk,url='https://example.invalid/concurrent',
+                    external_source='linear:fixture-org',external_id='concurrent-attachment')
+                results['link']=row.pk;inserted.set()
+                if not commit.wait(20):raise RuntimeError('Writer release timeout')
+        except Exception as error:results['writer_error']=type(error).__name__
+        finally:connections.close_all()
+    def reverse():
+        try:
+            with connections['default'].cursor() as cursor:
+                cursor.execute("SET application_name = 'hlb464_reverse_contract'")
+            MigrationExecutor(connections['default']).migrate([
+                ('db','0122_alter_draftissue_assignees_alter_issue_assignees_and_more')])
+            results['reverse']='applied'
+        except RuntimeError as error:
+            results['reverse']='blocked' if 'Cannot remove imported link identities' in str(error) else 'unexpected'
+        except Exception as error:results['reverse_error']=type(error).__name__
+        finally:connections.close_all()
+    write_thread=threading.Thread(target=writer)
+    reverse_thread=threading.Thread(target=reverse)
+    write_thread.start()
+    try:
+        assert inserted.wait(10),'writer did not reach the intended boundary'
+        reverse_thread.start()
+        waiting=False;deadline=time.monotonic()+15
+        while time.monotonic()<deadline and reverse_thread.is_alive():
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE application_name='hlb464_reverse_contract' AND wait_event_type='Lock')")
+                waiting=cursor.fetchone()[0]
+            if waiting:break
+            time.sleep(0.02)
+        assert waiting,'reversal did not reach the competing-write boundary'
+        commit.set();write_thread.join(20);reverse_thread.join(20)
+        assert not write_thread.is_alive() and not reverse_thread.is_alive()
+        assert 'writer_error' not in results and 'reverse_error' not in results
+        assert results['reverse']=='blocked'
+        assert IssueLink.objects.get(pk=results['link']).external_id=='concurrent-attachment'
+    finally:
+        commit.set();write_thread.join(20)
+        if reverse_thread.ident is not None:reverse_thread.join(20)
+        MigrationExecutor(connection).migrate([('db','0123_issue_link_source_identity')])
