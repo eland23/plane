@@ -256,3 +256,16 @@ def test_identifier_reservation_inventory_accepts_plane_integer_primary_key(plan
     assert planner.validated_snapshot(Destination(dest).capture())['rows']['project_identifiers'][0]['id']==1
     dest['rows']['project_identifiers'][0]['id']='invalid'
     with pytest.raises(SourceError):planner.validated_snapshot(Destination(dest).capture())
+
+
+def test_cancelled_snapshot_and_unknown_workspace_preserve_input_without_output(planner,tmp_path):
+    source=inputs(tmp_path);before=(source[0]/'manifest.json').read_bytes()
+    class Cancelled(Destination):
+        def capture(self):
+            if self.calls:raise KeyboardInterrupt()
+            return super().capture()
+    with pytest.raises(KeyboardInterrupt):planner.plan_import(*source,Cancelled(),WS,tmp_path/'cancelled')
+    with pytest.raises(SourceError,match='DESTINATION_WORKSPACE'):
+        planner.plan_import(*source,Destination(),'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',tmp_path/'unknown')
+    assert not (tmp_path/'cancelled').exists() and not (tmp_path/'unknown').exists()
+    assert (source[0]/'manifest.json').read_bytes()==before

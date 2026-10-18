@@ -71,10 +71,7 @@ def read_assets(directory,bundle):
         if hashlib.sha256(raw).hexdigest()!=page['sha256']:raise SourceError('CHECKSUM_MISMATCH')
         rows,more,next_cursor=attachment_page(json.loads(raw)['data'],ids[index],bundle['team_id'])
         for row in rows:
-            key=row['id']
-            if table=='project_identifiers' and value['tables'][table]['columns'].get('id') in ['smallint','integer','bigint']:
-                if type(key) is not int or key<1:raise SourceError('DESTINATION_ID_SHAPE')
-            else:key=identity(key)
+            key=identity(row['id'])
             if key in seen:raise SourceError('ASSET_DUPLICATE')
             seen.add(key);nodes.append(row)
         if more:
