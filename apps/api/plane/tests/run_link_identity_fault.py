@@ -16,7 +16,14 @@ from urllib.parse import urlsplit
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", required=True, type=Path)
-    output = parser.parse_args().output
+    parser.add_argument("--contract", choices=["link", "milestone"], default="link")
+    args = parser.parse_args()
+    output = args.output
+    # Fixed targets; caller input cannot become SQL or a test module path.
+    table, constraint, test, selected = {
+        "link": ("issue_links", "issue_link_source_identity_unique", "test_import_link_identity.py", "import_link_identity_is_scoped_unique"),
+        "milestone": ("module_milestones", "milestone_source_identity_unique", "test_module_milestones.py", "native_milestone_source_identity"),
+    }[args.contract]
     target = urlsplit(os.environ.get("DATABASE_URL", ""))
     if (
         target.scheme not in {"postgres", "postgresql"} or target.hostname != "plane-hlb464-db"
@@ -34,8 +41,8 @@ def main():
         raise RuntimeError("Isolated fixture database required")
     command = [
         sys.executable, "-m", "pytest",
-        "plane/tests/contract/test_import_link_identity.py",
-        "-k", "import_link_identity_is_scoped_unique",
+        "plane/tests/contract/" + test,
+        "-k", selected,
         "-q", "-o", "addopts=", "-p", "no:cacheprovider", "--reuse-db", "--migrations",
         "--junitxml=" + str(output / "failure-identity-loss.xml"),
     ]
@@ -45,11 +52,11 @@ def main():
         dbname="test_" + config["NAME"], autocommit=True,
     ) as database:
         with database.cursor() as cursor:
-            cursor.execute("SELECT count(*) FROM public.issue_links")
+            cursor.execute("SELECT count(*) FROM public." + table)
             if cursor.fetchone()[0] != 0:
                 raise RuntimeError("Expected empty synthetic link fixture")
             cursor.execute(
-                "ALTER TABLE public.issue_links DROP CONSTRAINT issue_link_source_identity_unique"
+                "ALTER TABLE public." + table + " DROP CONSTRAINT " + constraint
             )
             restored = False
             try:
@@ -58,15 +65,15 @@ def main():
                 (output / "failure-identity-loss.log").write_text(log)
             finally:
                 cursor.execute(
-                    "ALTER TABLE public.issue_links ADD CONSTRAINT issue_link_source_identity_unique "
+                    "ALTER TABLE public." + table + " ADD CONSTRAINT " + constraint + " "
                     "UNIQUE (workspace_id, external_source, external_id)"
                 )
                 cursor.execute(
-                    "SELECT count(*) FROM pg_constraint WHERE conrelid='public.issue_links'::regclass "
-                    "AND conname='issue_link_source_identity_unique'"
+                    "SELECT count(*) FROM pg_constraint WHERE conrelid=%s::regclass AND conname=%s",
+                    ("public." + table, constraint)
                 )
                 restored = cursor.fetchone()[0] == 1
-            cursor.execute("SELECT count(*) FROM public.issue_links")
+            cursor.execute("SELECT count(*) FROM public." + table)
             rows_after = cursor.fetchone()[0]
     suites = ET.parse(output / "failure-identity-loss.xml").getroot().findall("testsuite")
     intended = (
@@ -76,7 +83,7 @@ def main():
         and sum(int(s.get("errors", 0)) for s in suites) == 0
     )
     receipt = {
-        "exit": run.returncode, "expected_failure": True, "intended_assertion_detected": intended,
+        "contract": args.contract, "fixture_table": table, "exit": run.returncode, "expected_failure": True, "intended_assertion_detected": intended,
         "constraint_restored": restored, "fixture_link_rows_after": rows_after,
         "accepted": intended and restored and rows_after == 0,
     }

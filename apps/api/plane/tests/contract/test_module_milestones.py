@@ -128,3 +128,81 @@ def test_native_milestone_source_identity_is_paired_unique_and_retained(scope):
     with pytest.raises(IntegrityError),transaction.atomic():
         ModuleMilestone.objects.create(project=project,module=module,name='Replay',
             external_source='linear:fixture',external_id='milestone-uuid')
+
+
+def test_milestone_direct_scope_and_identity_rebinding_are_rejected(scope):
+    from plane.db.models import ModuleMilestone
+    _,workspace,project,module,_=scope
+    row=ModuleMilestone.objects.create(project=project,module=module,name='Imported',
+        external_source='linear:fixture',external_id='original-milestone')
+    foreign=Module.objects.create(project=project,name='Foreign')
+    for values in [{'external_id':'replacement'},{'module_id':foreign.pk}]:
+        with pytest.raises(IntegrityError),transaction.atomic():
+            ModuleMilestone.objects.filter(pk=row.pk).update(**values)
+    row.refresh_from_db();assert row.external_id=='original-milestone' and row.module_id==module.id
+    other=Workspace.objects.create(name='Other',slug='other-milestone-fixture',owner=workspace.owner)
+    other_project=Project.objects.create(name='Other',identifier='OTH',workspace=other)
+    with pytest.raises(IntegrityError),transaction.atomic():
+        ModuleMilestone.objects.create(project=other_project,module=module,name='Invalid scope')
+
+
+@pytest.mark.django_db(transaction=True)
+def test_milestone_schema_reverse_refuses_to_discard_native_data(scope):
+    from django.db import connection
+    from django.db.migrations.executor import MigrationExecutor
+    from plane.db.models import ModuleMilestone
+    user,_,_,module,_=scope
+    row=create_milestone(user,module.id,{'name':'Original native milestone'})
+    with pytest.raises(RuntimeError,match='Cannot remove native milestone data'):
+        MigrationExecutor(connection).migrate([('db','0123_issue_link_source_identity')])
+    assert ModuleMilestone.objects.get(pk=row.pk).name=='Original native milestone'
+
+
+@pytest.mark.django_db(transaction=True)
+def test_milestone_assignment_and_delete_serialize_without_losing_membership(scope):
+    import threading
+    import time
+    from django.db import connections
+    from plane.db.models import IssueMilestone
+    user,_,_,module,issue=scope
+    row=create_milestone(user,module.id,{'name':'Concurrent target'})
+    assigned,release=threading.Event(),threading.Event()
+    results={}
+    def writer():
+        try:
+            with transaction.atomic():
+                assign_milestone(user,module.id,issue.id,row.id)
+                assigned.set()
+                if not release.wait(20):raise RuntimeError('Writer release timeout')
+        except Exception as error:results['writer_error']=type(error).__name__
+        finally:connections.close_all()
+    def deleter():
+        try:
+            with connections['default'].cursor() as cursor:
+                cursor.execute("SET application_name='hlb465_delete_contract'")
+                cursor.execute("SET statement_timeout='15s'")
+            delete_milestone(user,module.id,row.id)
+            results['delete']='deleted'
+        except MilestoneConflict:results['delete']='conflict'
+        except Exception as error:results['delete_error']=type(error).__name__
+        finally:connections.close_all()
+    first=threading.Thread(target=writer);second=threading.Thread(target=deleter)
+    first.start()
+    try:
+        assert assigned.wait(10),'assignment did not reach lock boundary'
+        second.start()
+        waited=False
+        for _ in range(100):
+            with connections['default'].cursor() as cursor:
+                cursor.execute("SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE application_name='hlb465_delete_contract' AND wait_event_type='Lock')")
+                waited=cursor.fetchone()[0]
+            if waited:break
+            time.sleep(.05)
+        assert waited,'competing delete did not wait on the scope lock'
+    finally:
+        release.set();first.join(25)
+        if second.ident:second.join(25)
+    assert not first.is_alive() and not second.is_alive()
+    assert results=={'delete':'conflict'},results
+    assert IssueMilestone.objects.get(issue=issue).milestone_id==row.id
+    row.refresh_from_db();assert row.deleted_at is None
