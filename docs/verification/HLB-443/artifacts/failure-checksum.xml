@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.318" timestamp="2026-10-18T20:55:46.208600+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_linear_associations" name="test_checksum_and_malformed_resume_rejection_preserves_manifest" time="0.668"><failure message="Failed: DID NOT RAISE &lt;class 'linear_export.SourceError'&gt;">associations = &lt;module 'linear_associations' from '/var/tmp/linear-association-contract-1u3v_u1j/tools/linear_associations.py'&gt;
+tmp_path = PosixPath('/var/tmp/linear-association-contract-1u3v_u1j/fixtures/test_checksum_and_malformed_re0')
+
+    def test_checksum_and_malformed_resume_rejection_preserves_manifest(associations, tmp_path):
+        source = Source()
+        issues = setup_issues(source, tmp_path)
+        output = tmp_path / 'out'
+        associations.export_associations(source, issues, output)
+        saved = output / 'manifest.json'
+        original = saved.read_bytes()
+        page = output / 'page-000001.json'
+        corrupted = json.loads(page.read_text())
+        corrupted['data']['entity']['fields'][0]['name'] = 'tampered_schema_field'
+        page.write_text(json.dumps(corrupted))
+        with pytest.raises(base.SourceError, match='CHECKSUM_MISMATCH'):
+&gt;           associations.export_associations(Source(), issues, output, resume=True)
+E           Failed: DID NOT RAISE &lt;class 'linear_export.SourceError'&gt;
+
+tools/tests/test_linear_associations.py:195: Failed</failure></testcase></testsuite></testsuites>
