@@ -30,13 +30,18 @@ class GateError(Exception):
         self.code = code
 
 
-def command(argv, code="COMMAND_FAILED", timeout=60):
+def command(argv, code="COMMAND_FAILED", timeout=60, log_path=None):
     # Never echo stderr, environment, remote URLs or credentials from tools.
     try:
-        result = subprocess.run(argv, check=True, capture_output=True, timeout=timeout)
+        if log_path is None:
+            result = subprocess.run(argv, check=True, capture_output=True, timeout=timeout)
+        else:
+            descriptor = os.open(str(log_path), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(descriptor, "wb") as log:
+                result = subprocess.run(argv, check=True, stdout=log, stderr=subprocess.STDOUT, timeout=timeout)
     except (OSError, subprocess.SubprocessError):
         raise GateError(code) from None
-    return result.stdout.decode("utf-8")
+    return result.stdout.decode("utf-8") if result.stdout is not None else ""
 
 
 def git(repo, *args):
@@ -72,7 +77,7 @@ def source_identity(args):
             "services": SERVICES, "commands": COMMANDS, "migrations": migrations}
 
 
-def preflight(args):
+def preflight(args, packaging=False):
     if args.target != TARGET:
         raise GateError("TARGET_DENIED")
     if not re.fullmatch(r"plane-rehearsal-[a-z0-9][a-z0-9-]{0,39}", args.namespace):
@@ -94,9 +99,12 @@ def preflight(args):
     except (ValueError, TypeError, KeyError):
         raise GateError("TARGET_PROBE") from None
     # Reservation gate, not a claim of measured application requirements.
-    if capacity["disk_free"] < 10 * GIB or capacity["memory_available"] < 2 * GIB:
+    admitted = capacity["disk_free"] >= 10 * GIB and capacity["memory_available"] >= 2 * GIB
+    if not admitted and not packaging:
         raise GateError("TARGET_CAPACITY")
-    report.update(status="PASS", capacity=capacity, reservation={"disk_bytes": 10 * GIB, "memory_bytes": 2 * GIB})
+    report.update(status="PACKAGING_ONLY" if packaging else "PASS", capacity=capacity,
+                  runtime_admission={"status": "PASS"} if admitted else {"status": "BLOCKED", "code": "TARGET_CAPACITY"},
+                  reservation={"disk_bytes": 10 * GIB, "memory_bytes": 2 * GIB})
     return report
 
 
@@ -310,6 +318,8 @@ def build(args, report):
         raise GateError("OUTPUT_DENIED")
     if shutil.disk_usage(tempfile.gettempdir()).free < 10 * GIB:
         raise GateError("BUILD_CAPACITY")
+    logs = output.with_name(output.name + ".build-logs")
+    logs.mkdir(mode=0o700)
     with tempfile.TemporaryDirectory(prefix="plane-source-") as directory:
         source = Path(directory)
         expected = snapshot(repo, args.revision, source)
@@ -326,7 +336,7 @@ def build(args, report):
             # Logs may include dependency URLs; keep them private, do not echo them.
             command(["docker", "build", "--pull", "--label", "org.opencontainers.image.revision=" + args.revision,
                      "--label", "io.plane.source.tree=" + report["source_tree"], "--tag", tag,
-                     "--file", str(file), str(context)], "IMAGE_BUILD", timeout=3600)
+                     "--file", str(file), str(context)], "IMAGE_BUILD", timeout=3600, log_path=logs / (kind + ".log"))
             images[kind] = {"tag": tag, "id": image_identity(tag, args.revision, report["source_tree"], backend=kind == "backend")}
         image_backend_files(images["backend"]["id"], expected)
         # Refuse publication if source or remote ref changed while building.
@@ -341,7 +351,7 @@ def build(args, report):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=["preflight", "build"])
+    parser.add_argument("command", choices=["preflight", "build", "preflight-package", "package"])
     parser.add_argument("--repo", required=True)
     parser.add_argument("--revision", required=True)
     parser.add_argument("--ref", required=True)
@@ -353,8 +363,8 @@ def main():
     parser.add_argument("--nginx-base")
     args = parser.parse_args()
     try:
-        report = preflight(args)
-        if args.command == "build":
+        report = preflight(args, packaging=args.command in {"preflight-package", "package"})
+        if args.command in {"build", "package"}:
             with release_lock():
                 report = build(args, report)
         print(json.dumps(report, sort_keys=True))

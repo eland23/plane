@@ -60,3 +60,19 @@ python3 -m pytest -q tools/tests/test_plane_release.py -o addopts='' \
 Tests use real temporary Git remotes and external SSH/Docker contract fakes.
 Synthetic saved-image layers check missing/changed/removed migrations and
 symlink replacement. These tests do not prove a real image was built.
+
+## Image packaging while deployment admission is pending
+
+`preflight-package` performs the same source, exact-target, namespace and trusted
+SSH checks, and records measured target capacity. It returns PACKAGING_ONLY and
+a separate runtime_admission status. `package` then builds/verifies local images
+with these checks. Insufficient runtime reservation never becomes a release PASS;
+ordinary `preflight` and `build` retain their strict runtime capacity gate. These
+commands do not start applications or change the target. HLB-435 must perform
+fresh runtime admission, measured sizing, restore and readiness checks.
+
+Build failures retain private 0600 backend/frontend logs in a new 0700 directory
+next to the candidate manifest. Logs may include dependency URLs; keep them
+outside Git. A retry uses a new output name. The manifest is published only after
+both complete images and backend Git-blob comparisons pass. Build source temp
+storage and the build daemon's disk usage must be monitored independently.

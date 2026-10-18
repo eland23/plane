@@ -318,3 +318,31 @@ def test_backend_command_identity_cannot_pass_with_wrong_entrypoint(release_modu
         "WorkingDir": "/code", "Cmd": ["/bin/false"]}}]))
     with pytest.raises(release_module.GateError, match="IMAGE_COMMAND"):
         release_module.image_identity("fixture", "a" * 40, "c" * 40, backend=True)
+
+
+def test_package_preflight_reports_low_runtime_capacity_without_admitting_release(source):
+    source[1]['PROBE']='{"disk_free": 9000000000, "memory_available": 1100000000}'
+    result=invoke(source,command='preflight-package')
+    assert result.returncode==0,result.stderr
+    report=json.loads(result.stdout)
+    assert report['status']=='PACKAGING_ONLY'
+    assert report['runtime_admission']=={'status':'BLOCKED','code':'TARGET_CAPACITY'}
+    assert report['capacity']=={'disk_free':9000000000,'memory_available':1100000000}
+    assert report['revision']==git(source[0],'rev-parse','HEAD')
+    release=invoke(source)
+    assert release.returncode==2 and json.loads(release.stderr)['code']=='TARGET_CAPACITY'
+
+
+@pytest.mark.parametrize('command',['preflight-package','package'])
+def test_packaging_cannot_bypass_wrong_target_or_unreachable_probe(source,command):
+    result=invoke(source,command=command,target='192.168.1.129')
+    assert result.returncode==2 and json.loads(result.stderr)['code']=='TARGET_DENIED'
+    source[1]['PROBE']='not-valid-json'
+    result=invoke(source,command=command)
+    assert result.returncode==2 and json.loads(result.stderr)['code']=='TARGET_PROBE'
+
+
+def test_package_requires_build_arguments_even_when_runtime_admission_is_pending(source):
+    source[1]['PROBE']='{"disk_free": 9000000000, "memory_available": 1100000000}'
+    result=invoke(source,command='package')
+    assert result.returncode==2 and json.loads(result.stderr)['code']=='BUILD_ARGUMENTS'
