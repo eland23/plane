@@ -87,7 +87,11 @@ def test_milestone_authorization_denies_reads_and_writes(scope,denial):
     if denial=='inactive-project':ProjectMember.objects.filter(member=user,project=project).update(is_active=False)
     if denial=='outsider':user=User.objects.create(email='outsider@example.invalid',username='outsider')
     if denial=='inactive-user':user.is_active=False;user.save()
-    for command in [lambda:list_milestones(user,module.id),lambda:update_milestone(user,module.id,row.id,{'name':'Leaked'}),
+    if denial=='viewer':
+        assert [item.name for item in list_milestones(user,module.id)]==['Protected']
+    else:
+        with pytest.raises(PermissionDenied):list_milestones(user,module.id)
+    for command in [lambda:update_milestone(user,module.id,row.id,{'name':'Leaked'}),
                     lambda:delete_milestone(user,module.id,row.id),lambda:create_milestone(user,module.id,{'name':'Forged'})]:
         with pytest.raises(PermissionDenied):command()
     row.refresh_from_db();assert row.name=='Protected'

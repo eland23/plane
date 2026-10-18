@@ -20,14 +20,15 @@ class MilestoneConflict(Exception):
     """An assignment must be explicitly cleared before destructive deletion."""
 
 
-def _scope(actor, module_id):
+def _scope(actor, module_id, write=True):
     if not actor or not actor.is_active:
         raise PermissionDenied('Milestone scope unavailable')
+    minimum_role = 15 if write else 5
     module = Module.objects.select_for_update().filter(pk=module_id,project__deleted_at__isnull=True,
         workspace__deleted_at__isnull=True).first()
     if not module or not WorkspaceMember.objects.filter(workspace_id=module.workspace_id,member_id=actor.pk,
-        is_active=True,role__gte=15).exists() or not ProjectMember.objects.filter(project_id=module.project_id,
-        member_id=actor.pk,is_active=True,role__gte=15).exists():
+        is_active=True,role__gte=minimum_role).exists() or not ProjectMember.objects.filter(project_id=module.project_id,
+        member_id=actor.pk,is_active=True,role__gte=minimum_role).exists():
         raise PermissionDenied('Milestone scope unavailable')
     return module
 
@@ -89,7 +90,7 @@ def update_milestone(actor, module_id, milestone_id, values):
 
 @transaction.atomic
 def list_milestones(actor, module_id, include_archived=False):
-    module = _scope(actor,module_id)
+    module = _scope(actor,module_id,write=False)
     rows = ModuleMilestone.objects.filter(module=module,project_id=module.project_id,workspace_id=module.workspace_id)
     if not include_archived:rows=rows.filter(archived_at__isnull=True)
     # Materialize before the transaction releases the authorization/scope lock.
