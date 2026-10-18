@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="2.002" timestamp="2026-10-18T22:05:55.032825+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_linear_import_plan" name="test_destination_drift_is_named_and_prevents_a_stable_plan" time="0.641"><failure message="assert (True is False)">planner = &lt;module 'linear_import_plan' from '/isolated-contract/tools/linear_import_plan.py'&gt;
+tmp_path = PosixPath('/isolated-contract/fixtures/test_destination_drift_is_name0')
+
+    def test_destination_drift_is_named_and_prevents_a_stable_plan(planner,tmp_path):
+        source=inputs(tmp_path);before=destination();after=copy.deepcopy(before)
+        after['tables']['issues']['sha256']='f'*64
+        report=planner.plan_import(*source,Destination(before,after),WS,tmp_path/'plan')
+&gt;       assert report['destination_unchanged'] is False and report['plan_valid'] is False
+E       assert (True is False)
+
+tools/tests/test_linear_import_plan.py:113: AssertionError</failure></testcase></testsuite></testsuites>

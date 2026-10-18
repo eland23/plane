@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.756" timestamp="2026-10-18T22:04:52.592090+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_linear_import_plan" name="test_identifier_reservation_inventory_accepts_plane_integer_primary_key" time="0.010"><failure message="linear_export.SourceError: INVALID_IDENTITY">planner = &lt;module 'linear_import_plan' from '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-431/tools/linear_import_plan.py'&gt;
+
+    def test_identifier_reservation_inventory_accepts_plane_integer_primary_key(planner):
+        dest=destination()
+        dest['tables']['project_identifiers']={'columns':{'id':'bigint','workspace_id':'uuid','project_id':'uuid','name':'text'},'count':1,'sha256':'0'*64}
+        dest['rows']['project_identifiers']=[dict(id=1,workspace_id=WS,project_id=PROJECT,name='FAS')]
+&gt;       assert planner.validated_snapshot(Destination(dest).capture())['rows']['project_identifiers'][0]['id']==1
+
+tools/tests/test_linear_import_plan.py:256:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools/linear_import_plan.py:116: in validated_snapshot
+    key=identity(row['id'])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = 1
+
+    def identity(value):
+        try:
+            return str(uuid.UUID(value))
+        except (ValueError, TypeError, AttributeError):
+&gt;           raise SourceError("INVALID_IDENTITY") from None
+E           linear_export.SourceError: INVALID_IDENTITY
+
+tools/linear_export.py:112: SourceError</failure></testcase></testsuite></testsuites>
