@@ -125,13 +125,19 @@ def validated_snapshot(value):
     return value
 
 
-def plan_import(issues,associations,assets,coverage,reader,workspace,destination,target_project=None):
+def plan_import(issues,associations,assets,coverage,reader,workspace,destination,target_project=None,actors=None):
     workspace=identity(workspace)
     if target_project:target_project=identity(target_project)
     try:
         bundle=read_bundle(issues,associations)
         asset_manifest,asset_hash,attachments=read_assets(assets,bundle)
         entities=dict(bundle['entities'])
+        actor_hash=None;unavailable_actors=[]
+        if actors is not None:
+            from linear_actors import read_actors,referenced_actors
+            actor_records,actor_hash=read_actors(actors,bundle)
+            for key,record in actor_records.items():entities[('user',key)]=record
+            unavailable_actors=sorted(set(referenced_actors(bundle))-set(actor_records))
         for row in attachments:entities[('attachment',identity(row['id']))]=leaves(row)
         coverage_path=Path(coverage).resolve();outside_git(coverage_path)
         if coverage_path.stat().st_mode&0o077:raise SourceError('OUTPUT_PERMISSIONS')
@@ -147,7 +153,7 @@ def plan_import(issues,associations,assets,coverage,reader,workspace,destination
         owned_projects=[r for r in projects if r.get('workspace_id')==workspace and r.get('external_source')==namespace and r.get('external_id')==bundle['team_id'] and not r.get('deleted_at')]
         if not target_project and len(owned_projects)==1:existing_project=owned_projects[0]
         project=existing_project['id'] if existing_project else proposed_id(workspace,bundle['organization_id'],'team',bundle['team_id'])
-        blockers=[];mapping=[]
+        blockers=[{'code':'SOURCE_ACTOR_UNAVAILABLE','source_uuid':key} for key in unavailable_actors];mapping=[]
         if existing_project:
             binding=(existing_project.get('external_source'),existing_project.get('external_id'))
             if binding not in [(None,None),('',''),(namespace,bundle['team_id'])] and any(binding):
@@ -279,6 +285,7 @@ def plan_import(issues,associations,assets,coverage,reader,workspace,destination
         if not unchanged:blockers.append({'code':'DESTINATION_CHANGED'})
         report={'schema_version':1,'source_fingerprint':bundle['fingerprint'],'asset_manifest_sha256':asset_hash,
                 'coverage_manifest_sha256':hashlib.sha256(coverage_bytes).hexdigest(),
+                'actor_manifest_sha256':actor_hash,
                 'target':{'workspace_uuid':workspace,'project_uuid':project,'identifier':'FAS','action':'reuse' if existing_project else 'create'},
                 'mapping':sorted(mapping,key=lambda r:(r['source_kind'],r.get('sequence_id') or 0,r['source_uuid'])),
                 'counts':dict(sorted(Counter(r['source_kind'] for r in mapping).items())),
@@ -306,10 +313,11 @@ def main(argv=None):
     for name in ['issues','associations','assets','coverage','workspace','output']:
         parser.add_argument('--'+name,required=True)
     parser.add_argument('--target-project')
+    parser.add_argument('--actors')
     args=parser.parse_args(argv)
     try:
         result=plan_import(args.issues,args.associations,args.assets,args.coverage,
-                           PlaneSnapshotSSH(),args.workspace,args.output,args.target_project)
+                           PlaneSnapshotSSH(),args.workspace,args.output,args.target_project,args.actors)
         print(json.dumps({k:result[k] for k in ['status','counts','proposed_counts','next_sequence_id','destination_unchanged','can_import']}))
         return 1 if result['blockers'] else 3
     except KeyboardInterrupt:
