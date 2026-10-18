@@ -1,0 +1,30 @@
+[
+  {
+    "run": "pass-known-state",
+    "exit": 0,
+    "expected_failure": false,
+    "accepted": true,
+    "fixture_directory_removed": true
+  },
+  {
+    "run": "failure-target-guard",
+    "exit": 1,
+    "expected_failure": true,
+    "accepted": true,
+    "fixture_directory_removed": true
+  },
+  {
+    "run": "failure-image-integrity",
+    "exit": 1,
+    "expected_failure": true,
+    "accepted": true,
+    "fixture_directory_removed": true
+  },
+  {
+    "run": "restore-and-repeat",
+    "exit": 0,
+    "expected_failure": false,
+    "accepted": true,
+    "fixture_directory_removed": true
+  }
+]
