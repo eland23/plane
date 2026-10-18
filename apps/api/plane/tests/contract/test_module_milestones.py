@@ -66,7 +66,7 @@ def test_milestone_assignment_replaces_one_value_and_delete_conflicts_until_clea
 
 
 @pytest.mark.parametrize('values',[{'name':' '},{'name':'x'*256},{'target_date':'2026-02-30'},
-    {'status':'invented'},{'sort_order':float('nan')},{'sort_order':True},{'archived':'yes'},
+    {'status':'invented'},{'sort_order':10**400},{'sort_order':float('nan')},{'sort_order':True},{'archived':'yes'},
     {'external_id':'forged'},{'workspace':'forged'},{'description':None}])
 def test_milestone_validation_keeps_saved_record_usable(scope,values):
     user,_,_,module,_=scope
@@ -207,3 +207,27 @@ def test_milestone_assignment_and_delete_serialize_without_losing_membership(sco
     assert results=={'delete':'conflict'},results
     assert IssueMilestone.objects.get(issue=issue).milestone_id==row.id
     row.refresh_from_db();assert row.deleted_at is None
+
+
+def test_milestone_foreign_workspace_and_unjoined_project_are_unavailable(scope):
+    user,workspace,_,_,_=scope
+    other=Workspace.objects.create(name='Foreign',slug='foreign-milestone-fixture',owner=user)
+    foreign_project=Project.objects.create(name='Foreign',identifier='FOR',workspace=other)
+    unjoined_project=Project.objects.create(name='Unjoined',identifier='UNJ',workspace=workspace)
+    for project in [foreign_project,unjoined_project]:
+        module=Module.objects.create(name='Unavailable',project=project)
+        with pytest.raises(PermissionDenied):list_milestones(user,module.pk)
+        with pytest.raises(PermissionDenied):create_milestone(user,module.pk,{'name':'Forbidden'})
+
+
+def test_issue_assignment_database_is_single_valued_and_archiving_retains_membership(scope):
+    from plane.db.models import IssueMilestone
+    user,_,project,module,issue=scope
+    first=create_milestone(user,module.id,{'name':'First'})
+    second=create_milestone(user,module.id,{'name':'Second'})
+    assign_milestone(user,module.id,issue.id,first.id)
+    with pytest.raises(IntegrityError),transaction.atomic():
+        IssueMilestone.objects.create(project=project,issue=issue,milestone=second)
+    update_milestone(user,module.id,first.id,{'archived':True,'status':'cancelled'})
+    assert IssueMilestone.objects.get(issue=issue).milestone_id==first.id
+    with pytest.raises(MilestoneConflict):delete_milestone(user,module.id,first.id)

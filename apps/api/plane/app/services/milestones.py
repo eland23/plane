@@ -64,8 +64,13 @@ def _values(values, creating=False):
         result['target_date'] = value
     if 'status' in result and result['status'] not in ('planned','completed','cancelled'):
         raise ValidationError({'status':'Unsupported milestone status'})
-    if 'sort_order' in result and (type(result['sort_order']) not in (int,float) or not math.isfinite(result['sort_order'])):
-        raise ValidationError({'sort_order':'Use a finite number'})
+    if 'sort_order' in result:
+        try:
+            if type(result['sort_order']) not in (int,float):raise ValueError
+            result['sort_order']=float(result['sort_order'])
+            if not math.isfinite(result['sort_order']):raise ValueError
+        except (ValueError,OverflowError):
+            raise ValidationError({'sort_order':'Use a representable finite number'}) from None
     if 'archived' in result:
         if type(result['archived']) is not bool:raise ValidationError({'archived':'Use a boolean'})
         result['archived_at'] = timezone.now() if result.pop('archived') else None

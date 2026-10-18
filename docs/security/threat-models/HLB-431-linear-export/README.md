@@ -46,3 +46,27 @@ database tests run only on synthetic .130 fixtures; schema/migration-bookkeeping
 capture from .129 is read-only and excludes user/business rows. No production
 schema/import mutation occurs. The source actor supplement is an additional
 read window; final cutoff and actor/native timeline reconciliation remain open.
+
+### HLB-465 native milestone command boundary
+
+Milestones are project/module/workspace scoped native records. Ordinary commands
+accept an authenticated active User and require active workspace and project
+membership; write roles are Member/Admin, Guest may list. Foreign UUIDs and
+unavailable membership return the same scope denial. Values are explicitly
+allowlisted and validated; source IDs, workspace/module bindings and audit actors
+cannot be supplied through editing values. Audit fields use the authenticated
+actor. This Python boundary is not an HTTP authentication/session adapter.
+
+A module lock serializes all milestone commands; issue locks and an active-issue
+unique constraint keep assignment single-valued. Assignment/removal preserves
+unrelated issue values; referenced deletion conflicts until explicit clearing.
+Native imported identity is paired, workspace-unique across tombstones and
+immutable. A PostgreSQL trigger checks milestone module/project/workspace binding.
+Atomic migration reversal locks both native tables and refuses to discard rows.
+Only fixed synthetic .130 database/table/constraint/test targets can be used by
+the fault helper; pre-framework guards and finally-restoration remain mandatory.
+
+No live source/destination writes, account operations, new network calls, UI,
+HTTP endpoint or session behavior is introduced. Endpoint authorization, native
+UI behavior, module-membership editing, full import ledger/reconciliation and
+serialized release remain separately owned gates. No production rollout claim.
