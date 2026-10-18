@@ -247,3 +247,12 @@ def test_cli_exit_and_sanitized_transport_failure(planner,tmp_path,monkeypatch,c
     spec=importlib.util.spec_from_file_location('transport',Path(planner.__file__))
     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
     with pytest.raises(SourceError,match='^DESTINATION_SNAPSHOT_FAILED$'):module.PlaneSnapshotSSH(run=fail).capture()
+
+
+def test_identifier_reservation_inventory_accepts_plane_integer_primary_key(planner):
+    dest=destination()
+    dest['tables']['project_identifiers']={'columns':{'id':'bigint','workspace_id':'uuid','project_id':'uuid','name':'text'},'count':1,'sha256':'0'*64}
+    dest['rows']['project_identifiers']=[dict(id=1,workspace_id=WS,project_id=PROJECT,name='FAS')]
+    assert planner.validated_snapshot(Destination(dest).capture())['rows']['project_identifiers'][0]['id']==1
+    dest['rows']['project_identifiers'][0]['id']='invalid'
+    with pytest.raises(SourceError):planner.validated_snapshot(Destination(dest).capture())
