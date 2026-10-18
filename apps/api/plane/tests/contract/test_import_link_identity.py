@@ -59,3 +59,46 @@ def test_bound_source_identity_cannot_be_rewritten_by_a_direct_update(link_scope
         IssueLink.objects.filter(pk=imported.pk).update(external_id='different-source')
     imported.refresh_from_db()
     assert imported.external_id=='source-attachment-1'
+
+
+@pytest.mark.django_db(transaction=True)
+def test_schema_roundtrip_preserves_manual_links_and_refuses_to_drop_bound_identity(link_scope):
+    from django.db import connection
+    from django.db.migrations.executor import MigrationExecutor
+    _, project, issue=link_scope
+    manual=IssueLink.objects.create(project=project,issue=issue,url='https://example.invalid/manual',title='Existing')
+    before=('db','0122_alter_draftissue_assignees_alter_issue_assignees_and_more')
+    after=('db','0123_issue_link_source_identity')
+    executor=MigrationExecutor(connection)
+    try:
+        executor.migrate([before])
+        old=executor.loader.project_state([before]).apps.get_model('db','IssueLink')
+        assert old.objects.get(pk=manual.pk).url=='https://example.invalid/manual'
+        executor=MigrationExecutor(connection);executor.migrate([after])
+        manual.refresh_from_db()
+        assert manual.title=='Existing' and manual.external_id is None
+        imported=IssueLink.objects.create(project=project,issue=issue,url='https://example.invalid/source',
+            external_source='linear:fixture-org',external_id='source-attachment-1')
+        with pytest.raises(RuntimeError,match='Cannot remove imported link identities'):
+            MigrationExecutor(connection).migrate([before])
+        imported.refresh_from_db();manual.refresh_from_db()
+        assert imported.external_id=='source-attachment-1'
+        assert manual.url=='https://example.invalid/manual'
+    finally:
+        MigrationExecutor(connection).migrate([after])
+
+
+def test_source_identity_can_exist_in_another_workspace_but_cannot_be_moved(link_scope):
+    workspace, project, issue=link_scope
+    other=Workspace.objects.create(name='Other workspace',slug='other-link-fixture',owner=workspace.owner)
+    other_project=Project.objects.create(name='Other FAS',identifier='FAS',workspace=other)
+    other_issue=Issue.objects.create(name='Other issue',project=other_project)
+    for target_project,target_issue in [(project,issue),(other_project,other_issue)]:
+        IssueLink.objects.create(project=target_project,issue=target_issue,url='https://example.invalid/scoped',
+            external_source='linear:fixture-org',external_id='shared-source-uuid')
+    movable=IssueLink.objects.create(project=project,issue=issue,url='https://example.invalid/move',
+        external_source='linear:fixture-org',external_id='unique-source-uuid')
+    with pytest.raises(IntegrityError), transaction.atomic():
+        IssueLink.objects.filter(pk=movable.pk).update(workspace_id=other.id)
+    movable.refresh_from_db()
+    assert movable.workspace_id==workspace.id
