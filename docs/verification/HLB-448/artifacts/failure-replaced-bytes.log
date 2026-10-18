@@ -1,0 +1,21 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______ test_asset_bytes_hash_durable_reference_and_pr_link_are_preserved _______
+
+assets = <module 'linear_assets' from '/var/tmp/linear-assets-contract-q_lpwucx/tools/linear_assets.py'>
+tmp_path = PosixPath('/var/tmp/linear-assets-contract-q_lpwucx/fixtures/test_asset_bytes_hash_durable_0')
+
+    def test_asset_bytes_hash_durable_reference_and_pr_link_are_preserved(assets,tmp_path):
+        inputs=fixture(tmp_path);source=Metadata();opener=Opener()
+        result=assets.export_assets(source,assets.AssetHTTP('private-token',opener=opener),*inputs,tmp_path/'assets')
+        assert result['status']=='COMPLETE_FOR_DISCOVERED_ASSETS'
+        assert len(result['assets'])==2
+>       assert all(r['sha256']==SHA and r['size']==19 for r in result['assets'])
+E       assert False
+E        +  where False = all(<generator object test_asset_bytes_hash_durable_reference_and_pr_link_are_preserved.<locals>.<genexpr> at 0x7f4905ebc7b0>)
+
+tools/tests/test_linear_assets.py:58: AssertionError
+- generated xml file: /var/tmp/hlb448-matrix-final/failure-replaced-bytes.xml --
+=========================== short test summary info ============================
+FAILED tools/tests/test_linear_assets.py::test_asset_bytes_hash_durable_reference_and_pr_link_are_preserved
+1 failed, 31 deselected in 1.16s

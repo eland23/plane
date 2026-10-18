@@ -1,0 +1,70 @@
+{
+  "status": "PASS",
+  "task_owned_roots": [
+    {
+      "fixture_root": "plane-coverage-review-red",
+      "absent": true
+    },
+    {
+      "fixture_root": "plane-coverage-review-green",
+      "absent": true
+    },
+    {
+      "fixture_root": "plane-coverage-auth-green",
+      "absent": true
+    },
+    {
+      "fixture_root": "plane-all447",
+      "absent": true
+    },
+    {
+      "fixture_root": "plane-assets-red",
+      "absent": true
+    },
+    {
+      "fixture_root": "plane-assets-green",
+      "absent": true
+    },
+    {
+      "fixture_root": "plane-assets-rich-red",
+      "absent": true
+    },
+    {
+      "fixture_root": "plane-assets-rich-green",
+      "absent": true
+    },
+    {
+      "fixture_root": "plane-assets-plan-red",
+      "absent": true
+    },
+    {
+      "fixture_root": "plane-assets-nonhttp-red",
+      "absent": true
+    },
+    {
+      "fixture_root": "plane-assets-review-green",
+      "absent": true
+    },
+    {
+      "fixture_root": "plane-assets-final-local",
+      "absent": true
+    },
+    {
+      "fixture_root": "plane-all448",
+      "absent": true
+    },
+    {
+      "fixture_root": "plane-assets-link-red",
+      "absent": true
+    },
+    {
+      "fixture_root": "plane-assets-link-green",
+      "absent": true
+    },
+    {
+      "fixture_root": "plane-all448-final",
+      "absent": true
+    }
+  ],
+  "protected_real_source_archives_retained": true
+}
