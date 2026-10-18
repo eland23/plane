@@ -1,6 +1,6 @@
 # HLB-465: Native module milestone prerequisite
 
-Status: **verification in progress; final evidence review and CI pending**.
+Status: **implementation and scoped verification PASS; final evidence review and CI pending**.
 [HLB-465](https://linear.app/fashionfindrs/issue/HLB-465),
 [child PR12](https://github.com/eland23/plane/pull/12), parent
 [HLB-431](https://linear.app/fashionfindrs/issue/HLB-431).
@@ -45,7 +45,7 @@ Native persistence uses real PostgreSQL on .130, not an intercepted response.
 | Assignment/delete concurrency | PAR-08 | Observe real Lock wait, commit assignment, delete conflicts, original membership/target retained, threads terminate | actual threads/connections/PostgreSQL | PASS |
 | Reference-loss detection | V2 | Actual deletion guard removed in memory; unchanged normal conflict assertion must fail nonzero; original definitions restored and fixture tables empty | native controlled defect | PASS |
 | Identity-loss detection | V2 | Actual unique constraint removed; unchanged duplicate-source assertion must fail nonzero; finally restores constraint, empty fixture | native controlled defect | PASS |
-| Restore and regression | V2 | Same normal milestone checks plus existing link serializer/identity/reversal/concurrency suite pass after both defects | pytest/PostgreSQL | pending |
+| Restore and regression | V2 | Same normal milestone checks plus existing link serializer/identity/reversal/concurrency suite pass after both defects | pytest/PostgreSQL | PASS |
 | Fault-target protection | security/V2 | Nine subprocess checks reject unrelated/empty/override DSNs for both fault helpers before Django/output setup | pytest/editor, no services | PASS |
 | HTTP roles/session, UI/TS/browser/accessibility | HLB-440 ownership | No such adapter changed; require actual endpoint/UI evidence before parent completion | HTTP/Playwright/Jest | N/A for this prerequisite; NOT RUN for parent |
 
@@ -92,9 +92,22 @@ then starts the competing writer. It executes the original SQL and retains the
 actual lock-wait, committed-writer, blocked-reversal and exact-identity assertions.
 
 Raw installed schema and source archives remain private outside Git. Retained
-artifacts contain synthetic fixtures and normalized runner paths only. No provider
+artifacts contain synthetic fixture output only. No provider
 credential, original actor profile or raw installed schema is committed.
-Final cleanup and model/schema drift receipts are recorded below after readback.
+Native cleanup readback (artifacts/cleanup.json) confirms zero users, workspaces,
+projects, modules, issues, links, milestones and assignments. The milestone source
+constraint, active-issue partial unique index, scope/identity trigger and
+migration0124 are present. All task CLI runners were removed. PostgreSQL/Redis
+dependencies remain for subsequent parity work. Owned editor fixtures and an
+unused temporary diagnostic tool were removed. Schema drift: No changes detected.
+The partial uniqueness check uses pg_index; an initial pg_constraint-only probe
+was corrected without modifying native data or schema.
+
+Final evidence:27 known-state native passes; two separate intended one-assertion
+failures with restoration receipts;37 restored native/regression passes in143.35s;
+nine pre-framework target guards pass. Inventory:15 rows,14 scoped PASS plus
+one separately owned parent/N/A row. No approved deferral. Full provenance is
+in artifacts/source-provenance.json; failed timing runs remain retained.
 
 ## Review and limits
 
