@@ -85,7 +85,8 @@ def test_schema_roundtrip_preserves_manual_links_and_refuses_to_drop_bound_ident
         assert imported.external_id=='source-attachment-1'
         assert manual.url=='https://example.invalid/manual'
     finally:
-        MigrationExecutor(connection).migrate([after])
+        restore = MigrationExecutor(connection)
+        restore.migrate(restore.loader.graph.leaf_nodes())
 
 
 def test_source_identity_can_exist_in_another_workspace_but_cannot_be_moved(link_scope):
@@ -155,4 +156,5 @@ def test_concurrent_import_commits_before_reversal_check_and_identity_is_preserv
     finally:
         commit.set();write_thread.join(20)
         if reverse_thread.ident is not None:reverse_thread.join(20)
-        MigrationExecutor(connection).migrate([('db','0123_issue_link_source_identity')])
+        restore = MigrationExecutor(connection)
+        restore.migrate(restore.loader.graph.leaf_nodes())

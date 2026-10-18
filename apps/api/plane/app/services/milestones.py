@@ -75,8 +75,10 @@ def _values(values, creating=False):
 @transaction.atomic
 def create_milestone(actor, module_id, values):
     module = _scope(actor,module_id)
-    return ModuleMilestone.objects.create(project_id=module.project_id,workspace_id=module.workspace_id,
-        module=module,**_values(values,creating=True))
+    row = ModuleMilestone(project_id=module.project_id,workspace_id=module.workspace_id,
+        module=module,created_by_id=actor.pk,**_values(values,creating=True))
+    row.save(disable_auto_set_user=True)
+    return row
 
 
 @transaction.atomic
@@ -84,7 +86,8 @@ def update_milestone(actor, module_id, milestone_id, values):
     module = _scope(actor,module_id)
     row = _milestone(module,milestone_id)
     for key,value in _values(values).items():setattr(row,key,value)
-    row.save()
+    row.updated_by_id=actor.pk
+    row.save(disable_auto_set_user=True)
     return row
 
 
@@ -110,14 +113,19 @@ def assign_milestone(actor, module_id, issue_id, milestone_id):
         # Clearing one module cannot silently remove another module's value.
         if existing and existing.milestone.module_id != module.pk:
             raise PermissionDenied('Milestone scope unavailable')
-        IssueMilestone.objects.filter(issue=issue).update(deleted_at=timezone.now())
+        IssueMilestone.objects.filter(issue=issue).update(deleted_at=timezone.now(),
+            updated_by_id=actor.pk,updated_at=timezone.now())
         return None
     target = _milestone(module,milestone_id)
     if target.archived_at is not None:raise ValidationError('Unarchive the milestone before assigning issues')
     if existing:
-        existing.milestone=target;existing.save();return existing
-    return IssueMilestone.objects.create(project_id=module.project_id,workspace_id=module.workspace_id,
-        issue=issue,milestone=target)
+        existing.milestone=target;existing.updated_by_id=actor.pk
+        existing.save(disable_auto_set_user=True)
+        return existing
+    row=IssueMilestone(project_id=module.project_id,workspace_id=module.workspace_id,
+        issue=issue,milestone=target,created_by_id=actor.pk)
+    row.save(disable_auto_set_user=True)
+    return row
 
 
 @transaction.atomic
@@ -126,4 +134,5 @@ def delete_milestone(actor, module_id, milestone_id):
     row = _milestone(module,milestone_id)
     if IssueMilestone.objects.filter(milestone=row).exists():
         raise MilestoneConflict('Explicitly clear every issue assignment before deletion')
-    ModuleMilestone.objects.filter(pk=row.pk).update(deleted_at=timezone.now())
+    ModuleMilestone.objects.filter(pk=row.pk).update(deleted_at=timezone.now(),
+        updated_by_id=actor.pk,updated_at=timezone.now())

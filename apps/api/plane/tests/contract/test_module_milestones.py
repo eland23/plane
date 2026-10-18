@@ -32,11 +32,11 @@ def test_milestone_lifecycle_exact_values_clear_order_archive_and_delete(scope):
         'target_date':'2026-11-03','sort_order':20})
     second = create_milestone(user, module.id, {'name':'Preview','sort_order':10})
     assert [row.name for row in list_milestones(user,module.id)] == ['Preview','First release']
-    assert first.target_date == date(2026,11,3)
+    assert first.target_date == date(2026,11,3) and first.created_by_id==user.pk
     update_milestone(user,module.id,first.id,{'target_date':None,'status':'cancelled','sort_order':5,'archived':True})
     first.refresh_from_db()
     assert first.target_date is None and first.status == 'cancelled' and first.archived_at is not None
-    assert first.description == 'Original scope'
+    assert first.description == 'Original scope' and first.updated_by_id==user.pk
     assert [row.id for row in list_milestones(user,module.id)] == [second.id]
     update_milestone(user,module.id,first.id,{'archived':False})
     assert [row.id for row in list_milestones(user,module.id)] == [first.id,second.id]
@@ -80,7 +80,7 @@ def test_milestone_validation_keeps_saved_record_usable(scope,values):
 
 @pytest.mark.parametrize('denial',['viewer','inactive-workspace','inactive-project','outsider','inactive-user'])
 def test_milestone_authorization_denies_reads_and_writes(scope,denial):
-    user,workspace,project,module,_=scope
+    user,workspace,project,module,issue=scope
     row=create_milestone(user,module.id,{'name':'Protected'})
     if denial=='viewer':ProjectMember.objects.filter(member=user,project=project).update(role=5)
     if denial=='inactive-workspace':WorkspaceMember.objects.filter(member=user,workspace=workspace).update(is_active=False)
@@ -92,7 +92,8 @@ def test_milestone_authorization_denies_reads_and_writes(scope,denial):
     else:
         with pytest.raises(PermissionDenied):list_milestones(user,module.id)
     for command in [lambda:update_milestone(user,module.id,row.id,{'name':'Leaked'}),
-                    lambda:delete_milestone(user,module.id,row.id),lambda:create_milestone(user,module.id,{'name':'Forged'})]:
+                    lambda:delete_milestone(user,module.id,row.id),lambda:create_milestone(user,module.id,{'name':'Forged'}),
+                    lambda:assign_milestone(user,module.id,issue.id,row.id)]:
         with pytest.raises(PermissionDenied):command()
     row.refresh_from_db();assert row.name=='Protected'
 
