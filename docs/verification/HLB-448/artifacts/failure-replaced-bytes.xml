@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.169" timestamp="2026-10-18T21:40:23.434200+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_linear_assets" name="test_asset_bytes_hash_durable_reference_and_pr_link_are_preserved" time="0.365"><failure message="assert False&#10; +  where False = all(&lt;generator object test_asset_bytes_hash_durable_reference_and_pr_link_are_preserved.&lt;locals&gt;.&lt;genexpr&gt; at 0x7f4905ebc7b0&gt;)">assets = &lt;module 'linear_assets' from '/var/tmp/linear-assets-contract-q_lpwucx/tools/linear_assets.py'&gt;
+tmp_path = PosixPath('/var/tmp/linear-assets-contract-q_lpwucx/fixtures/test_asset_bytes_hash_durable_0')
+
+    def test_asset_bytes_hash_durable_reference_and_pr_link_are_preserved(assets,tmp_path):
+        inputs=fixture(tmp_path);source=Metadata();opener=Opener()
+        result=assets.export_assets(source,assets.AssetHTTP('private-token',opener=opener),*inputs,tmp_path/'assets')
+        assert result['status']=='COMPLETE_FOR_DISCOVERED_ASSETS'
+        assert len(result['assets'])==2
+&gt;       assert all(r['sha256']==SHA and r['size']==19 for r in result['assets'])
+E       assert False
+E        +  where False = all(&lt;generator object test_asset_bytes_hash_durable_reference_and_pr_link_are_preserved.&lt;locals&gt;.&lt;genexpr&gt; at 0x7f4905ebc7b0&gt;)
+
+tools/tests/test_linear_assets.py:58: AssertionError</failure></testcase></testsuite></testsuites>

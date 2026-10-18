@@ -1,0 +1,15 @@
+{
+  "source_revision": "1d6579e8f1371b1ceab707acbd2793a5aa6fb5c8",
+  "status": "COMPLETE_FOR_DISCOVERED_ASSETS",
+  "started_at": "2026-10-18T21:41:04.495479+00:00",
+  "finished_at": "2026-10-18T21:44:14.860587+00:00",
+  "attachment_pages": 801,
+  "archived": 25,
+  "blocked": 0,
+  "archived_bytes": 57269718,
+  "reference_rows": 5986,
+  "archive_manifest_sha256": "ba80f9cdcd22445fe9b770d240ec1981b1fda1af5f9758c8b2af151acadc341a",
+  "private_source_retained": true,
+  "native_destination_proof": false,
+  "canonical_archive": "HLB-448-assets-final-20261018"
+}

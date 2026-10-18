@@ -91,3 +91,42 @@ Controls: FF-C-SECRETS-HYGIENE, FF-C-PII-MINIMIZE and validation/error boundarie
 Prove with snapshot_delta_coverage and reconciliation_detects_loss contracts,
 including named missing field/edge assertions and unchanged input/output bytes.
 No new resolver/mutation/authz surface, hosted service or destination write.
+
+## HLB-448 asset export delta
+
+New boundary: private provider attachment metadata and uploaded bytes to protected
+local storage. `asset_integrity_contract` proves FF-C-URL-VALIDATE,
+FF-C-IMAGE-URL-VALIDATE, FF-C-SECRETS-HYGIENE and FF-C-PII-MINIMIZE.
+Only exact HTTPS uploads.linear.app URLs may receive the Linear authorization
+header. Alternate ports, userinfo, fragments, control characters, backslashes,
+private/IP hosts and redirects are rejected; proxies are disabled for the asset
+transport. The configured hostname belongs to the trusted provider (no user-
+controlled DNS name). Response final URL/status are checked. No arbitrary URL,
+external PR fetch, source mutation, content execution or destination write.
+
+Private attachment pages validate issue/team/UUID/cursor identity before commit.
+The output binds verified issue/association archives and a query/implementation fingerprint.
+Resume replays saved pages and verifies every committed blob hash/size/private
+mode before writable checkpoint state. Exclusive locking prevents concurrent
+writers; inputs are read-only. URLs, signed query strings and raw attachment
+metadata remain private and never enter console/CI evidence.
+
+Stream per-asset deadline30s/socket wait30s, size64MiB, aggregate512MiB and
+metadata-page/count budgets bound egress/storage; the1GiB disk reserve is a
+conservative operation guard, not Plane runtime sizing. Each blob is fsynced,
+content-addressed and committed with an exclusive hardlink; private temporary
+files are removed on controlled failure/cancel. Hard-kill stale partials require
+explicit operator cleanup and are never silently overwritten. Completed resume
+performs scope read only and no redownload. Transient failures can be resumed;
+no automatic unbounded retry. Private blob corruption blocks resume with the
+checkpoint unchanged. A stored SHA256 proves archive integrity, not an upstream
+provider checksum unless an independent expected digest is separately available.
+
+Markdown/HTML images and recognized rich-content image fields become required
+asset candidates; unsupported hosts/data-image payloads remain explicit blocked
+assets. External-resource attachment references remain links, per the provider Attachment schema; only approved uploads and required content-image locations become downloaded assets. Discovery covers current
+verified source payloads plus paginated issue attachment metadata. Unexported
+comments/history and nonstandard content syntax remain coverage gaps in later
+content/export work, not a full-backup or native rendering claim. Durable local
+asset references must be uploaded/rewritten/verified by HLB-454 and storage
+recovery by R2 before cutover.

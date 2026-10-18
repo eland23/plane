@@ -1,0 +1,20 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______ test_corrupt_committed_blob_rejected_without_mutating_checkpoint _______
+
+assets = <module 'linear_assets' from '/var/tmp/linear-assets-contract-usvq0dkt/tools/linear_assets.py'>
+tmp_path = PosixPath('/var/tmp/linear-assets-contract-usvq0dkt/fixtures/test_corrupt_committed_blob_re0')
+
+    def test_corrupt_committed_blob_rejected_without_mutating_checkpoint(assets,tmp_path):
+        inputs=fixture(tmp_path);output=tmp_path/'assets'
+        assets.export_assets(Metadata(),assets.AssetHTTP('secret',opener=Opener()),*inputs,output)
+        saved=(output/'manifest.json').read_bytes();blob=output/('sha256-'+SHA);blob.write_bytes(b'corrupted')
+        with pytest.raises(SourceError,match='ASSET_CHECKSUM_MISMATCH'):
+>           assets.export_assets(Metadata(),assets.AssetHTTP('secret',opener=Opener()),*inputs,output,resume=True)
+E           Failed: DID NOT RAISE <class 'linear_export.SourceError'>
+
+tools/tests/test_linear_assets.py:108: Failed
+- generated xml file: /var/tmp/hlb448-matrix-final/failure-checksum-bypass.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_linear_assets.py::test_corrupt_committed_blob_rejected_without_mutating_checkpoint
+1 failed, 31 deselected in 1.39s

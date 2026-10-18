@@ -1,0 +1,30 @@
+[
+  {
+    "run": "pass-known-state",
+    "exit": 0,
+    "expected_failure": false,
+    "accepted": true,
+    "fixtures_removed": true
+  },
+  {
+    "run": "failure-replaced-bytes",
+    "exit": 1,
+    "expected_failure": true,
+    "accepted": true,
+    "fixtures_removed": true
+  },
+  {
+    "run": "failure-checksum-bypass",
+    "exit": 1,
+    "expected_failure": true,
+    "accepted": true,
+    "fixtures_removed": true
+  },
+  {
+    "run": "restore-and-repeat",
+    "exit": 0,
+    "expected_failure": false,
+    "accepted": true,
+    "fixtures_removed": true
+  }
+]
