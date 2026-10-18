@@ -59,3 +59,35 @@ reconciliation require later coverage disposition. A source GraphQL/permission
 error stops with a failed checkpoint, never a full-completeness claim. Local
 root/operators remain trusted; crash-orphan recovery preserves files for an
 operator rather than deleting private records. No new formal risk acceptance.
+
+## HLB-447 coverage and snapshot-delta delta
+
+The new schema capture client uses only the existing fixed Linear HTTPS transport,
+static type names and UUID-bound source scope. It requests field names, never
+integration/session/credential values. API-denied and missing type results stay
+explicit; loss of authentication stops further type requests and marks remaining
+inventory blocked. Schema metadata and comparison manifests stay in protected
+0700 directories with0600 checkpoints outside Git.
+
+Offline comparison verifies both issue/association archives, their source binding,
+complete traversal/cursor/hash/graph proofs, organization/team and time windows
+before creating a new report. It never modifies input archives or overwrites a
+report. Changed fields are identified by kind/UUID/path and hashes, not raw private
+values. Original snapshots remain the recovery source. Missing records are
+unconfirmed tombstone candidates: absence may mean deletion, lost access or scope
+change and never authorizes destination deletion. Source intra-snapshot edits,
+schema drift and cutoff exceptions remain visible. Equal snapshots or repeated
+readback of one archive cannot establish an atomic cutoff/freeze.
+
+Every schema-visible field in the enumerated migration categories receives a
+source disposition; unread values and partial object capture are distinguished
+from preserved raw payloads. Native behavior is never inferred from an archive.
+Credential fields are intentionally excluded per migration scope. Unexposed or
+uncaptured custom properties/types remain unknown usage and require explicit
+feature-owner disposition. This tool cannot authorize cutover or waive native
+import/reconciliation evidence owned by later children.
+
+Controls: FF-C-SECRETS-HYGIENE, FF-C-PII-MINIMIZE and validation/error boundaries.
+Prove with snapshot_delta_coverage and reconciliation_detects_loss contracts,
+including named missing field/edge assertions and unchanged input/output bytes.
+No new resolver/mutation/authz surface, hosted service or destination write.
