@@ -112,6 +112,9 @@ def test_concurrent_import_commits_before_reversal_check_and_identity_is_preserv
     from django.db import connection, connections
     from django.db.migrations.executor import MigrationExecutor
     _, project, issue=link_scope
+    # Remove later empty schemas before timing this migration's lock boundary.
+    # Their historical-state rendering is not part of the identity race.
+    MigrationExecutor(connection).migrate([('db','0123_issue_link_source_identity')])
     inserted,commit=threading.Event(),threading.Event()
     results={}
     def writer():
