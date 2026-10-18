@@ -1,0 +1,21 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_concurrent_edit_archive_and_missing_record_are_named_without_inventing_deletion _
+
+coverage = <module 'linear_coverage' from '/var/tmp/linear-coverage-contract-tajvqpvm/tools/linear_coverage.py'>
+tmp_path = PosixPath('/var/tmp/linear-coverage-contract-tajvqpvm/fixtures/test_concurrent_edit_archive_a0')
+
+    def test_concurrent_edit_archive_and_missing_record_are_named_without_inventing_deletion(coverage, tmp_path):
+        before = snapshot(tmp_path / 'before')
+        after = snapshot(tmp_path / 'after', title='Synthetic changed', missing=True, archive=True)
+        schema = inventory(tmp_path / 'schema')
+        result = coverage.compare_exports(*before, *after, schema, tmp_path / 'report')
+        assert result['comparison']['equal'] is False
+>       assert {'kind': 'issue', 'id': IDS[0], 'field': 'title'} in [{k:r[k] for k in ['kind','id','field']} for r in result['delta']['modified_fields']]
+E       AssertionError: assert {'field': 'title', 'id': '10000000-0000-0000-0000-000000000002', 'kind': 'issue'} in []
+
+tools/tests/test_linear_coverage.py:72: AssertionError
+- generated xml file: /var/tmp/hlb447-matrix-final/failure-modified-field.xml --
+=========================== short test summary info ============================
+FAILED tools/tests/test_linear_coverage.py::test_concurrent_edit_archive_and_missing_record_are_named_without_inventing_deletion
+1 failed, 15 deselected in 1.14s

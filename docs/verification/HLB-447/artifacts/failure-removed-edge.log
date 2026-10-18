@@ -1,0 +1,22 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________ test_missing_document_edge_is_reported_with_exact_direction __________
+
+coverage = <module 'linear_coverage' from '/var/tmp/linear-coverage-contract-8l144rym/tools/linear_coverage.py'>
+tmp_path = PosixPath('/var/tmp/linear-coverage-contract-8l144rym/fixtures/test_missing_document_edge_is_0')
+
+    def test_missing_document_edge_is_reported_with_exact_direction(coverage, tmp_path):
+        before = snapshot(tmp_path / 'before')
+        after = snapshot(tmp_path / 'after', document=False)
+        result = coverage.compare_exports(*before, *after, inventory(tmp_path / 'schema'), tmp_path / 'out')
+>       assert result['delta']['removed_edges'] == [['issue', IDS[0], 'documents', 'document', DOC]]
+E       AssertionError: assert [] == [['issue', '1...00000000001']]
+E
+E         Right contains one more item: ['issue', '10000000-0000-0000-0000-000000000002', 'documents', 'document', '30000000-0000-0000-0000-000000000001']
+E         Use -v to get more diff
+
+tools/tests/test_linear_coverage.py:125: AssertionError
+-- generated xml file: /var/tmp/hlb447-matrix-final/failure-removed-edge.xml ---
+=========================== short test summary info ============================
+FAILED tools/tests/test_linear_coverage.py::test_missing_document_edge_is_reported_with_exact_direction
+1 failed, 15 deselected in 1.20s

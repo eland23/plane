@@ -1,0 +1,15 @@
+{
+  "source_revision": "8511256c17a45698ef172783ba33bbf151122bc3",
+  "files": {
+    "tools/linear_coverage.py": "0d98ae992fe5752b3392d47d06013351e02e71d91e084234a67294754af483fe",
+    "tools/check_linear_coverage.py": "4589100edc2dc6a15191acb5baaafc79a7e6849315fa2a6e9ca883cec1aefd53",
+    "tools/tests/test_linear_coverage.py": "da5c2a5395492ea05d05882bfd1bd330fb5cc33f532dfbd53e1b868368ae2532",
+    "tools/linear_export.py": "dec8c8a1d0b3b8079376c8b7b2a257d22acc907e39f1fabab21a2c4815603ca1",
+    "tools/linear_associations.py": "3f26ed8b992eced0f4c7f03e49d62d976d57885bf090ae7194d3f92ba6cbe3d3"
+  },
+  "python": "3.9.2",
+  "pytest": "8.4.2",
+  "three_check_artifacts_are_synthetic": true,
+  "hosted_services_started": false,
+  "destination_writes": 0
+}

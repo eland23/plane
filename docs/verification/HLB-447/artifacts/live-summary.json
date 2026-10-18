@@ -1,0 +1,63 @@
+{
+  "status": "PASS_SOURCE_COMPARISON_WITH_READINESS_BLOCKERS",
+  "source_revision": "8511256c17a45698ef172783ba33bbf151122bc3",
+  "comparison": {
+    "equal": false,
+    "exit_code": 1,
+    "independent_observations": true
+  },
+  "delta_counts": {
+    "added_edges": 0,
+    "added_entities": 0,
+    "modified_fields": 2,
+    "removed_edges": 0,
+    "schema_fields_added": 0,
+    "schema_fields_removed": 0,
+    "tombstone_candidates": 0
+  },
+  "modified_fields_by_kind_and_field": {
+    "issue.description": 1,
+    "issue.updatedAt": 1
+  },
+  "coverage_fields": 1100,
+  "coverage_by_disposition": {
+    "blocked": 941,
+    "archive": 159
+  },
+  "schema_categories": 33,
+  "schema_available_categories": 33,
+  "cutoff": {
+    "after_window": [
+      "2026-10-18T21:23:07.473805+00:00",
+      "2026-10-18T21:26:48.133441+00:00"
+    ],
+    "atomic_snapshot": false,
+    "before_window": [
+      "2026-10-18T19:55:14.708016+00:00",
+      "2026-10-18T21:00:32.760821+00:00"
+    ],
+    "reason": "read_snapshots_do_not_establish_source_freeze_or_as_of_completeness",
+    "requested": "2026-10-18T21:26:48.133441+00:00",
+    "verified": false
+  },
+  "intra_snapshot_conflict_counts": {
+    "after": 0,
+    "before": 0
+  },
+  "readiness": {
+    "blockers": [
+      "owner_field_dispositions_required",
+      "native_import_evidence_required",
+      "verified_cutoff_required",
+      "delta_requires_reconciliation"
+    ],
+    "cutover_ready": false
+  },
+  "private_archives_intentionally_retained": true,
+  "source_manifest_sha256": {
+    "HLB-447-issues-20261018": "84466937c411c00de37fc2f67ea5391ba7cd0a124a7eaf018e2eb7e7ad874398",
+    "HLB-447-associations-20261018": "7344409fd11c8cbefd6d440fbefeb779a196a192af5d82581e36692d662dd9c4",
+    "HLB-447-schema-20261018": "e0848e67cf320e5574523ff485f8cddca074c39990867223f02cbe5848a4b136",
+    "HLB-447-comparison-20261018": "f30acebfa322eb52c07340fee4fa5328d68ce86db7d9cb2cf26d843d903413e7"
+  }
+}

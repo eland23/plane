@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.145" timestamp="2026-10-18T21:23:10.489604+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_linear_coverage" name="test_concurrent_edit_archive_and_missing_record_are_named_without_inventing_deletion" time="0.495"><failure message="AssertionError: assert {'field': 'title', 'id': '10000000-0000-0000-0000-000000000002', 'kind': 'issue'} in []">coverage = &lt;module 'linear_coverage' from '/var/tmp/linear-coverage-contract-tajvqpvm/tools/linear_coverage.py'&gt;
+tmp_path = PosixPath('/var/tmp/linear-coverage-contract-tajvqpvm/fixtures/test_concurrent_edit_archive_a0')
+
+    def test_concurrent_edit_archive_and_missing_record_are_named_without_inventing_deletion(coverage, tmp_path):
+        before = snapshot(tmp_path / 'before')
+        after = snapshot(tmp_path / 'after', title='Synthetic changed', missing=True, archive=True)
+        schema = inventory(tmp_path / 'schema')
+        result = coverage.compare_exports(*before, *after, schema, tmp_path / 'report')
+        assert result['comparison']['equal'] is False
+&gt;       assert {'kind': 'issue', 'id': IDS[0], 'field': 'title'} in [{k:r[k] for k in ['kind','id','field']} for r in result['delta']['modified_fields']]
+E       AssertionError: assert {'field': 'title', 'id': '10000000-0000-0000-0000-000000000002', 'kind': 'issue'} in []
+
+tools/tests/test_linear_coverage.py:72: AssertionError</failure></testcase></testsuite></testsuites>
