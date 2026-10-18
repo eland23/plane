@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="2.542" timestamp="2026-10-18T22:03:29.585025+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_linear_import_plan" name="test_independent_receipt_checker_detects_number_loss" time="1.851"><failure message="assert (0 == 1)&#10; +  where 0 = CompletedProcess(args=['/usr/bin/python3', '-O', '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-431/to...='{&quot;verified_issue_count&quot;: 6, &quot;destination_unchanged&quot;: true, &quot;tables_compared&quot;: 13, &quot;can_import&quot;: false}\n', stderr='').returncode">planner = &lt;module 'linear_import_plan' from '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-431/tools/linear_import_plan.py'&gt;
+tmp_path = PosixPath('/var/tmp/hlb449-optimized-red/test_independent_receipt_check0')
+
+    def test_independent_receipt_checker_detects_number_loss(planner,tmp_path):
+        from verify_linear_import_plan import verify
+        source=inputs(tmp_path);planner.plan_import(*source,Destination(),WS,tmp_path/'plan')
+        assert verify(source[0],tmp_path/'plan')['verified_issue_count']==6
+        path=tmp_path/'plan/manifest.json';report=json.loads(path.read_text())
+        next(r for r in report['mapping'] if r['source_kind']=='issue')['sequence_id']=1
+        path.write_text(json.dumps(report))
+        with pytest.raises(AssertionError,match='number changed'):verify(source[0],tmp_path/'plan')
+        import subprocess
+        result=subprocess.run([sys.executable,'-O',str(Path(planner.__file__).with_name('verify_linear_import_plan.py')),'--issues',str(source[0]),'--output',str(tmp_path/'plan')],capture_output=True,text=True)
+&gt;       assert result.returncode==1 and 'RECEIPT_VERIFICATION_FAILED' in result.stdout
+E       assert (0 == 1)
+E        +  where 0 = CompletedProcess(args=['/usr/bin/python3', '-O', '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-431/to...='{"verified_issue_count": 6, "destination_unchanged": true, "tables_compared": 13, "can_import": false}\n', stderr='').returncode
+
+tools/tests/test_linear_import_plan.py:234: AssertionError</failure></testcase></testsuite></testsuites>

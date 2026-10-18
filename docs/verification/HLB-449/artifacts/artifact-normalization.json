@@ -1,0 +1,11 @@
+{
+  "normalized_fields": [
+    "temporary fixture root path in fault matrix XML/logs",
+    "trailing whitespace in synthetic runner XML/log lines"
+  ],
+  "replacement": "/isolated-contract",
+  "source": "/var/tmp/hlb449-controls-native-final",
+  "xml_parsed_after_normalization": true,
+  "source_data_redacted": false,
+  "native_outcomes_unchanged": true
+}

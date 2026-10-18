@@ -1,0 +1,19 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_destination_drift_is_named_and_prevents_a_stable_plan __________
+
+planner = <module 'linear_import_plan' from '/isolated-contract/tools/linear_import_plan.py'>
+tmp_path = PosixPath('/isolated-contract/fixtures/test_destination_drift_is_name0')
+
+    def test_destination_drift_is_named_and_prevents_a_stable_plan(planner,tmp_path):
+        source=inputs(tmp_path);before=destination();after=copy.deepcopy(before)
+        after['tables']['issues']['sha256']='f'*64
+        report=planner.plan_import(*source,Destination(before,after),WS,tmp_path/'plan')
+>       assert report['destination_unchanged'] is False and report['plan_valid'] is False
+E       assert (True is False)
+
+tools/tests/test_linear_import_plan.py:113: AssertionError
+- generated xml file: /var/tmp/hlb449-controls-native-final/failure-destination-drift.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_linear_import_plan.py::test_destination_drift_is_named_and_prevents_a_stable_plan
+1 failed, 21 deselected in 1.98s

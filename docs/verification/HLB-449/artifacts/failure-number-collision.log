@@ -1,0 +1,20 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_reserved_number_collision_blocks_and_correction_restores_identical_plan _
+
+planner = <module 'linear_import_plan' from '/isolated-contract/tools/linear_import_plan.py'>
+tmp_path = PosixPath('/isolated-contract/fixtures/test_reserved_number_collision0')
+
+    def test_reserved_number_collision_blocks_and_correction_restores_identical_plan(planner,tmp_path):
+        source=inputs(tmp_path);dest=destination()
+        dest['rows']['projects']=[{'id':PROJECT,'workspace_id':WS,'identifier':'FAS'}]
+        dest['rows']['issue_sequences']=[{'id':'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','project_id':PROJECT,'issue_id':None,'sequence':11,'deleted':True}]
+        blocked=planner.plan_import(*source,Destination(dest),WS,tmp_path/'blocked',target_project=PROJECT)
+>       assert {'code':'NUMBER_COLLISION','source_uuid':IDS[2],'sequence_id':11} in blocked['blockers']
+E       AssertionError: assert {'code': 'NUMBER_COLLISION', 'sequence_id': 11, 'source_uuid': '10000000-0000-0000-0000-000000000011'} in [{'code': 'IGNORED_NUMBER_COLLISION', 'sequence_id': 11, 'source_uuid': '10000000-0000-0000-0000-000000000011'}]
+
+tools/tests/test_linear_import_plan.py:90: AssertionError
+- generated xml file: /var/tmp/hlb449-controls-native-final/failure-number-collision.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_linear_import_plan.py::test_reserved_number_collision_blocks_and_correction_restores_identical_plan
+1 failed, 21 deselected in 1.89s
