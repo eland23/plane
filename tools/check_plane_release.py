@@ -18,12 +18,13 @@ def main():
     root = Path(__file__).resolve().parent
     runs = []
     cases = [
-        ("pass-known-state", None, None),
-        ("failure-target-guard", "if args.target != TARGET:", "release_preflight_rejects_wrong_target"),
-        ("failure-image-integrity", "if any(actual.get(k) != v for k, v in expected.items()):", "detects_missing_or_changed_migration"),
-        ("restore-and-repeat", None, None),
+        ("pass-known-state", None, None, None),
+        ("failure-target-guard", "if args.target != TARGET:", "release_preflight_rejects_wrong_target", None),
+        ("failure-image-integrity", "if any(actual.get(k) != v for k, v in expected.items()):", "detects_missing_or_changed_migration", None),
+        ("failure-packaging-admission", 'status="PACKAGING_ONLY" if packaging else "PASS"', "package_preflight_reports", 'status="PASS"'),
+        ("restore-and-repeat", None, None, None),
     ]
-    for name, defect, selection in cases:
+    for name, defect, selection, replacement in cases:
         with tempfile.TemporaryDirectory(prefix="plane-contract-") as temporary:
             clone = Path(temporary)
             (clone / "tools/tests").mkdir(parents=True)
@@ -31,7 +32,7 @@ def main():
             if defect:
                 if text.count(defect) != 1:
                     raise RuntimeError("Fault boundary must match exactly once")
-                text = text.replace(defect, "if False:")
+                text = text.replace(defect, replacement or "if False:")
             (clone / "tools/plane_release.py").write_text(text)
             shutil.copyfile(root / "tests/test_plane_release.py", clone / "tools/tests/test_plane_release.py")
             command = [sys.executable, "-m", "pytest", "-q", "tools/tests/test_plane_release.py",
@@ -52,7 +53,7 @@ def main():
             break
     (output / "receipts.json").write_text(json.dumps(runs, indent=2) + "\n")
     print(json.dumps(runs))
-    return 0 if len(runs) == 4 and all(r["accepted"] and r["fixture_directory_removed"] for r in runs) else 1
+    return 0 if len(runs) == 5 and all(r["accepted"] and r["fixture_directory_removed"] for r in runs) else 1
 
 
 if __name__ == "__main__":

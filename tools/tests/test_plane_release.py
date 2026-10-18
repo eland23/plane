@@ -372,3 +372,23 @@ sys.exit(1)
     assert logs.stat().st_mode&0o777==0o700
     log=logs/'backend.log';assert log.stat().st_mode&0o777==0o600
     assert json.loads(log.read_text())=={'private_error':'fixture-credential-marker','heap_bounded':True,'serial_build':True}
+
+
+def test_release_probe_error_terminates_owned_helper_children(source,tmp_path):
+    import signal
+    binary=Path(source[1]['PATH'].split(os.pathsep)[0])/'ssh'
+    pidfile=tmp_path/'helper.pid'
+    binary.write_text('#!/usr/bin/env python3\nimport subprocess,sys\nfrom pathlib import Path\n'
+        +"p=subprocess.Popen([sys.executable,'-c','import time; time.sleep(60)'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)\n"
+        +f'Path({str(pidfile)!r}).write_text(str(p.pid))\nsys.exit(1)\n')
+    try:
+        result=invoke(source)
+        assert result.returncode==2 and json.loads(result.stderr)['code']=='TARGET_PROBE'
+        path=Path('/proc')/pidfile.read_text()/'stat'
+        deadline=time.monotonic()+2
+        while path.exists() and path.read_text().split()[2]!='Z' and time.monotonic()<deadline:time.sleep(.02)
+        assert not path.exists() or path.read_text().split()[2]=='Z','probe left its owned helper running'
+    finally:
+        if pidfile.exists():
+            try:os.kill(int(pidfile.read_text()),signal.SIGKILL)
+            except ProcessLookupError:pass

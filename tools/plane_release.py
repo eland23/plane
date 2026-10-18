@@ -32,16 +32,30 @@ class GateError(Exception):
 
 def command(argv, code="COMMAND_FAILED", timeout=60, log_path=None):
     # Never echo stderr, environment, remote URLs or credentials from tools.
+    process = None
+    log = None
     try:
-        if log_path is None:
-            result = subprocess.run(argv, check=True, capture_output=True, timeout=timeout)
-        else:
+        if log_path is not None:
             descriptor = os.open(str(log_path), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-            with os.fdopen(descriptor, "wb") as log:
-                result = subprocess.run(argv, check=True, stdout=log, stderr=subprocess.STDOUT, timeout=timeout)
+            log = os.fdopen(descriptor, "wb")
+        process = subprocess.Popen(argv, stdout=log or subprocess.PIPE,
+            stderr=subprocess.STDOUT if log is not None else subprocess.PIPE,
+            start_new_session=True)
+        output, _ = process.communicate(timeout=timeout)
+        if process.returncode:
+            raise GateError(code)
+        return output.decode("utf-8") if output is not None else ""
     except (OSError, subprocess.SubprocessError):
         raise GateError(code) from None
-    return result.stdout.decode("utf-8") if result.stdout is not None else ""
+    finally:
+        if process is not None:
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            process.wait()
+        if log is not None:
+            log.close()
 
 
 def git(repo, *args):
