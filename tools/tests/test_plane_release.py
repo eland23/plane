@@ -346,3 +346,29 @@ def test_package_requires_build_arguments_even_when_runtime_admission_is_pending
     source[1]['PROBE']='{"disk_free": 9000000000, "memory_available": 1100000000}'
     result=invoke(source,command='package')
     assert result.returncode==2 and json.loads(result.stderr)['code']=='BUILD_ARGUMENTS'
+
+
+def test_packaging_keeps_build_errors_private_and_bounds_frontend_resources(source,tmp_path):
+    repo,env=source
+    web=repo/'apps/web/Dockerfile.web'
+    web.write_text('FROM node:22-alpine AS base\nFROM base AS installer\nRUN pnpm turbo run build --filter=web\nFROM nginx:1.31-alpine AS production\n')
+    git(repo,'add','.');git(repo,'-c','user.name=Fixture','-c','user.email=fixture@example.invalid','commit','-m','web fixture');git(repo,'push','origin','candidate')
+    docker=Path(env['PATH'].split(os.pathsep)[0])/'docker'
+    docker.write_text('''#!/usr/bin/env python3
+import json,sys
+from pathlib import Path
+web=(Path(sys.argv[-1]).parent/'web/Dockerfile.web').read_text()
+print(json.dumps({'private_error':'fixture-credential-marker','heap_bounded':'--max-old-space-size=2304' in web,'serial_build':'--filter=web --concurrency=1' in web}))
+sys.exit(1)
+''');docker.chmod(0o755)
+    env['PROBE']='{"disk_free": 9000000000, "memory_available": 1100000000}'
+    output=tmp_path/'candidate.json'
+    result=invoke(source,command='package',output=str(output),
+        **{'python-base':'python@sha256:'+'a'*64,'node-base':'node@sha256:'+'b'*64,'nginx-base':'nginx@sha256:'+'c'*64})
+    assert result.returncode==2 and json.loads(result.stderr)['code']=='IMAGE_BUILD'
+    assert 'fixture-credential-marker' not in result.stdout+result.stderr
+    assert not output.exists()
+    logs=tmp_path/'candidate.json.build-logs'
+    assert logs.stat().st_mode&0o777==0o700
+    log=logs/'backend.log';assert log.stat().st_mode&0o777==0o600
+    assert json.loads(log.read_text())=={'private_error':'fixture-credential-marker','heap_bounded':True,'serial_build':True}

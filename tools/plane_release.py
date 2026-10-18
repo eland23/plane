@@ -72,7 +72,12 @@ def source_identity(args):
         raise GateError("INCOMPLETE_SOURCE")
     if any(Path(p).name == ".env" or Path(p).suffix in (".pem", ".key") for p in files):
         raise GateError("TRACKED_SECRET_FILE")
-    return {"revision": args.revision, "source_tree": git(repo, "rev-parse", "HEAD^{tree}"),
+    sizes = git(repo, "ls-tree", "-rlz", args.revision).split("\0")
+    try:
+        source_bytes = sum(int(row.split("\t", 1)[0].split()[-1]) for row in sizes if row)
+    except (ValueError, IndexError):
+        raise GateError("UNSUPPORTED_SOURCE") from None
+    return {"source_bytes": source_bytes, "revision": args.revision, "source_tree": git(repo, "rev-parse", "HEAD^{tree}"),
             "ref": args.ref, "target": args.target, "namespace": args.namespace,
             "services": SERVICES, "commands": COMMANDS, "migrations": migrations}
 
@@ -316,7 +321,8 @@ def build(args, report):
     repo = Path(args.repo).resolve()
     if output.is_relative_to(repo) or output.exists():
         raise GateError("OUTPUT_DENIED")
-    if shutil.disk_usage(tempfile.gettempdir()).free < 10 * GIB:
+    snapshot_reservation = max(64 * 1024 ** 2, report["source_bytes"] * 3)
+    if shutil.disk_usage(tempfile.gettempdir()).free < snapshot_reservation:
         raise GateError("BUILD_CAPACITY")
     logs = output.with_name(output.name + ".build-logs")
     logs.mkdir(mode=0o700)
@@ -330,6 +336,14 @@ def build(args, report):
         pin_dockerfile(dockerfile, {"python:3.12.10-alpine": args.python_base})
         webfile = source / "apps/web/Dockerfile.web"
         pin_dockerfile(webfile, {"node:22-alpine": args.node_base, "nginx:1.31-alpine": args.nginx_base})
+        text = webfile.read_text()
+        if text.count("FROM base AS installer\n") != 1 or text.count("RUN pnpm turbo run build --filter=web\n") != 1:
+            raise GateError("DOCKERFILE_COMPATIBILITY")
+        webfile.write_text(text.replace("FROM base AS installer\n", "FROM base AS installer\nENV NODE_OPTIONS=--max-old-space-size=2304\n")
+            .replace("RUN pnpm turbo run build --filter=web\n", "RUN pnpm turbo run build --filter=web --concurrency=1\n"))
+        report["build_limits"] = {"node_heap_mib": 2304, "turbo_concurrency": 1,
+                                  "snapshot_reservation_bytes": snapshot_reservation}
+        report["builder_sha256"] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
         images = {}
         for kind, context, file in [("backend", backend, dockerfile), ("frontend", source, webfile)]:
             tag = args.namespace + "-" + kind + ":" + args.revision

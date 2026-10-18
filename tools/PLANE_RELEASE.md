@@ -76,3 +76,9 @@ next to the candidate manifest. Logs may include dependency URLs; keep them
 outside Git. A retry uses a new output name. The manifest is published only after
 both complete images and backend Git-blob comparisons pass. Build source temp
 storage and the build daemon's disk usage must be monitored independently.
+
+Packaging reserves temporary snapshot space from tracked Git blob sizes (three
+copies, at least64MiB); this is separate from Docker layer storage and runtime
+capacity. Frontend build stages use a2304MiB Node heap and one Turbo task at a
+time. The manifest records these limits and the builder source checksum. These
+are build controls, not measured application sizing or deployment admission.
