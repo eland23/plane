@@ -17,11 +17,12 @@ verification decisions and FashionFindr `docs/testing/REPORT-TEMPLATE.md`.
 | REL-03 / execution mode | V1/V2 | HLB-434 | native_commands_deny_optimized_execution | Both native commands reject -O / PYTHONOPTIMIZE before protected operations | pytest/process | PASS source | source-controls |
 | REL-03 / inspection | V2 | HLB-434 | indeterminate_docker_state | Unavailable Docker state preserves private readbacks/config and cannot produce a clean receipt | pytest/CLI fake | PASS source | source-controls |
 | REL-03 / cleanup errors | V2 | HLB-434 | receipt_failure_still, diagnostic_failure_still | Receipt I/O failure still removes owned readbacks/credential files and closes lease; failed diagnostic retrieval/storage cannot prevent confirmed-owned resource removal | pytest/filesystem | PASS source | source-controls |
+| REL-03 / database destination | AC2/V1 | HLB-434 | tools/tests/test_database_restore_guards.py | Five foreign destinations rejected before Django import; both commands reject optimized execution | pytest/process | PASS source | source-controls/failure-database-destination.xml |
 | REL-03 / real asset restore | AC2/V1/V2 | HLB-434 | native/asset_store_rehearsal.py + test_asset_store.py | Signed S3 restore and fresh GET readback: exact original/fixture keys, metadata and hashes; anonymous GET denied; corrupt fixture fails unchanged checksum assertion; restore repeats | authenticated S3 API/pytest | PASS component | native-assets-4769e03 |
 | REL-03 / own database restore | AC2/V1 | HLB-434 | shared runtime fixture preparation | Own restored database and supported fixture-M identities/content preserved through independently read destination APIs | native DB/API | NOT RUN | HLB-433 evidence does not waive this row |
 | REL-03 / shared M integration | V1/V3 | HLB-434/435/436 | supported issue/module/cycle/wiki/asset fixture M | Literal identities/graph/order/assets and combined wiki/cycle reload | API/Playwright | NOT RUN | shared integration remains open |
 
-Inventory: 11 scoped rows; 8 source rows and 1 native asset row proven, 2 integration rows NOT RUN,
+Inventory: 12 scoped rows; 9 source rows and 1 native asset row proven, 2 integration rows NOT RUN,
 0 approved deferrals. UI and Jest are N/A to this Python CLI/component slice;
 actual browser journeys remain required under HLB-436. Optional TesterArmy is N/A
 per the parent. No coverage claim extends beyond these rows.
@@ -81,13 +82,14 @@ while the migration rehearsal is open.
 
 | Behavior IDs | Check | Expected result | Actual result | Exit | Artifacts |
 |---|---|---|---|---|---|
-| Source rows above | Known state | PASS | 45 pass / 0 errors | 0 | artifacts/source-controls/pass-known-state.xml |
+| Source rows above | Known state | PASS | 52 pass / 0 errors | 0 | artifacts/source-controls/pass-known-state.xml |
 | Byte guard | Bypass readback checksum | Unchanged contract fails | 1 intended failure / 0 errors | 1 | failure-asset-checksum.xml |
 | Record guard | Bypass preservation comparison | Unchanged contracts fail | 3 intended failures of 5 cases / 0 errors | 1 | failure-record-preservation.xml |
 | Endpoint guard | Remove endpoint admission | Fake client marker reached; unchanged tests fail | 2 intended failures of 6 cases / 0 errors | 1 | failure-sdk-endpoint.xml |
 | Inspection guard | Treat permission failure as absence | Data-preservation assertion fails | 1 intended failure / 0 errors | 1 | failure-inspection-admission.xml |
+| Database guard | Remove destination hostname restriction | Fake Django import reached; unchanged tests fail | 2 intended failures of 5 cases / 0 errors | 1 | failure-database-destination.xml |
 | Receipt cleanup | Skip cleanup after receipt error | Readback cleanup assertion fails | 1 intended failure / 0 errors | 1 | failure-receipt-cleanup.xml |
-| Source rows above | Restore and repeat | PASS | 45 pass / 0 errors | 0 | artifacts/source-controls/restore-and-repeat.xml |
+| Source rows above | Restore and repeat | PASS | 52 pass / 0 errors | 0 | artifacts/source-controls/restore-and-repeat.xml |
 | Real S3 rows | Known / corrupt / restored | PASS / intended checksum failure / PASS | 4 pass / 1 intended failure of 4 / 4 pass; 0 errors/skips | 0 / 1 / 0 | native-assets-4769e03/*.xml and receipts.json |
 
 Source controlled defects affect temporary copies only; all fixture directories
@@ -124,7 +126,7 @@ inputs only. No source result proves native restoration.
 ## Execution metrics
 
 Source tests contain no model/provider calls. Durations are in native JUnit;
-seven source phases form one serial matrix, not a reliability sample. Initial
+eight source phases form one serial matrix, not a reliability sample. Initial
 red/green development runs are separate. Cached execution, model tokens, reserved
 budget and billed cost are N/A/unavailable. No cost or performance claim is made.
 
@@ -184,3 +186,10 @@ Django initialization and optimized execution before operations. Red/green and
 source controlled-defect results are tracked separately from native execution.
 This database component and complete supported fixture M are NOT RUN at this
 source checkpoint; neither is inferred from earlier HLB-433 evidence.
+
+Latest database component source at dccc84f: 52 checks PASS before and after six
+controlled guard defects; each defect produced the intended failures with zero
+errors, and all temporary fixture copies were removed. CI restore contracts
+39189253529 and React Doctor39189253560 PASS at that exact pushed revision.
+Separate Standards and Spec/security review PASS. Native evidence remains
+separate and will be recorded after actual execution and cleanup.

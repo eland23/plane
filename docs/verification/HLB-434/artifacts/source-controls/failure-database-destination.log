@@ -1,0 +1,65 @@
+FF...                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_database_seed_denies_foreign_destination_before_django_import[postgresql://plane_fixture:synthetic@192.168.1.129:5432/plane_restore_good] _
+
+tmp_path = PosixPath('/var/tmp/plane-restore-contract-w4u3azmt/fixtures/test_database_seed_denies_fore0')
+url = 'postgresql://plane_fixture:synthetic@192.168.1.129:5432/plane_restore_good'
+
+    @pytest.mark.parametrize('url',[
+        'postgresql://plane_fixture:synthetic@192.168.1.129:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@127.0.0.1:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/postgres',
+        'postgresql://postgres:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good?options=unsafe',
+    ])
+    def test_database_seed_denies_foreign_destination_before_django_import(tmp_path,url):
+        ns='plane-rehearsal-db-434-20261019'
+        (tmp_path/'socket.py').write_text(f'def gethostname():return {ns+"-cli"!r}\n')
+        marker=tmp_path/'django-imported'
+        (tmp_path/'django.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\n')
+        result=subprocess.run([sys.executable,str(NATIVE/'seed_database_fixture.py')],
+            env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path),'DATABASE_URL':url,
+                 'DJANGO_SETTINGS_MODULE':'plane.settings.production',
+                 'REDIS_URL':'redis://'+ns+'-redis:6379/0','AMQP_URL':'redis://'+ns+'-redis:6379/1'},
+            capture_output=True,text=True,timeout=10)
+>       assert not marker.exists(),'Foreign database must be rejected before Django initializes'
+E       AssertionError: Foreign database must be rejected before Django initializes
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/var/tmp/plane-restore-contract-w4u3azmt/fixtures/test_database_seed_denies_fore0/django-imported').exists
+
+tools/tests/test_database_restore_guards.py:29: AssertionError
+_ test_database_seed_denies_foreign_destination_before_django_import[postgresql://plane_fixture:synthetic@127.0.0.1:5432/plane_restore_good] _
+
+tmp_path = PosixPath('/var/tmp/plane-restore-contract-w4u3azmt/fixtures/test_database_seed_denies_fore1')
+url = 'postgresql://plane_fixture:synthetic@127.0.0.1:5432/plane_restore_good'
+
+    @pytest.mark.parametrize('url',[
+        'postgresql://plane_fixture:synthetic@192.168.1.129:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@127.0.0.1:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/postgres',
+        'postgresql://postgres:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good?options=unsafe',
+    ])
+    def test_database_seed_denies_foreign_destination_before_django_import(tmp_path,url):
+        ns='plane-rehearsal-db-434-20261019'
+        (tmp_path/'socket.py').write_text(f'def gethostname():return {ns+"-cli"!r}\n')
+        marker=tmp_path/'django-imported'
+        (tmp_path/'django.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\n')
+        result=subprocess.run([sys.executable,str(NATIVE/'seed_database_fixture.py')],
+            env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path),'DATABASE_URL':url,
+                 'DJANGO_SETTINGS_MODULE':'plane.settings.production',
+                 'REDIS_URL':'redis://'+ns+'-redis:6379/0','AMQP_URL':'redis://'+ns+'-redis:6379/1'},
+            capture_output=True,text=True,timeout=10)
+>       assert not marker.exists(),'Foreign database must be rejected before Django initializes'
+E       AssertionError: Foreign database must be rejected before Django initializes
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/var/tmp/plane-restore-contract-w4u3azmt/fixtures/test_database_seed_denies_fore1/django-imported').exists
+
+tools/tests/test_database_restore_guards.py:29: AssertionError
+- generated xml file: /var/tmp/HLB-434-db-source-controls-v2-20261019/failure-database-destination.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_database_restore_guards.py::test_database_seed_denies_foreign_destination_before_django_import[postgresql://plane_fixture:synthetic@192.168.1.129:5432/plane_restore_good]
+FAILED tools/tests/test_database_restore_guards.py::test_database_seed_denies_foreign_destination_before_django_import[postgresql://plane_fixture:synthetic@127.0.0.1:5432/plane_restore_good]
+2 failed, 3 passed, 47 deselected in 1.51s

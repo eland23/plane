@@ -2,7 +2,7 @@ F                                                                        [100%]
 =================================== FAILURES ===================================
 _ test_downloaded_asset_matches_original_then_rejects_changed_bytes_and_recovers _
 
-tmp_path = PosixPath('/var/tmp/plane-restore-contract-14z__t5v/fixtures/test_downloaded_asset_matches_0')
+tmp_path = PosixPath('/var/tmp/plane-restore-contract-od8xrggt/fixtures/test_downloaded_asset_matches_0')
 
     def test_downloaded_asset_matches_original_then_rejects_changed_bytes_and_recovers(tmp_path):
         path,digest=archive_fixture(tmp_path)
@@ -21,7 +21,7 @@ E         At index 0 diff: 0 != 1
 E         Use -v to get more diff
 
 tools/tests/test_plane_restore.py:60: AssertionError
-- generated xml file: /var/tmp/HLB-434-reviewed-source-controls-20261019/failure-asset-checksum.xml -
+- generated xml file: /var/tmp/HLB-434-db-source-controls-v2-20261019/failure-asset-checksum.xml -
 =========================== short test summary info ============================
 FAILED tools/tests/test_plane_restore.py::test_downloaded_asset_matches_original_then_rejects_changed_bytes_and_recovers
-1 failed, 44 deselected in 1.24s
+1 failed, 51 deselected in 1.53s

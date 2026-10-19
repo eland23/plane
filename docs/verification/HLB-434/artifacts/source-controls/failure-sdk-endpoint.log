@@ -2,7 +2,7 @@ FF....                                                                   [100%]
 =================================== FAILURES ===================================
 ____ test_sdk_rejects_foreign_connection_before_loading_s3_client[change0] _____
 
-tmp_path = PosixPath('/var/tmp/plane-restore-contract-xyyzen63/fixtures/test_sdk_rejects_foreign_conne0')
+tmp_path = PosixPath('/var/tmp/plane-restore-contract-1s5hwu0i/fixtures/test_sdk_rejects_foreign_conne0')
 change = {'endpoint': 'http://192.168.1.129:9000'}
 
     @pytest.mark.parametrize('change',[
@@ -29,12 +29,12 @@ change = {'endpoint': 'http://192.168.1.129:9000'}
 E       AssertionError: Foreign connection must be denied before S3 client initialization
 E       assert not True
 E        +  where True = exists()
-E        +    where exists = PosixPath('/var/tmp/plane-restore-contract-xyyzen63/fixtures/test_sdk_rejects_foreign_conne0/client-initialized').exists
+E        +    where exists = PosixPath('/var/tmp/plane-restore-contract-1s5hwu0i/fixtures/test_sdk_rejects_foreign_conne0/client-initialized').exists
 
 tools/tests/test_asset_store_guards.py:35: AssertionError
 ____ test_sdk_rejects_foreign_connection_before_loading_s3_client[change1] _____
 
-tmp_path = PosixPath('/var/tmp/plane-restore-contract-xyyzen63/fixtures/test_sdk_rejects_foreign_conne1')
+tmp_path = PosixPath('/var/tmp/plane-restore-contract-1s5hwu0i/fixtures/test_sdk_rejects_foreign_conne1')
 change = {'endpoint': 'http://127.0.0.1:9000'}
 
     @pytest.mark.parametrize('change',[
@@ -61,11 +61,11 @@ change = {'endpoint': 'http://127.0.0.1:9000'}
 E       AssertionError: Foreign connection must be denied before S3 client initialization
 E       assert not True
 E        +  where True = exists()
-E        +    where exists = PosixPath('/var/tmp/plane-restore-contract-xyyzen63/fixtures/test_sdk_rejects_foreign_conne1/client-initialized').exists
+E        +    where exists = PosixPath('/var/tmp/plane-restore-contract-1s5hwu0i/fixtures/test_sdk_rejects_foreign_conne1/client-initialized').exists
 
 tools/tests/test_asset_store_guards.py:35: AssertionError
-- generated xml file: /var/tmp/HLB-434-reviewed-source-controls-20261019/failure-sdk-endpoint.xml -
+- generated xml file: /var/tmp/HLB-434-db-source-controls-v2-20261019/failure-sdk-endpoint.xml -
 =========================== short test summary info ============================
 FAILED tools/tests/test_asset_store_guards.py::test_sdk_rejects_foreign_connection_before_loading_s3_client[change0]
 FAILED tools/tests/test_asset_store_guards.py::test_sdk_rejects_foreign_connection_before_loading_s3_client[change1]
-2 failed, 4 passed, 39 deselected in 2.41s
+2 failed, 4 passed, 46 deselected in 2.00s
