@@ -102,3 +102,21 @@ def test_api_client_stays_on_private_network_without_host_publication(fixture_sc
     assert '-p' not in api and '--publish' not in api, 'Private schema API must never publish a host port'
     assert client[client.index('--network')+1]==module.NETWORK, 'HTTP client must share the isolated API network'
     assert any(c[:3]==['docker','exec',module.NS+'-api'] for c in calls), 'Readiness must execute within the isolated API container'
+
+
+@pytest.mark.parametrize('output',[b'pytest 9.0.3\n',b'pytest 8.0.0\n',b''])
+def test_runner_dependency_admission_without_network_or_database(fixture_scope,monkeypatch,output):
+    module,root=fixture_scope
+    calls=[]
+    def external(argv,**kwargs):
+        calls.append(argv)
+        return subprocess.CompletedProcess(argv,0,output,b'')
+    monkeypatch.setattr(module,'run',external)
+    if output==b'pytest 9.0.3\n':module.verify_runner()
+    else:
+        with pytest.raises(RuntimeError,match='TEST_RUNNER_REQUIRED'):module.verify_runner()
+    assert len(calls)==1
+    argv=calls[0]
+    assert argv[argv.index('--network')+1]=='none'
+    assert module.PG not in argv and module.BACKEND not in argv
+    assert argv[-5:]==[module.RUNNER,'python','-m','pytest','--version']

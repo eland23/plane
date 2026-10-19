@@ -30,7 +30,7 @@ BACKEND = 'sha256:1c54c4fbe69d3a38740e1d05a6c0d31387050c351f0848e62c33c0a71a7c5a
 BASE_TAG = 'plane-rehearsal-migration-e5c-backend:e5c7acf098a890436ab6300f0bc8491c7dd22725'
 PG = 'sha256:468d34fefd6338031787c7b8e94078975b3aaf4d66c7ead25c39cd3ba46a15c6'
 REDIS = 'sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2'
-RUNNER = 'sha256:f2470ea68b74b1746bc31a20112dac63e67f55e84e2580b30b03da8af49d2d7d'
+RUNNER = 'sha256:25c7d4cbb046e0929072c2197f074222e7fe9e5b1f09c75e2e3e8dc36635560f'
 FAULT_TAG = NS + '-fault:missing0123'
 REVISION = 'e5c7acf098a890436ab6300f0bc8491c7dd22725'
 NAMES = [NS + suffix for suffix in ['-db','-redis','-api','-cli','-tests']]
@@ -188,6 +188,13 @@ def test_phase(name, fault=False):
     return {'phase':name,'exit':result.returncode,'intended_schema_failure':fault}
 
 
+def verify_runner():
+    result=run(['docker','run','--rm','--name',NS+'-tests','--label','io.plane.rehearsal.owner='+OWNER,
+        '--network','none','--memory','128m','--memory-swap','128m','--cpus','1','--pids-limit','64',
+        '--read-only','--tmpfs','/tmp:rw,nosuid,size=16m',RUNNER,'python','-m','pytest','--version'])
+    require(result.stdout.strip()==b'pytest 9.0.3','TEST_RUNNER_REQUIRED')
+
+
 def prepare():
     global OWNED_ROOT
     require(not ROOT.exists() and ROOT.resolve()==ROOT,'FIXTURE_OUTPUT_EXISTS_OR_SYMLINK')
@@ -210,6 +217,7 @@ def prepare():
     private_file(ROOT/'owner',OWNER.encode())
     OWNED_ROOT = True
     for name in ['logs','evidence','testsrc','pgdata','fault-build']:(ROOT/name).mkdir(mode=0o700)
+    verify_runner()
     shutil.copyfile(Path(__file__).with_name('test_schema_api.py'),ROOT/'testsrc/test_schema_api.py')
     password=secrets.token_urlsafe(32)
     private_file(ROOT/'db.env',f'POSTGRES_USER=plane_fixture\nPOSTGRES_PASSWORD={password}\nPOSTGRES_DB=plane_schema_good\n'.encode())
