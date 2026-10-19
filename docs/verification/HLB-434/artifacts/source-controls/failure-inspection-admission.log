@@ -1,0 +1,24 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___ test_indeterminate_docker_state_preserves_data_and_refuses_clean_receipt ___
+
+cleanup_scope = (<module 'asset_rehearsal_under_test' from '/var/tmp/plane-restore-contract-xp247650/docs/verification/HLB-434/native/...rehearsal.py'>, PosixPath('/var/tmp/plane-restore-contract-xp247650/fixtures/test_indeterminate_docker_stat0/private'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7906bd42b5b0>
+
+    def test_indeterminate_docker_state_preserves_data_and_refuses_clean_receipt(cleanup_scope,monkeypatch):
+        module,root=cleanup_scope
+        monkeypatch.setenv('DOCKER_FIXTURE_MODE','denied')
+        error=None
+        try:module.cleanup()
+        except RuntimeError as caught:error=str(caught)
+>       assert (root/'readbacks/original-marker').exists(),'Indeterminate Docker state must preserve readbacks'
+E       AssertionError: Indeterminate Docker state must preserve readbacks
+E       assert False
+E        +  where False = exists()
+E        +    where exists = (PosixPath('/var/tmp/plane-restore-contract-xp247650/fixtures/test_indeterminate_docker_stat0/private') / 'readbacks/original-marker').exists
+
+tools/tests/test_asset_store_guards.py:84: AssertionError
+- generated xml file: /var/tmp/HLB-434-full-source-controls-20261018/failure-inspection-admission.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_asset_store_guards.py::test_indeterminate_docker_state_preserves_data_and_refuses_clean_receipt
+1 failed, 42 deselected in 1.99s

@@ -1,0 +1,23 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_receipt_failure_still_removes_readbacks_credentials_and_releases_lease __
+
+cleanup_scope = (<module 'asset_rehearsal_under_test' from '/var/tmp/plane-restore-contract-txsp0o_3/docs/verification/HLB-434/native/...rehearsal.py'>, PosixPath('/var/tmp/plane-restore-contract-txsp0o_3/fixtures/test_receipt_failure_still_rem0/private'))
+
+    def test_receipt_failure_still_removes_readbacks_credentials_and_releases_lease(cleanup_scope):
+        import errno
+        module,root=cleanup_scope
+        (root/'receipts.json').mkdir()
+        lease=os.open(root/'lease',os.O_CREAT|os.O_RDWR,0o600)
+        with pytest.raises(OSError):module.finish([],lease)
+>       assert not (root/'readbacks').exists(),'Receipt failure must still remove owned readbacks'
+E       AssertionError: Receipt failure must still remove owned readbacks
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = (PosixPath('/var/tmp/plane-restore-contract-txsp0o_3/fixtures/test_receipt_failure_still_rem0/private') / 'readbacks').exists
+
+tools/tests/test_asset_store_guards.py:96: AssertionError
+- generated xml file: /var/tmp/HLB-434-full-source-controls-20261018/failure-receipt-cleanup.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_asset_store_guards.py::test_receipt_failure_still_removes_readbacks_credentials_and_releases_lease
+1 failed, 42 deselected in 0.44s

@@ -1,0 +1,27 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_downloaded_asset_matches_original_then_rejects_changed_bytes_and_recovers _
+
+tmp_path = PosixPath('/var/tmp/plane-restore-contract-ru7jkbam/fixtures/test_downloaded_asset_matches_0')
+
+    def test_downloaded_asset_matches_original_then_rejects_changed_bytes_and_recovers(tmp_path):
+        path,digest=archive_fixture(tmp_path)
+        readback=tmp_path/'readback.bin'
+        arguments=['compare-asset','--archive',path,'--expected-sha256',digest,
+                   '--key-sha256',KEY_DIGEST,'--readback',readback]
+        readback.write_bytes(b'abc')
+        code,result=command(*arguments)
+        assert code==0
+        assert result=={'status':'PASS','key_sha256':KEY_DIGEST,'sha256':CONTENT_DIGEST,'bytes':3}
+        readback.write_bytes(b'xyz')
+>       assert command(*arguments)==(1,{'status':'FAIL','error':'ASSET_HASH_MISMATCH'})
+E       AssertionError: assert (0, {'bytes':...tus': 'PASS'}) == (1, {'error':...tus': 'FAIL'})
+E         
+E         At index 0 diff: 0 != 1
+E         Use -v to get more diff
+
+tools/tests/test_plane_restore.py:60: AssertionError
+- generated xml file: /var/tmp/HLB-434-full-source-controls-20261018/failure-asset-checksum.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_plane_restore.py::test_downloaded_asset_matches_original_then_rejects_changed_bytes_and_recovers
+1 failed, 42 deselected in 2.31s

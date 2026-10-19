@@ -1,0 +1,7 @@
+{
+  "source_state": "precommit working tree; native identity metadata added after the source matrix",
+  "core_tool_git_blob": "8c5d96f3681b40d727c7b81935ef2deaabf92016",
+  "source_runner_git_blob": "3756284fcea874793d1f869a14f53c75d23efd28",
+  "final_exact_head_ci": "pending",
+  "hosted_service_execution": false
+}

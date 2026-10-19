@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.771" timestamp="2026-10-19T01:36:39.949270+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_plane_restore" name="test_downloaded_asset_matches_original_then_rejects_changed_bytes_and_recovers" time="0.400"><failure message="assert 1 == 0">tmp_path = PosixPath('/tmp/pytest-of-root/pytest-100/test_downloaded_asset_matches_0')
+
+    def test_downloaded_asset_matches_original_then_rejects_changed_bytes_and_recovers(tmp_path):
+        path,digest=archive_fixture(tmp_path)
+        readback=tmp_path/'readback.bin'
+        arguments=['compare-asset','--archive',path,'--expected-sha256',digest,
+                   '--key-sha256',KEY_DIGEST,'--readback',readback]
+        readback.write_bytes(b'abc')
+        code,result=command(*arguments)
+&gt;       assert code==0
+E       assert 1 == 0
+
+tools/tests/test_plane_restore.py:50: AssertionError</failure></testcase></testsuite></testsuites>

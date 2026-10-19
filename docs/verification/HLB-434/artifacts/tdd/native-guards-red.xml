@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="10" time="4.565" timestamp="2026-10-19T01:46:51.406062+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_asset_store_guards" name="test_sdk_rejects_foreign_connection_before_loading_s3_client[change0]" time="0.422" /><testcase classname="tools.tests.test_asset_store_guards" name="test_sdk_rejects_foreign_connection_before_loading_s3_client[change1]" time="0.680" /><testcase classname="tools.tests.test_asset_store_guards" name="test_sdk_rejects_foreign_connection_before_loading_s3_client[change2]" time="0.421" /><testcase classname="tools.tests.test_asset_store_guards" name="test_sdk_rejects_foreign_connection_before_loading_s3_client[change3]" time="0.373" /><testcase classname="tools.tests.test_asset_store_guards" name="test_sdk_rejects_foreign_connection_before_loading_s3_client[change4]" time="0.518" /><testcase classname="tools.tests.test_asset_store_guards" name="test_sdk_rejects_foreign_connection_before_loading_s3_client[change5]" time="0.312" /><testcase classname="tools.tests.test_asset_store_guards" name="test_native_commands_deny_optimized_execution_before_operations[flag-asset_store_rehearsal.py]" time="0.291"><failure message="AssertionError: assert 1 == 2&#10; +  where 1 = CompletedProcess(args=['/usr/bin/python3', '-O', '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-434/docs/verification/HLB-434/native/asset_store_rehearsal.py'], returncode=1, stdout='NOT_IMPLEMENTED\n', stderr='').returncode">tmp_path = PosixPath('/tmp/pytest-of-root/pytest-106/test_native_commands_deny_opti0')
+name = 'asset_store_rehearsal.py', mode = 'flag'
+
+    @pytest.mark.parametrize('name',['asset_store_rehearsal.py','asset_store_sdk.py'])
+    @pytest.mark.parametrize('mode',['flag','environment'])
+    def test_native_commands_deny_optimized_execution_before_operations(tmp_path,name,mode):
+        env={'PATH':os.environ['PATH']}
+        args=[sys.executable]
+        if mode=='flag':args+=['-O']
+        else:env['PYTHONOPTIMIZE']='1'
+        result=subprocess.run([*args,str(NATIVE/name)],env=env,capture_output=True,text=True,timeout=10)
+&gt;       assert result.returncode==2
+E       AssertionError: assert 1 == 2
+E        +  where 1 = CompletedProcess(args=['/usr/bin/python3', '-O', '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-434/docs/verification/HLB-434/native/asset_store_rehearsal.py'], returncode=1, stdout='NOT_IMPLEMENTED\n', stderr='').returncode
+
+tools/tests/test_asset_store_guards.py:48: AssertionError</failure></testcase><testcase classname="tools.tests.test_asset_store_guards" name="test_native_commands_deny_optimized_execution_before_operations[flag-asset_store_sdk.py]" time="0.385" /><testcase classname="tools.tests.test_asset_store_guards" name="test_native_commands_deny_optimized_execution_before_operations[environment-asset_store_rehearsal.py]" time="0.184"><failure message="AssertionError: assert 1 == 2&#10; +  where 1 = CompletedProcess(args=['/usr/bin/python3', '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-434/docs/verification/HLB-434/native/asset_store_rehearsal.py'], returncode=1, stdout='NOT_IMPLEMENTED\n', stderr='').returncode">tmp_path = PosixPath('/tmp/pytest-of-root/pytest-106/test_native_commands_deny_opti2')
+name = 'asset_store_rehearsal.py', mode = 'environment'
+
+    @pytest.mark.parametrize('name',['asset_store_rehearsal.py','asset_store_sdk.py'])
+    @pytest.mark.parametrize('mode',['flag','environment'])
+    def test_native_commands_deny_optimized_execution_before_operations(tmp_path,name,mode):
+        env={'PATH':os.environ['PATH']}
+        args=[sys.executable]
+        if mode=='flag':args+=['-O']
+        else:env['PYTHONOPTIMIZE']='1'
+        result=subprocess.run([*args,str(NATIVE/name)],env=env,capture_output=True,text=True,timeout=10)
+&gt;       assert result.returncode==2
+E       AssertionError: assert 1 == 2
+E        +  where 1 = CompletedProcess(args=['/usr/bin/python3', '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-434/docs/verification/HLB-434/native/asset_store_rehearsal.py'], returncode=1, stdout='NOT_IMPLEMENTED\n', stderr='').returncode
+
+tools/tests/test_asset_store_guards.py:48: AssertionError</failure></testcase><testcase classname="tools.tests.test_asset_store_guards" name="test_native_commands_deny_optimized_execution_before_operations[environment-asset_store_sdk.py]" time="0.239" /></testsuite></testsuites>
