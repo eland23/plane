@@ -169,7 +169,7 @@ remain unchanged.
 ## Shared fixture M preparation (NOT RUN)
 
 A new isolated shared controller combines original database and object restore,
-supported fixture M setup, and 28 unchanged native API/asset checks. The fixture
+supported fixture M setup, and 29 unchanged native API/asset checks. The fixture
 covers six literal FAS identifiers, state totals, module membership and the
 cross-module parent chain, blocking/related/duplicate edges, tied/null dates,
 a cycle spanning DST, an inactive comment author/thread, wiki/inline image,
@@ -182,3 +182,10 @@ changed, then pass after asset repair and database dump recovery. Future portfol
 fields excluded by the parent runtime scope are not seeded. Browser editing,
 cancel/save/error/retry, combined Control A and ordered release/readiness remain
 open; collection and source checks do not prove native combined behavior.
+
+Shared attempt01 (79419ff) ran the normal suite:27PASS/1FAIL, zero errors/skips.
+The failure required identical ISO timestamp text even though the returned New
+York offsets represent the golden UTC instants. This is an expectation defect,
+not a controlled-failure result or accepted normal pass. The corrected contract
+compares exact aware instants and the literal DST offsets (-04:00→-05:00); cycle
+state totals now have an independent test. The rerun expects29 cases.

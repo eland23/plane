@@ -1,5 +1,6 @@
 """Literal fixture-M contracts against real authenticated APIs and asset bytes."""
 import hashlib
+from datetime import datetime
 import json
 from pathlib import Path
 from urllib.error import HTTPError
@@ -67,9 +68,17 @@ def test_modules_preserve_exact_membership(module,expected_sequences):
     assert sorted(row['sequence_id'] for row in actual)==expected_sequences
 
 
-def test_cycle_spans_dst_and_preserves_state_counts():
+def test_cycle_spans_dst_and_preserves_exact_instants():
     row=data(P+'cycles/'+G['cycle']['id']+'/')
-    assert row['start_date']==G['cycle']['start'] and row['end_date']==G['cycle']['end']
+    start=datetime.fromisoformat(row['start_date'].replace('Z','+00:00'))
+    end=datetime.fromisoformat(row['end_date'].replace('Z','+00:00'))
+    assert start==datetime.fromisoformat(G['cycle']['start'].replace('Z','+00:00'))
+    assert end==datetime.fromisoformat(G['cycle']['end'].replace('Z','+00:00'))
+    assert (start.utcoffset().total_seconds(),end.utcoffset().total_seconds())==(-14400,-18000)
+
+
+def test_cycle_preserves_six_issue_state_counts():
+    row=data(P+'cycles/'+G['cycle']['id']+'/')
     assert (row['total_issues'],row['completed_issues'],row['unstarted_issues'],row['cancelled_issues'])==(6,2,2,2)
 
 

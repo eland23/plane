@@ -2,8 +2,8 @@ F                                                                        [100%]
 =================================== FAILURES ===================================
 ___ test_indeterminate_docker_state_preserves_data_and_refuses_clean_receipt ___
 
-cleanup_scope = (<module 'asset_rehearsal_under_test' from '/var/tmp/plane-restore-contract-4232ar7w/docs/verification/HLB-434/native/...rehearsal.py'>, PosixPath('/var/tmp/plane-restore-contract-4232ar7w/fixtures/test_indeterminate_docker_stat0/private'))
-monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x71a291a13250>
+cleanup_scope = (<module 'asset_rehearsal_under_test' from '/var/tmp/plane-restore-contract-b0i8ac93/docs/verification/HLB-434/native/...rehearsal.py'>, PosixPath('/var/tmp/plane-restore-contract-b0i8ac93/fixtures/test_indeterminate_docker_stat0/private'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ee378d170a0>
 
     def test_indeterminate_docker_state_preserves_data_and_refuses_clean_receipt(cleanup_scope,monkeypatch):
         module,root=cleanup_scope
@@ -15,10 +15,10 @@ monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x71a291a13250>
 E       AssertionError: Indeterminate Docker state must preserve readbacks
 E       assert False
 E        +  where False = exists()
-E        +    where exists = (PosixPath('/var/tmp/plane-restore-contract-4232ar7w/fixtures/test_indeterminate_docker_stat0/private') / 'readbacks/original-marker').exists
+E        +    where exists = (PosixPath('/var/tmp/plane-restore-contract-b0i8ac93/fixtures/test_indeterminate_docker_stat0/private') / 'readbacks/original-marker').exists
 
 tools/tests/test_asset_store_guards.py:84: AssertionError
-- generated xml file: /var/tmp/HLB-434-db-reviewed-controls-20261019/failure-inspection-admission.xml -
+- generated xml file: /var/tmp/HLB-434-M-source-controls-20261019/failure-inspection-admission.xml -
 =========================== short test summary info ============================
 FAILED tools/tests/test_asset_store_guards.py::test_indeterminate_docker_state_preserves_data_and_refuses_clean_receipt
-1 failed, 54 deselected in 2.36s
+1 failed, 64 deselected in 1.97s
