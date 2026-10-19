@@ -168,3 +168,19 @@ lease. No diagnostic loss was recorded. Raw service logs stay private; selected
 public outputs were scanned against original bucket/key/header values and
 credential field markers before copying to Git. The native store data was
 ephemeral and removed. Both original captures and unrelated services remain.
+
+## Database restore component preparation
+
+Added a separate .130-owned database controller and guarded setup, restoring this
+ticket's own copy from the captured original dump. The normal API suite splits
+anonymous denial, exact link identity, title, URL and nullable provenance into
+five assertions. The bounded defect changes only the synthetic title. Recovery
+restores the saved seeded dump, checks exact full logical-row equality, restarts
+the API and repeats those unchanged assertions. Original rows are checked before
+migration and after recovery using the public preservation comparator.
+
+Seven new process-boundary guards reject foreign database destinations before
+Django initialization and optimized execution before operations. Red/green and
+source controlled-defect results are tracked separately from native execution.
+This database component and complete supported fixture M are NOT RUN at this
+source checkpoint; neither is inferred from earlier HLB-433 evidence.

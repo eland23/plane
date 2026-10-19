@@ -6,6 +6,7 @@ on:
       - tools/check_plane_restore.py
       - tools/tests/test_plane_restore.py
       - tools/tests/test_asset_store_guards.py
+      - tools/tests/test_database_restore_guards.py
       - docs/verification/HLB-434/**
       - .github/workflows/plane-restore-contract.yml
   workflow_dispatch:

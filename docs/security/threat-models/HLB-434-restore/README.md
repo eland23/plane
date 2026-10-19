@@ -23,3 +23,31 @@ before publication because an assertion failure can otherwise disclose inputs.
 
 Resource limits are component reservations, not full Plane sizing evidence. Logs
 may retain private material after credential invalidation and stay outside Git.
+
+## Database/API restore delta (preparatory)
+
+The separate database controller restores only into a new owned .130 PostgreSQL
+namespace under the same shared lease. Private dump and logical snapshot hashes
+must match captured constants before mutation. A repeatable read-only transaction
+captures all public logical rows; the public comparator requires exact equality
+before migrations, preserves old row multiplicity/values after additions, and
+compares the saved seeded snapshot exactly after restoring its private dump.
+This covers logical rows, not all PostgreSQL catalogs/roles/grants.
+
+The synthetic setup checks exact database URL, resolved Django connection,
+settings, Redis endpoints and container hostname before writes. It creates a
+single supported issue/link and native temporary session in the new database;
+existing source rows are never the fault target. Anonymous API access is denied;
+signed session reads assert literal UUID, title, URL and nullable provenance.
+The controlled fault changes only that synthetic link title. Recovery stops the
+owned API and restores the seeded dump; unchanged API assertions must pass again.
+
+Internal networking has no published ports. No worker, mail or provider client
+is started. The full backend payload fingerprint and application revision are
+verified, all dependency images pinned, and source execution hashes recorded.
+Memory/disk reservations remain component gates. Ownership checks precede
+container/network deletion; failed state inspection preserves private database
+and readbacks. Once absence is confirmed, delete owned database data, dump,
+snapshots and session/environment files. Private diagnostics may retain expired
+session material outside Git. Native database/API and full shared fixture M proof
+remain pending; source guards alone do not mitigate the runtime risks.
