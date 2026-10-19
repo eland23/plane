@@ -1,6 +1,6 @@
 # Verification evidence: HLB-434 Plane restore integrity
 
-Status: **NOT RUN for full acceptance; source contracts PASS**. Author: Codex.
+Status: **NOT RUN for full acceptance; source contracts and native asset component PASS**. Author: Codex.
 Reviewer: separate Standards and Spec/security review PASS at 8e5995c. [Child](https://linear.app/fashionfindrs/issue/HLB-434),
 [parent](https://linear.app/fashionfindrs/issue/HLB-429). Policy: existing parent
 verification decisions and FashionFindr `docs/testing/REPORT-TEMPLATE.md`.
@@ -17,11 +17,11 @@ verification decisions and FashionFindr `docs/testing/REPORT-TEMPLATE.md`.
 | REL-03 / execution mode | V1/V2 | HLB-434 | native_commands_deny_optimized_execution | Both native commands reject -O / PYTHONOPTIMIZE before protected operations | pytest/process | PASS source | source-controls |
 | REL-03 / inspection | V2 | HLB-434 | indeterminate_docker_state | Unavailable Docker state preserves private readbacks/config and cannot produce a clean receipt | pytest/CLI fake | PASS source | source-controls |
 | REL-03 / cleanup errors | V2 | HLB-434 | receipt_failure_still, diagnostic_failure_still | Receipt I/O failure still removes owned readbacks/credential files and closes lease; failed diagnostic retrieval/storage cannot prevent confirmed-owned resource removal | pytest/filesystem | PASS source | source-controls |
-| REL-03 / real asset restore | AC2/V1/V2 | HLB-434 | native/asset_store_rehearsal.py + test_asset_store.py | Signed S3 restore and fresh GET readback: exact original/fixture keys, metadata and hashes; anonymous GET denied; corrupt fixture fails unchanged checksum assertion; restore repeats | authenticated S3 API/pytest | NOT RUN | native preparation only |
+| REL-03 / real asset restore | AC2/V1/V2 | HLB-434 | native/asset_store_rehearsal.py + test_asset_store.py | Signed S3 restore and fresh GET readback: exact original/fixture keys, metadata and hashes; anonymous GET denied; corrupt fixture fails unchanged checksum assertion; restore repeats | authenticated S3 API/pytest | PASS component | native-assets-4769e03 |
 | REL-03 / own database restore | AC2/V1 | HLB-434 | shared runtime fixture preparation | Own restored database and supported fixture-M identities/content preserved through independently read destination APIs | native DB/API | NOT RUN | HLB-433 evidence does not waive this row |
 | REL-03 / shared M integration | V1/V3 | HLB-434/435/436 | supported issue/module/cycle/wiki/asset fixture M | Literal identities/graph/order/assets and combined wiki/cycle reload | API/Playwright | NOT RUN | shared integration remains open |
 
-Inventory: 11 scoped rows; 8 source rows proven, 3 runtime/integration rows NOT RUN,
+Inventory: 11 scoped rows; 8 source rows and 1 native asset row proven, 2 integration rows NOT RUN,
 0 approved deferrals. UI and Jest are N/A to this Python CLI/component slice;
 actual browser journeys remain required under HLB-436. Optional TesterArmy is N/A
 per the parent. No coverage claim extends beyond these rows.
@@ -48,7 +48,7 @@ Native dependencies already staged on .130:
 - Hash-locked test runner `25c7d4cb…`, native pytest 9.0.3 (preflight verifies it).
 - Object store `30cfd6ed…`, an existing pinned custom MinIO image. Its version CLI
   identifies DEVELOPMENT.GOGET, Go 1.24.7; no upstream release-tag claim is made.
-  Source preparation has not yet proved its S3 compatibility here.
+  The signed restore/readback and fault/recovery sequence proves the scoped S3 operations here.
 
 The store has a 256 MiB memory cap and read-only root, with an ephemeral data
 filesystem. SDK and pytest clients are bounded and sequential; component admission
@@ -65,8 +65,12 @@ python3 tools/check_plane_restore.py --output /absolute/new-evidence-directory
 Before native execution, commit/push source and stage that Git archive on .130;
 retain the original root-only archive at the documented private source path.
 Run the staged native/asset_store_rehearsal.py only on .130. The fixed namespace
-and output directory must be absent. Runtime/test/source hashes and exact-head CI
-will be recorded with actual execution; none is inferred from source checks.
+and output directory must be absent. The actual run used pushed revision 4769e0335a5db8f5a28a9d069dde5c34bd0bca08.
+Five executed code files match its Git blobs; image/isolation identities are in
+artifacts/native-assets-4769e03/runtime-identity.json. Native pytest 9.0.3 and
+boto3 1.34.96/Python 3.12.10 ran on .130. The unchanged assertion file has the
+same SHA-256 across the three phases. CI 39188214390 (restore contracts) and
+39188214393 (React Doctor) PASS at that exact revision.
 
 Private originals, credential material and diagnostics stay root-only outside
 Git; public evidence contains synthetic source tests and sanitized metadata.
@@ -84,7 +88,7 @@ while the migration rehearsal is open.
 | Inspection guard | Treat permission failure as absence | Data-preservation assertion fails | 1 intended failure / 0 errors | 1 | failure-inspection-admission.xml |
 | Receipt cleanup | Skip cleanup after receipt error | Readback cleanup assertion fails | 1 intended failure / 0 errors | 1 | failure-receipt-cleanup.xml |
 | Source rows above | Restore and repeat | PASS | 45 pass / 0 errors | 0 | artifacts/source-controls/restore-and-repeat.xml |
-| Real S3 rows | Known / corrupt / restored | PASS / intended checksum failure / PASS | NOT RUN | — | pending native receipts |
+| Real S3 rows | Known / corrupt / restored | PASS / intended checksum failure / PASS | 4 pass / 1 intended failure of 4 / 4 pass; 0 errors/skips | 0 / 1 / 0 | native-assets-4769e03/*.xml and receipts.json |
 
 Source controlled defects affect temporary copies only; all fixture directories
 are removed. They do not substitute for parent Control B against real restored
@@ -104,12 +108,13 @@ by the controller; exact-head CI remains a separate gate before acceptance.
 | Foreign endpoint, bucket or credentials | S3 initialization | Deliberate external SDK fake | Reject before importing client; no provider calls | PASS source |
 | Docker permission/inspection failure | Cleanup | Deliberate external Docker fake | Preserve private readbacks and reject clean receipt | PASS source |
 | Receipt write failure | Completion | Real filesystem/descriptor | Cleanup still runs and lease descriptor closes | PASS source |
-| Actual object corruption and repair | Signed S3 PUT/GET | Real isolated server | Same normal test detects changed binary fixture, then passes after repair | NOT RUN |
+| Actual object corruption and repair | Signed S3 PUT/GET | Real isolated server | Same normal test detects changed binary fixture, then passes after repair | PASS native |
 
 ## Evidence bundle
 
 Source JUnit/native phase outputs: artifacts/source-controls/ and artifacts/tdd/.
-No browser screenshots/traces are applicable to this source-only checkpoint.
+Native JUnit, unchanged phase logs, runtime identity and independent cleanup are
+in artifacts/native-assets-4769e03/. Browser coverage remains pending integration.
 Independent Standards and Spec/security review PASS at 8e5995c; cleanup P2
 resolved with two red/green boundary regressions. Restore contracts CI
 [39188012985](https://github.com/eland23/plane/actions/runs/39188012985) and React
@@ -129,9 +134,12 @@ All owned source-test temporary directories were removed. No application service
 or service container ran on the editor. The manual MinIO version CLI on .130 was
 short-lived and removed itself; it is not S3 restore evidence.
 
-Full child acceptance remains incomplete. Native signed S3 restore/corruption/
-recovery, HLB-434's own database restore/readback, and supported shared fixture M
-integration are still open. Existing HLB-433 DB/schema proof is preparatory
+The native signed S3 component PASS covers the 98975-byte original object and
+two golden inline-image/binary fixtures. Exact key sets, headers/metadata, SHA-256
+and anonymous 403 passed; changing only the synthetic binary caused the intended
+checksum assertion to fail with no setup errors, then repair restored all four
+checks. Full child acceptance remains incomplete: HLB-434's own database
+restore/readback and supported shared fixture M integration are still open. Existing HLB-433 DB/schema proof is preparatory
 context and does not waive HLB-434 coverage. The prerequisite/acceptance alignment
 remains explicit; no child is falsely marked complete to clear a blocker. Live
 .129 and unrelated .130 workloads/data remain unchanged.
@@ -142,4 +150,21 @@ Revision 8e5995c reached the isolated server bootstrap, which failed before any
 restore assertions: the non-root store could not write its new ephemeral data
 filesystem. The correction assigns that new tmpfs to the existing UID/GID 1000
 with mode 0700; no host directory or existing object store is changed. Cleanup
-and rerun results will be recorded separately.
+passed independently: zero owned containers/networks, no private readbacks or
+credential files, archive unchanged, lease reacquired. Its private diagnostics
+were archived separately; this failed setup is not counted as Control B.
+
+## Native attempt 02 (accepted asset component)
+
+Revision 4769e03 completed all three unchanged-test phases with exit 0/1/0 and
+4/4, 3/4, 4/4 passing assertions. The only failure was the literal golden checksum
+for the deliberately corrupted attachment. Other key/metadata/access assertions
+passed during corruption. SDK writes and GETs used the internal signed endpoint;
+test containers had no network or credential mount.
+
+Independent post-run readback confirmed zero owned containers and networks,
+removed credential/readback files, unchanged original archive, and a reacquirable
+lease. No diagnostic loss was recorded. Raw service logs stay private; selected
+public outputs were scanned against original bucket/key/header values and
+credential field markers before copying to Git. The native store data was
+ephemeral and removed. Both original captures and unrelated services remain.

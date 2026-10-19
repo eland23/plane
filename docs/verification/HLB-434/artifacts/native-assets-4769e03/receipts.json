@@ -1,0 +1,35 @@
+[
+  {
+    "phase": "pass-known-state",
+    "exit": 0,
+    "counts": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "intended_checksum_failure": false
+  },
+  {
+    "phase": "failure-corrupt-asset",
+    "exit": 1,
+    "counts": {
+      "tests": 4,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "intended_checksum_failure": true
+  },
+  {
+    "phase": "restore-and-repeat",
+    "exit": 0,
+    "counts": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "intended_checksum_failure": false
+  }
+]

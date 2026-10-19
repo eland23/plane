@@ -1,0 +1,11 @@
+{
+  "executed_revision": "4769e0335a5db8f5a28a9d069dde5c34bd0bca08",
+  "code_files_match_pushed_git": true,
+  "native_source_tests_unchanged_across_phases": true,
+  "test_sha256": "1fdbbb00da9d813c10e8da732d7df6b14b6515903680f4408501503adbc213a2",
+  "ci_run": 39188214390,
+  "standards_review": "PASS",
+  "spec_security_review": "PASS at8e5995c; permissions-only followup StandardsPASS",
+  "full_child_acceptance": "INCOMPLETE",
+  "original_values_and_credentials_scan": "PASS"
+}
