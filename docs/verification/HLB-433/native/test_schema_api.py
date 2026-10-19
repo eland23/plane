@@ -29,7 +29,7 @@ def get(path, authenticated=False):
 
 def test_schema_api_requires_authenticated_session():
     status, _ = get(PATH)
-    assert status == 403, 'Unauthenticated schema fixture must be denied'
+    assert status == 401, 'Unauthenticated schema fixture must be denied'
 
 
 def test_complete_packaged_schema_serves_exact_fixture_link():
