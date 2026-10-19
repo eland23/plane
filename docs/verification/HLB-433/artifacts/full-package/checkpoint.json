@@ -1,0 +1,20 @@
+{
+  "checkpoint": "COMPLETE_IMAGES_AND_OFFLINE_PAYLOAD_VERIFIED",
+  "builder_revision": "08a15ab54ecfeeb4b077541dfbf3ea9591ff2aa4",
+  "builder_checksum_matches": true,
+  "source_snapshot_removed": true,
+  "candidate_sha256": "a5361762f1cb133510a0846526942b1dcd367c9237085369f72d94303703727c",
+  "images": {
+    "backend": {
+      "id": "sha256:0488a84e9e4c903d972420fa7c28ebaa6a006e27049dc3e57d6ec1e2d45717ec",
+      "bytes": 307630465
+    },
+    "frontend": {
+      "id": "sha256:9e5f1f51d8bd35efe70adb1385ea76b3ca88395a1a3ea24d9d9f52b7afdeb196",
+      "bytes": 103280599
+    }
+  },
+  "total_image_bytes": 410911064,
+  "deployment_admitted": false,
+  "native_http_control_complete": false
+}

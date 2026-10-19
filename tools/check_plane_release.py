@@ -26,19 +26,34 @@ def main():
         ("failure-private-output", "    require_private_output(output, repo)\n", "denies_logs_inside_any_git", "    pass\n"),
         ("restore-and-repeat", None, None, None),
     ]
-    for name, defect, selection, replacement in cases:
+    cases = [(*case, "tools/plane_release.py") for case in cases]
+    native = root.parent / "docs/verification/HLB-433/native"
+    seed = (native / "seed_schema_fixture.py").read_text()
+    admission = seed[seed.index("NS ="):seed.index("import django")]
+    cases[-1:-1] = [
+        ("failure-seed-admission", admission, "seed_rejects_nonfixture_database", "", "docs/verification/HLB-433/native/seed_schema_fixture.py"),
+        ("failure-inspection-admission", "    require(listing.returncode==0, 'INSPECTION_FAILED')", "inspection_failure_preserves", "    if listing.returncode: return None", "docs/verification/HLB-433/native/schema_api_fixture.py"),
+        ("failure-receipt-cleanup", "            finally:\n                cleanup()", "receipt_failure_still_cleans", "            except OSError:\n                raise\n            cleanup()", "docs/verification/HLB-433/native/schema_api_fixture.py"),
+        ("failure-lease-cleanup", "    finally:\n        os.close(lease)", "receipt_failure_still_cleans", "    finally:\n        pass", "docs/verification/HLB-433/native/schema_api_fixture.py"),
+    ]
+    for name, defect, selection, replacement, target in cases:
         with tempfile.TemporaryDirectory(prefix="plane-contract-", dir="/var/tmp") as temporary:
             clone = Path(temporary)
             (clone / "tools/tests").mkdir(parents=True)
-            text = (root / "plane_release.py").read_text()
-            if defect:
-                if text.count(defect) != 1:
-                    raise RuntimeError("Fault boundary must match exactly once")
-                text = text.replace(defect, replacement or "if False:")
-            (clone / "tools/plane_release.py").write_text(text)
-            shutil.copyfile(root / "tests/test_plane_release.py", clone / "tools/tests/test_plane_release.py")
-            command = [sys.executable, "-m", "pytest", "-q", "tools/tests/test_plane_release.py",
-                       "-o", "addopts=", "--junitxml=" + str(output / (name + ".xml")),
+            files = ["tools/plane_release.py", "tools/tests/test_plane_release.py",
+                     "tools/tests/test_native_backend_probe_guard.py", "tools/tests/test_schema_fixture_safety.py"]
+            files += ["docs/verification/HLB-433/native/" + file.name for file in native.glob("*.py")]
+            for file in files:
+                destination = clone / file
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                text = (root.parent / file).read_text()
+                if defect and file == target:
+                    if text.count(defect) != 1:
+                        raise RuntimeError("Fault boundary must match exactly once")
+                    text = text.replace(defect, replacement if replacement is not None else "if False:")
+                destination.write_text(text)
+            command = [sys.executable, "-m", "pytest", "-q", "tools/tests/test_plane_release.py", "tools/tests/test_native_backend_probe_guard.py",
+                       "tools/tests/test_schema_fixture_safety.py", "-o", "addopts=", "--junitxml=" + str(output / (name + ".xml")),
                        "--basetemp=" + str(clone / "fixtures")]
             if selection:
                 command += ["-k", selection]
@@ -55,7 +70,7 @@ def main():
             break
     (output / "receipts.json").write_text(json.dumps(runs, indent=2) + "\n")
     print(json.dumps(runs))
-    return 0 if len(runs) == 7 and all(r["accepted"] and r["fixture_directory_removed"] for r in runs) else 1
+    return 0 if len(runs) == 11 and all(r["accepted"] and r["fixture_directory_removed"] for r in runs) else 1
 
 
 if __name__ == "__main__":
