@@ -1,7 +1,7 @@
 # Verification evidence: HLB-434 Plane restore integrity
 
-Status: **NOT RUN for full acceptance; source contracts and native asset/database components PASS**. Author: Codex.
-Reviewer: separate Standards and Spec/security review PASS at 7b5ddfc. [Child](https://linear.app/fashionfindrs/issue/HLB-434),
+Status: **NOT RUN for full acceptance; source contracts, native components and shared M API/assets PASS**. Author: Codex.
+Reviewer: separate Standards and Spec/security source reviews PASS at 0a88a87; final evidence review tracked on PR13. [Child](https://linear.app/fashionfindrs/issue/HLB-434),
 [parent](https://linear.app/fashionfindrs/issue/HLB-429). Policy: existing parent
 verification decisions and FashionFindr `docs/testing/REPORT-TEMPLATE.md`.
 
@@ -21,9 +21,10 @@ verification decisions and FashionFindr `docs/testing/REPORT-TEMPLATE.md`.
 | REL-03 / network isolation | AC2/V1 | HLB-434 | tools/tests/test_database_runtime_observer.py | Valid topology passes; additional network and wrong network ID produce no PASS receipt | pytest/CLI fake | PASS source | tdd/database-observer-red.xml and green.xml |
 | REL-03 / real asset restore | AC2/V1/V2 | HLB-434 | native/asset_store_rehearsal.py + test_asset_store.py | Signed S3 restore and fresh GET readback: exact original/fixture keys, metadata and hashes; anonymous GET denied; corrupt fixture fails unchanged checksum assertion; restore repeats | authenticated S3 API/pytest | PASS component | native-assets-4769e03 |
 | REL-03 / own database restore | AC2/V1 | HLB-434 | shared runtime fixture preparation | Own restored originals preserved; bounded synthetic link identity/content verified through authenticated API; full M remains separate | native DB/API | PASS bounded component | native-database-7b5ddfc |
-| REL-03 / shared M integration | V1/V3 | HLB-434/435/436 | supported issue/module/cycle/wiki/asset fixture M | Literal identities/graph/order/assets and combined wiki/cycle reload | API/Playwright | NOT RUN | shared integration remains open |
+| REL-03 / shared M API/assets | V1/V3 | HLB-434 | native/test_shared_fixture_m.py + test_asset_store.py | Literal IDs/graph/order/DST/memberships/wiki/document/access and authenticated asset bytes; exact saved dump recovery | native API/S3/pytest | PASS bounded shared fixture | shared-m-0a88a87 |
+| REL-03 / combined browser/release | V3 | HLB-434/435/436 | wiki/cycle UI and release journeys | Actual edit/cancel/save/reload/error/retry, combined Control A and ordered release/readiness | Playwright/runtime | NOT RUN | owning gates remain open |
 
-Inventory: 13 scoped rows; 10 source rows and 2 native component rows proven, 1 integration row NOT RUN,
+Inventory: 14 scoped rows; 10 source rows, 2 native component rows and 1 shared API/asset row proven; 1 browser/release row NOT RUN,
 0 approved deferrals. UI and Jest are N/A to this Python CLI/component slice;
 actual browser journeys remain required under HLB-436. Optional TesterArmy is N/A
 per the parent. No coverage claim extends beyond these rows.
@@ -79,6 +80,7 @@ run. No workers, mail, provider sends or production imports run here.
 | Source contracts | 65PASS | Six source guard defects cause intended failures, zero errors | 65PASS | source-controls/*.xml and receipts.json |
 | Asset checksum | 4PASS | Same suite:1 intended checksum failure of4, zero errors/skips | 4PASS | native-assets-4769e03/ |
 | Database/API | 5PASS | Same suite:1 intended title-content failure of5, zero errors/skips | 5PASS | native-database-7b5ddfc/ |
+| Shared M API/assets | 30PASS | Same suite:2 intended checksum failures of30, zero errors/skips | 30PASS | shared-m-0a88a87/ |
 
 The six source defects bypass the asset checksum, original-row preservation,
 SDK endpoint admission, Docker inspection admission, cleanup on receipt failure,
@@ -158,9 +160,9 @@ and [React Doctor39189763645](https://github.com/eland23/plane/actions/runs/3918
 The asset executed head has its own saved CI/provenance. Current evidence-head
 CI/review is tracked separately on PR13; runtime is not inferred from CI.
 
-Full HLB-434 remains INCOMPLETE. Complete supported fixture M and combined
-issue/module/cycle/wiki/asset/API/browser coverage remain NOT RUN. Component
-proof does not waive shared integration or HLB-435/436 gates. Prior HLB-433 proof
+Full HLB-434 remains INCOMPLETE. Shared supported fixture M API/asset proof now
+passes, while combined browser coverage, Control A and ordered release/readiness
+remain NOT RUN. API proof does not waive browser integration or HLB-435/436 gates. Prior HLB-433 proof
 does not waive this ticket's verification. No deferrals were approved. No child
 is marked complete to clear a dependency, and no merge, production delivery or
 full runtime admission is claimed. Live .129 and unrelated .130 data/services
@@ -203,3 +205,40 @@ detail, whose explicit response fields include only total_issues/completed_issue
 The corrected test requires6/2 there and exactly canceled FAS-21/FAS-30 through
 the same supported filtered cycle-issues API. No golden membership/count changed.
 This attempt is not accepted normal/fault proof; the next run retains30 cases.
+
+## Accepted shared M run
+
+Shared attempt04 executed pushed0a88a87d99a3e262ce81450925ae77f3f40de66d on .130:
+30PASS → 2 intended checksum failures of30 → 30PASS, zero errors/skips throughout.
+Only the marked synthetic binary changed. Both its authenticated API download
+and independently captured storage bytes failed unchanged golden SHA assertions;
+all other28 checks passed. Repairing that asset and restoring the actual saved
+seeded database dump returned the same30 assertions to PASS.
+
+Cycle detail verifies total/completed6/2; separate supported state filters verify
+Todo FAS-11/FAS-17 and canceled FAS-21/FAS-30. Exact issue states, all6 membership,
+module membership, numeric order, parent chain and relation types remain literal
+golden assertions. The DST test checks equal UTC instants and exact -04:00/-05:00
+offsets. Wiki and issue-associated document HTML/reference identity and private
+inline/binary downloads pass, with anonymous and cross-workspace denial.
+
+Mandatory runtime readback confirms all4 pinned services on exactly the owned
+internal network, matching NetworkIDs, read-only roots and no published ports.
+Nine executed file hashes match the pushed Git blobs; actual copied test/fixture
+hashes and the observer hash match runtime identity. Independent cleanup confirms
+zero owned containers/networks, no restored database/readbacks/dump/config/session
+files, unchanged original3 input hashes and a reacquired lease. Private diagnostic
+retention remains as described above. Selected artifacts were scanned against
+original row values, original bucket/keys/headers and credential/signed-query markers
+before publication.
+
+Original database logical equality before migration and original-row preservation
+after seeding/recovery PASS. Exact seeded dump logical equality before API restart
+also PASS (112tables/895rows); counts are recorded in shared-m-0a88a87/roundtrip-integrity.json. This
+is logical data preservation, not a PostgreSQL roles/grants/catalog equivalence claim.
+
+Executed-head CI PASS: [restore39195518325](https://github.com/eland23/plane/actions/runs/39195518325)
+and [ReactDoctor39195518517](https://github.com/eland23/plane/actions/runs/39195518517).
+Final evidence-head CI is separate and tracked on PR13. Browser UI writes/reload,
+error/retry/cancel, combined missing-migration Control A and ordered release/worker
+readiness remain open. No production import, cutover, merge or full child completion.

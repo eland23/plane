@@ -1,0 +1,51 @@
+.......................F.....F                                           [100%]
+=================================== FAILURES ===================================
+_ test_associated_assets_download_through_authenticated_api_and_match_golden_bytes[binary-1] _
+
+name = 'binary', index = 1
+
+    @pytest.mark.parametrize('name,index',[('inline',0),('binary',1)])
+    def test_associated_assets_download_through_authenticated_api_and_match_golden_bytes(name,index):
+        if name=='inline':path='/api/assets/v2/workspaces/'+G['workspace']['slug']+'/projects/'+G['project']['id']+'/'+G['assets'][name]+'/'
+        else:path='/api/assets/v2/workspaces/'+G['workspace']['slug']+'/projects/'+G['project']['id']+'/issues/'+G['issues'][2]['id']+'/attachments/'+G['assets'][name]+'/'
+        status,headers,_=request(path)
+        assert status==302,'Authenticated fixture asset must produce a signed redirect'
+        signed=headers['Location'];target=urlsplit(signed)
+        assert not target.username and not target.password and not target.fragment
+        assert target.scheme=='http' and target.hostname==NS+'-minio' and target.port==9000 and target.path=='/plane-rehearsal-hlb434-m-20261019/'+FIXTURES[index]['key']
+        # No session cookie is forwarded to the storage host.
+        with build_opener(NoRedirect()).open(signed,timeout=30) as response:
+            body=response.read(1024*1024)
+            assert response.headers['Content-Type']==FIXTURES[index]['headers']['ContentType']
+>       assert hashlib.sha256(body).hexdigest()==FIXTURES[index]['sha256'],'Associated fixture asset bytes must match golden SHA-256'
+E       AssertionError: Associated fixture asset bytes must match golden SHA-256
+E       assert '263a4c9b9b13...f63b3d4ed1914' == 'afe2651d21f5...50a8cd8d23df5'
+E         
+E         - afe2651d21f5afd5212e29ea37925ae21634af409aad0a1873850a8cd8d23df5
+E         + 263a4c9b9b135975dbcf444f05e5bb02aa91fee4c38886aacf4f63b3d4ed1914
+
+tests/test_shared_fixture_m.py:139: AssertionError
+__________ test_restored_asset_bytes_match_original_and_golden_hashes __________
+
+    def test_restored_asset_bytes_match_original_and_golden_hashes():
+        for row in original_rows():
+            key_digest=hashlib.sha256(row['key'].encode()).hexdigest()
+            command=[sys.executable,str(TOOL),'compare-asset','--archive',str(ARCHIVE),
+                     '--expected-sha256',EXPECTED_ARCHIVE,'--key-sha256',key_digest,
+                     '--readback',str(READBACK/(key_digest+'.bin'))]
+            result=subprocess.run(command,capture_output=True,text=True,timeout=30)
+            assert result.returncode==0,'Original asset checksum gate must pass: '+result.stdout
+        for row in FIXTURES:
+            actual=hashlib.sha256((READBACK/(row['key_sha256']+'.bin')).read_bytes()).hexdigest()
+>           assert actual==row['sha256'],'Fixture asset bytes must match golden SHA-256'
+E           AssertionError: Fixture asset bytes must match golden SHA-256
+E           assert '263a4c9b9b13...f63b3d4ed1914' == 'afe2651d21f5...50a8cd8d23df5'
+E             
+E             - afe2651d21f5afd5212e29ea37925ae21634af409aad0a1873850a8cd8d23df5
+E             + 263a4c9b9b135975dbcf444f05e5bb02aa91fee4c38886aacf4f63b3d4ed1914
+
+tests/test_asset_store.py:58: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_shared_fixture_m.py::test_associated_assets_download_through_authenticated_api_and_match_golden_bytes[binary-1]
+FAILED tests/test_asset_store.py::test_restored_asset_bytes_match_original_and_golden_hashes
+2 failed, 28 passed in 17.06s

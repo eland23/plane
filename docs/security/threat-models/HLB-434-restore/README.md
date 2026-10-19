@@ -76,4 +76,4 @@ public outputs require review for original values and signed query parameters.
 The golden JSON contains synthetic FAS-like identifiers, never looked up in live
 Linear. Issue-linked project documents use existing IssueLink/PageLog fields;
 future portfolio, milestone and exclusive-label features are excluded by the
-parent runtime scope. Combined API/asset and browser results remain pending.
+parent runtime scope. Combined API/asset proof PASS at0a88a87:30PASS→2 intended checksum failures→30PASS, zero errors/skips. Mandatory four-service isolation readback, nine executed code hashes, exact saved dump equality, original-row preservation and independent cleanup PASS. Selected public artifacts were scanned for original values and signed/credential material. Browser journeys, combined Control A and ordered release/readiness remain pending.
