@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.318" timestamp="2026-10-19T00:48:50.165963+00:00" hostname="runnervm8k3b6"><testcase classname="tools.tests.test_schema_fixture_safety" name="test_inspection_failure_preserves_private_data_and_refuses_cleanup_receipt" time="0.242"><failure message="AssertionError: Docker inspection failure must preserve private clone&#10;assert False&#10; +  where False = exists()&#10; +    where exists = (PosixPath('/var/tmp/plane-contract-jh9oqsee/fixtures/test_inspection_failure_preser0/private-fixture') / 'pgdata/original-marker').exists">fixture_scope = (&lt;module 'schema_fixture_under_test' from '/var/tmp/plane-contract-jh9oqsee/docs/verification/HLB-433/native/schema_api_fixture.py'&gt;, PosixPath('/var/tmp/plane-contract-jh9oqsee/fixtures/test_inspection_failure_preser0/private-fixture'))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f39862a2f00&gt;
+
+    def test_inspection_failure_preserves_private_data_and_refuses_cleanup_receipt(fixture_scope,monkeypatch):
+        module,root=fixture_scope
+        monkeypatch.setenv('DOCKER_FIXTURE_MODE','denied')
+        error=None
+        try:module.cleanup()
+        except RuntimeError as caught:error=str(caught)
+&gt;       assert (root/'pgdata/original-marker').exists(), 'Docker inspection failure must preserve private clone'
+E       AssertionError: Docker inspection failure must preserve private clone
+E       assert False
+E        +  where False = exists()
+E        +    where exists = (PosixPath('/var/tmp/plane-contract-jh9oqsee/fixtures/test_inspection_failure_preser0/private-fixture') / 'pgdata/original-marker').exists
+
+tools/tests/test_schema_fixture_safety.py:65: AssertionError</failure></testcase></testsuite></testsuites>

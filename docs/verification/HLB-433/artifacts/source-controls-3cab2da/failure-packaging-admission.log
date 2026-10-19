@@ -1,0 +1,22 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_package_preflight_reports_low_runtime_capacity_without_admitting_release _
+
+source = (PosixPath('/var/tmp/plane-contract-9zre_c5n/fixtures/test_package_preflight_reports0/source'), {'GIT_CONFIG_GLOBAL': ...config/varlock/bin:/root/.local/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', ...})
+
+    def test_package_preflight_reports_low_runtime_capacity_without_admitting_release(source):
+        source[1]['PROBE']='{"disk_free": 9000000000, "memory_available": 1100000000}'
+        result=invoke(source,command='preflight-package')
+        assert result.returncode==0,result.stderr
+        report=json.loads(result.stdout)
+>       assert report['status']=='PACKAGING_ONLY'
+E       AssertionError: assert 'PASS' == 'PACKAGING_ONLY'
+E         
+E         - PACKAGING_ONLY
+E         + PASS
+
+tools/tests/test_plane_release.py:328: AssertionError
+- generated xml file: /var/tmp/HLB-433-full-source-controls-20261018/failure-packaging-admission.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_plane_release.py::test_package_preflight_reports_low_runtime_capacity_without_admitting_release
+1 failed, 46 deselected in 1.74s

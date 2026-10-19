@@ -1,0 +1,12 @@
+{
+  "test_source_sha": "b1e38efde29cddfa7eda620be61c1d0835166d31",
+  "application_revision": "e5c7acf098a890436ab6300f0bc8491c7dd22725",
+  "backend_vm_image": "sha256:1c54c4fbe69d3a38740e1d05a6c0d31387050c351f0848e62c33c0a71a7c5a84",
+  "test_file_sha256": "65bb4f0d39068609c23c6b1e6ecb7d1f890a2aac48f9d2f0f707864512bae75d",
+  "same_test_for_all_phases": true,
+  "target": "192.168.1.130",
+  "run_attempt": 5,
+  "schema_control_result": "PASS",
+  "full_runtime_release_admitted": false,
+  "raw_database_asset_backups_credentials_and_api_logs": "private outside Git"
+}

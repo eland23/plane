@@ -1,0 +1,43 @@
+name: Plane release contracts
+
+on:
+  pull_request:
+    paths:
+      - tools/plane_release.py
+      - tools/check_plane_release.py
+      - tools/tests/test_plane_release.py
+      - tools/tests/test_native_backend_probe_guard.py
+      - tools/tests/test_schema_fixture_safety.py
+      - tools/PLANE_RELEASE.md
+      - docs/verification/HLB-433/**
+      - docs/security/threat-models/HLB-429-plane-runtime/**
+      - .github/workflows/plane-release-contract.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plane-release-contract-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install test runner
+        run: python3 -m pip install pytest==8.4.2
+      - name: Pass, detect bounded defects, restore and repeat
+        run: python3 tools/check_plane_release.py --output "$RUNNER_TEMP/plane-release-evidence"
+      - name: Save JUnit and native receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: plane-release-contract-${{ github.sha }}
+          path: ${{ runner.temp }}/plane-release-evidence
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,10 @@
+{
+  "test_source_revision": "6738024cd930b2174f00442f446f5cc416ba3f54",
+  "application_revision": null,
+  "target": "192.168.1.130",
+  "target_preflight_exit": 2,
+  "target_preflight_code": "TARGET_CAPACITY",
+  "complete_plane_images_built": false,
+  "services_started": false,
+  "synthetic_images_remaining": []
+}

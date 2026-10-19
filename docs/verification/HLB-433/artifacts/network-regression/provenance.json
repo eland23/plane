@@ -1,0 +1,8 @@
+{
+  "red_source": "3cab2da61115bba1692133056760c413cca23a7f",
+  "green_source": "494e47b4829d374dfc6435edbb47b435e1c57d49",
+  "regression": "private network client reaches the API without host publication",
+  "red_failure": "Host HTTP access must not be used",
+  "green_safety_tests": 13,
+  "service_started_on_editor": false
+}

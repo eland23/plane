@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.103" timestamp="2026-10-19T01:02:05.032193+00:00" hostname="runnervm8k3b6"><testcase classname="tools.tests.test_plane_release" name="test_release_preflight_rejects_wrong_target_before_any_work" time="0.040"><failure message="assert '&quot;code&quot;: &quot;TARGET_DENIED&quot;' in '{&quot;code&quot;: &quot;SOURCE_CHECK&quot;}\n'&#10; +  where '{&quot;code&quot;: &quot;SOURCE_CHECK&quot;}\n' = CompletedProcess(args=['/usr/bin/python3', '/var/tmp/plane-contract-i5mtjy0h/tools/plane_release.py', 'preflight', '--...e', 'plane-rehearsal-test', '--target', '192.168.1.129'], returncode=2, stdout='', stderr='{&quot;code&quot;: &quot;SOURCE_CHECK&quot;}\n').stderr">tmp_path = PosixPath('/var/tmp/plane-contract-i5mtjy0h/fixtures/test_release_preflight_rejects0')
+
+    def test_release_preflight_rejects_wrong_target_before_any_work(tmp_path):
+        result = subprocess.run(
+            [sys.executable, str(CLI), "preflight", "--repo", str(tmp_path),
+             "--revision", "a" * 40, "--ref", "refs/heads/test",
+             "--namespace", "plane-rehearsal-test", "--target", "192.168.1.129"],
+            text=True, capture_output=True,
+        )
+        assert result.returncode == 2
+&gt;       assert '"code": "TARGET_DENIED"' in result.stderr
+E       assert '"code": "TARGET_DENIED"' in '{"code": "SOURCE_CHECK"}\n'
+E        +  where '{"code": "SOURCE_CHECK"}\n' = CompletedProcess(args=['/usr/bin/python3', '/var/tmp/plane-contract-i5mtjy0h/tools/plane_release.py', 'preflight', '--...e', 'plane-rehearsal-test', '--target', '192.168.1.129'], returncode=2, stdout='', stderr='{"code": "SOURCE_CHECK"}\n').stderr
+
+tools/tests/test_plane_release.py:28: AssertionError</failure></testcase></testsuite></testsuites>

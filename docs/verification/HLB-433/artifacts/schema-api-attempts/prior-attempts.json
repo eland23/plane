@@ -1,0 +1,41 @@
+{
+  "attempts": [
+    {
+      "attempt": 1,
+      "test_source": "3cab2da",
+      "result": "SETUP_FAILURE",
+      "reason": "internal-only network does not expose host-loopback binding",
+      "api_assertions_run": false,
+      "cleanup_verified": true
+    },
+    {
+      "attempt": 2,
+      "test_source": "494e47b",
+      "result": "SETUP_FAILURE",
+      "reason": "selected dependency image lacked pytest",
+      "api_readiness_http": 200,
+      "api_assertions_run": false,
+      "cleanup_verified": true
+    },
+    {
+      "attempt": 3,
+      "test_source": "99aa49f",
+      "result": "PREFLIGHT_DENIED",
+      "reason": "COMPONENT_DISK_RESERVATION",
+      "resources_created": false
+    },
+    {
+      "attempt": 4,
+      "test_source": "99aa49f",
+      "result": "INCORRECT_TEST_EXPECTATION",
+      "authenticated_exact_link_assertion": "PASS",
+      "anonymous_actual_status": 401,
+      "anonymous_incorrect_expected_status": 403,
+      "corrected_expectation_source": "application auth_exception_handler explicitly returns 401",
+      "omitted_migration_control_run": false,
+      "cleanup_verified": true
+    }
+  ],
+  "accepted_three_phase_runtime_evidence": false,
+  "raw_logs_private_outside_git": true
+}

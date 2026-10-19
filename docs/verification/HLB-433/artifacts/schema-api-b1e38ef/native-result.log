@@ -1,0 +1,1 @@
+{"result": "PASS", "phases": [{"phase": "pass-known-state", "exit": 0, "intended_schema_failure": false}, {"phase": "failure-omitted-migration", "exit": 1, "intended_schema_failure": true}, {"phase": "restore-and-repeat", "exit": 0, "intended_schema_failure": false}], "runtime_release_admitted": false}

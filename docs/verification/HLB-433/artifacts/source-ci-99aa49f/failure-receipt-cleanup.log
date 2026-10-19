@@ -1,0 +1,26 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________ test_receipt_failure_still_cleans_owned_data_and_closes_lease _________
+
+fixture_scope = (<module 'schema_fixture_under_test' from '/var/tmp/plane-contract-om1t16aq/docs/verification/HLB-433/native/schema_api_fixture.py'>, PosixPath('/var/tmp/plane-contract-om1t16aq/fixtures/test_receipt_failure_still_cle0/private-fixture'))
+
+    def test_receipt_failure_still_cleans_owned_data_and_closes_lease(fixture_scope):
+        module,root=fixture_scope
+        (root/'receipts.json').mkdir()
+        lease=os.open(root/'lease',os.O_CREAT|os.O_RDWR,0o600)
+        with pytest.raises(OSError):
+            module.finish([],lease)
+>       assert not (root/'pgdata').exists(), 'Receipt write failure must still clean owned clone'
+E       AssertionError: Receipt write failure must still clean owned clone
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = (PosixPath('/var/tmp/plane-contract-om1t16aq/fixtures/test_receipt_failure_still_cle0/private-fixture') / 'pgdata').exists
+
+tools/tests/test_schema_fixture_safety.py:78: AssertionError
+- generated xml file: /home/runner/work/_temp/plane-release-evidence/failure-receipt-cleanup.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_schema_fixture_safety.py::test_receipt_failure_still_cleans_owned_data_and_closes_lease - AssertionError: Receipt write failure must still clean owned clone
+assert not True
+ +  where True = exists()
+ +    where exists = (PosixPath('/var/tmp/plane-contract-om1t16aq/fixtures/test_receipt_failure_still_cle0/private-fixture') / 'pgdata').exists
+1 failed, 50 deselected in 0.06s

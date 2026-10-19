@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.402" timestamp="2026-10-19T00:54:04.853302+00:00" hostname="runnervm8k3b6"><testcase classname="tools.tests.test_plane_release" name="test_package_preflight_reports_low_runtime_capacity_without_admitting_release" time="0.317"><failure message="AssertionError: assert 'PASS' == 'PACKAGING_ONLY'&#10;  &#10;  - PACKAGING_ONLY&#10;  + PASS">source = (PosixPath('/var/tmp/plane-contract-dot1dzqe/fixtures/test_package_preflight_reports0/source'), {'GIT_CONFIG_GLOBAL': ...dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', ...})
+
+    def test_package_preflight_reports_low_runtime_capacity_without_admitting_release(source):
+        source[1]['PROBE']='{"disk_free": 9000000000, "memory_available": 1100000000}'
+        result=invoke(source,command='preflight-package')
+        assert result.returncode==0,result.stderr
+        report=json.loads(result.stdout)
+&gt;       assert report['status']=='PACKAGING_ONLY'
+E       AssertionError: assert 'PASS' == 'PACKAGING_ONLY'
+E         
+E         - PACKAGING_ONLY
+E         + PASS
+
+tools/tests/test_plane_release.py:328: AssertionError</failure></testcase></testsuite></testsuites>

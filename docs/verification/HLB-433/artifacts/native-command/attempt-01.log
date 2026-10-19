@@ -1,0 +1,8 @@
+Error response from daemon: No such image: sha256:0488a84e9e4c903d972420fa7c28ebaa6a006e27049dc3e57d6ec1e2d45717ec
+Traceback (most recent call last):
+  File "<stdin>", line 21, in <module>
+  File "/usr/lib/python3.10/subprocess.py", line 421, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+  File "/usr/lib/python3.10/subprocess.py", line 526, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['docker', 'image', 'inspect', 'sha256:0488a84e9e4c903d972420fa7c28ebaa6a006e27049dc3e57d6ec1e2d45717ec']' returned non-zero exit status 1.

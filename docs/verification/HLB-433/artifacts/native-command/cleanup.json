@@ -1,0 +1,5 @@
+{
+  "probe_containers_remaining": 0,
+  "cleanup": "PASS",
+  "independent_readback": "docker container ls -aq --filter ancestor=sha256:1c54c4fbe69d3a38740e1d05a6c0d31387050c351f0848e62c33c0a71a7c5a84"
+}

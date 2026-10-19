@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.778" timestamp="2026-10-19T00:47:05.741899+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_schema_fixture_safety" name="test_receipt_failure_still_cleans_owned_data_and_closes_lease" time="0.030"><failure message="AssertionError: Receipt write failure must still clean owned clone&#10;assert not True&#10; +  where True = exists()&#10; +    where exists = (PosixPath('/var/tmp/plane-contract-7z1cej_1/fixtures/test_receipt_failure_still_cle0/private-fixture') / 'pgdata').exists">fixture_scope = (&lt;module 'schema_fixture_under_test' from '/var/tmp/plane-contract-7z1cej_1/docs/verification/HLB-433/native/schema_api_fixture.py'&gt;, PosixPath('/var/tmp/plane-contract-7z1cej_1/fixtures/test_receipt_failure_still_cle0/private-fixture'))
+
+    def test_receipt_failure_still_cleans_owned_data_and_closes_lease(fixture_scope):
+        module,root=fixture_scope
+        (root/'receipts.json').mkdir()
+        lease=os.open(root/'lease',os.O_CREAT|os.O_RDWR,0o600)
+        with pytest.raises(OSError):
+            module.finish([],lease)
+&gt;       assert not (root/'pgdata').exists(), 'Receipt write failure must still clean owned clone'
+E       AssertionError: Receipt write failure must still clean owned clone
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = (PosixPath('/var/tmp/plane-contract-7z1cej_1/fixtures/test_receipt_failure_still_cle0/private-fixture') / 'pgdata').exists
+
+tools/tests/test_schema_fixture_safety.py:78: AssertionError</failure></testcase></testsuite></testsuites>

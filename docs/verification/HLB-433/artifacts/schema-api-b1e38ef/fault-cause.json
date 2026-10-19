@@ -1,0 +1,6 @@
+{
+  "fault_image": "sha256:dfd3488aeb239430a347319f8058dd0be62277797323e8b01716fe55c938098a",
+  "log_sha256": "036b5ed0ee175939f2dcf92b12d178ad2c526db73faee05de0b053dfe870962f",
+  "missing_link_provenance_column_observed": true,
+  "raw_log_private": true
+}

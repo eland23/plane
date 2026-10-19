@@ -1,0 +1,10 @@
+{
+  "source_sha": "3cab2da61115bba1692133056760c413cca23a7f",
+  "application_revision": "e5c7acf098a890436ab6300f0bc8491c7dd22725",
+  "source_only": true,
+  "hosted_application": false,
+  "phases": 11,
+  "known_state_tests": 47,
+  "restored_tests": 47,
+  "setup_errors": 0
+}
