@@ -325,6 +325,28 @@ def pin_dockerfile(file, replacements):
     file.write_text(text)
 
 
+def require_private_output(output, repo):
+    # Walk every ancestor, including worktree .git files and bare repositories.
+    # lstat (rather than exists) propagates inaccessible/indeterminate paths.
+    if output.is_relative_to(repo) or any(os.environ.get(key) for key in
+            ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR")):
+        raise GateError("OUTPUT_DENIED")
+    def present(path):
+        try:
+            path.lstat()
+            return True
+        except FileNotFoundError:
+            return False
+    try:
+        if present(output):
+            raise GateError("OUTPUT_DENIED")
+        for parent in output.parents:
+            if present(parent / ".git") or (present(parent / "HEAD") and present(parent / "objects")):
+                raise GateError("OUTPUT_DENIED")
+    except OSError:
+        raise GateError("OUTPUT_DENIED") from None
+
+
 def build(args, report):
     if not args.output or not args.python_base or not args.node_base or not args.nginx_base:
         raise GateError("BUILD_ARGUMENTS")
@@ -333,8 +355,7 @@ def build(args, report):
             raise GateError("BASE_DIGEST_REQUIRED")
     output = Path(args.output).resolve()
     repo = Path(args.repo).resolve()
-    if output.is_relative_to(repo) or output.exists():
-        raise GateError("OUTPUT_DENIED")
+    require_private_output(output, repo)
     snapshot_reservation = max(64 * 1024 ** 2, report["source_bytes"] * 3)
     if shutil.disk_usage(tempfile.gettempdir()).free < snapshot_reservation:
         raise GateError("BUILD_CAPACITY")

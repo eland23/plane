@@ -23,10 +23,11 @@ def main():
         ("failure-image-integrity", "if any(actual.get(k) != v for k, v in expected.items()):", "detects_missing_or_changed_migration", None),
         ("failure-packaging-admission", 'status="PACKAGING_ONLY" if packaging else "PASS"', "package_preflight_reports", 'status="PASS"'),
         ("failure-owned-helper-cleanup", "os.killpg(process.pid, signal.SIGKILL)", "probe_error_terminates", "pass"),
+        ("failure-private-output", "    require_private_output(output, repo)\n", "denies_logs_inside_any_git", "    pass\n"),
         ("restore-and-repeat", None, None, None),
     ]
     for name, defect, selection, replacement in cases:
-        with tempfile.TemporaryDirectory(prefix="plane-contract-") as temporary:
+        with tempfile.TemporaryDirectory(prefix="plane-contract-", dir="/var/tmp") as temporary:
             clone = Path(temporary)
             (clone / "tools/tests").mkdir(parents=True)
             text = (root / "plane_release.py").read_text()
@@ -54,7 +55,7 @@ def main():
             break
     (output / "receipts.json").write_text(json.dumps(runs, indent=2) + "\n")
     print(json.dumps(runs))
-    return 0 if len(runs) == 6 and all(r["accepted"] and r["fixture_directory_removed"] for r in runs) else 1
+    return 0 if len(runs) == 7 and all(r["accepted"] and r["fixture_directory_removed"] for r in runs) else 1
 
 
 if __name__ == "__main__":

@@ -392,3 +392,33 @@ def test_release_probe_error_terminates_owned_helper_children(source,tmp_path):
         if pidfile.exists():
             try:os.kill(int(pidfile.read_text()),signal.SIGKILL)
             except ProcessLookupError:pass
+
+
+@pytest.mark.parametrize("location", ["foreign", "enclosing", "worktree", "bare"])
+def test_packaging_denies_logs_inside_any_git_repository(source, tmp_path, location):
+    repo, env = source
+    if location == "enclosing":
+        git(tmp_path, "init")
+        root = tmp_path
+    elif location == "bare":
+        root = tmp_path / "other.git"
+        subprocess.run(["git", "init", "--bare", str(root)], check=True, capture_output=True)
+    else:
+        root = tmp_path / "other"
+        root.mkdir()
+        if location == "worktree":
+            (root / ".git").write_text("gitdir: /nonexistent/private-metadata")
+        else:
+            git(root, "init")
+    output = root / "candidate.json"
+    docker = Path(env["PATH"].split(os.pathsep)[0]) / "docker"
+    marker = tmp_path / "docker-called"
+    docker.write_text("#!/usr/bin/env python3\nfrom pathlib import Path\n" + f"Path({str(marker)!r}).touch()\n")
+    docker.chmod(0o755)
+    result = invoke(source, command="package", output=str(output),
+        **{"python-base": "python@sha256:" + "a" * 64,
+           "node-base": "node@sha256:" + "b" * 64, "nginx-base": "nginx@sha256:" + "c" * 64})
+    assert result.returncode == 2 and json.loads(result.stderr)["code"] == "OUTPUT_DENIED"
+    assert not output.exists()
+    assert not output.with_name(output.name + ".build-logs").exists()
+    assert not marker.exists()

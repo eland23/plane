@@ -42,7 +42,7 @@ target-wide file lock held until completion. HLB-435 must add the target-side
 release lock before any service mutation; this local builder lock is not a
 distributed deployment lease. Failed builds may leave their uniquely tagged
 candidate images for diagnosis but never emit a success manifest. Source
-snapshots are removed in `finally`; output is outside the source checkout and
+snapshots are removed in `finally`; output is outside every Git checkout or bare repository and
 never overwritten. Other tasks' images/services are not removed.
 
 Checks do not claim registry signature verification, live image startup,
@@ -73,12 +73,14 @@ fresh runtime admission, measured sizing, restore and readiness checks.
 
 Build failures retain private 0600 backend/frontend logs in a new 0700 directory
 next to the candidate manifest. Logs may include dependency URLs; keep them
-outside Git. A retry uses a new output name. The manifest is published only after
+outside Git. The command rejects checkout/worktree markers in every output
+ancestor, bare repositories, inherited Git-directory overrides and indeterminate
+filesystem checks before creating logs. A retry uses a new output name. The manifest is published only after
 both complete images and backend Git-blob comparisons pass. Build source temp
 storage and the build daemon's disk usage must be monitored independently.
 
 Packaging reserves temporary snapshot space from tracked Git blob sizes (three
-copies, at least64MiB); this is separate from Docker layer storage and runtime
-capacity. Frontend build stages use a2304MiB Node heap and one Turbo task at a
+copies, at least 64 MiB); this is separate from Docker layer storage and runtime
+capacity. Frontend build stages use a 2304 MiB Node heap and one Turbo task at a
 time. The manifest records these limits and the builder source checksum. These
 are build controls, not measured application sizing or deployment admission.
