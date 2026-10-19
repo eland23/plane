@@ -1,0 +1,40 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_release_probe_error_terminates_owned_helper_children ___________
+
+source = (PosixPath('/var/tmp/plane-contract-z1lval7b/fixtures/test_release_probe_error_termi0/source'), {'GIT_CONFIG_GLOBAL': ...dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', ...})
+tmp_path = PosixPath('/var/tmp/plane-contract-z1lval7b/fixtures/test_release_probe_error_termi0')
+
+    def test_release_probe_error_terminates_owned_helper_children(source,tmp_path):
+        import signal
+        binary=Path(source[1]['PATH'].split(os.pathsep)[0])/'ssh'
+        pidfile=tmp_path/'helper.pid'
+        binary.write_text('#!/usr/bin/env python3\nimport subprocess,sys\nfrom pathlib import Path\n'
+            +"p=subprocess.Popen([sys.executable,'-c','import time; time.sleep(60)'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)\n"
+            +f'Path({str(pidfile)!r}).write_text(str(p.pid))\nsys.exit(1)\n')
+        try:
+            result=invoke(source)
+            assert result.returncode==2 and json.loads(result.stderr)['code']=='TARGET_PROBE'
+            path=Path('/proc')/pidfile.read_text()/'stat'
+            deadline=time.monotonic()+2
+            while path.exists() and path.read_text().split()[2]!='Z' and time.monotonic()<deadline:time.sleep(.02)
+>           assert not path.exists() or path.read_text().split()[2]=='Z','probe left its owned helper running'
+E           AssertionError: probe left its owned helper running
+E           assert (not True or 'S' == 'Z'
+E            +  where True = exists()
+E            +    where exists = PosixPath('/proc/3257/stat').exists
+E             
+E             - Z
+E             + S)
+
+tools/tests/test_plane_release.py:390: AssertionError
+- generated xml file: /home/runner/work/_temp/plane-release-evidence/failure-owned-helper-cleanup.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_plane_release.py::test_release_probe_error_terminates_owned_helper_children - AssertionError: probe left its owned helper running
+assert (not True or 'S' == 'Z'
+ +  where True = exists()
+ +    where exists = PosixPath('/proc/3257/stat').exists
+  
+  - Z
+  + S)
+1 failed, 34 deselected in 2.23s
