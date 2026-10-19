@@ -184,12 +184,14 @@ def test_phase(name, fault=None):
     tree=ET.parse(ROOT/'evidence'/(name+'.xml'))
     suites=list(tree.getroot().iter('testsuite'))
     require(sum(int(s.get('errors','0')) for s in suites)==0,'API_TEST_SETUP_ERROR')
-    require(sum(int(s.get('failures','0')) for s in suites)==({'asset':2,'schema':1,None:0}[fault]),'WRONG_API_TEST_RESULT')
+    require(sum(int(s.get('failures','0')) for s in suites)==({'asset':2,'schema':7,None:0}[fault]),'WRONG_API_TEST_RESULT')
     require(sum(int(s.get('tests','0')) for s in suites)==30,'API_TEST_COUNT_CHANGED')
     require(sum(int(s.get('skipped','0')) for s in suites)==0,'API_TEST_SKIPPED')
     if fault=='schema':
         failures=[case.get('name') for case in tree.getroot().iter('testcase') if case.find('failure') is not None]
-        require(failures==['test_document_is_discovered_from_issue_link_and_retains_association'],'WRONG_SCHEMA_FAULT_CASE')
+        expected=['test_six_issue_identities_states_parents_dates_and_modules_survive[FAS-'+str(n)+']' for n in [2,5,11,17,21,30]]+['test_document_is_discovered_from_issue_link_and_retains_association']
+        require(sorted(failures)==sorted(expected),'WRONG_SCHEMA_FAULT_CASE')
+        require(all('got 500' in case.find('failure').get('message','') for case in tree.getroot().iter('testcase') if case.find('failure') is not None),'WRONG_SCHEMA_FAULT_HTTP_STATUS')
         require('Complete packaged schema must serve issue-linked document API; got 500' in (ROOT/'evidence'/(name+'.log')).read_text(),'WRONG_SCHEMA_FAULT_ASSERTION')
     if fault=='asset':
         failures=[case.get('name') for case in tree.getroot().iter('testcase') if case.find('failure') is not None]
@@ -377,6 +379,11 @@ def main():
         receipts.append(test_phase('pass-known-state'))
         make_schema_fault()
         receipts.append(test_phase('failure-omitted-migration',fault='schema'))
+        info=owned_container(NS+'-db')
+        require(info['Image']==PG,'DATABASE_IMAGE_MISMATCH')
+        diagnostic=run(['docker','logs',NS+'-db'])
+        require(b'column issue_links.external_source does not exist' in diagnostic.stdout+diagnostic.stderr,'WRONG_SCHEMA_DATABASE_ERROR')
+        private_file(ROOT/'schema-error-observation.json',json.dumps({'status':'PASS','database_image':PG,'postgres_missing_issue_link_source_column_error_observed':True,'raw_diagnostics_private':True},indent=2).encode())
         restore_saved_database('restored-schema-from-saved-dump')
         run([sys.executable,str(Path(__file__).with_name('inspect_shared_runtime.py'))])
         (ROOT/'independent-runtime.json').rename(ROOT/'independent-runtime-restored-schema.json')

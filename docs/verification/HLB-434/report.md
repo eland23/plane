@@ -264,3 +264,12 @@ these are source evidence, not native migration failure detection.
 The prior accepted shared API/asset run remains valid at its separate revision.
 Native combined Control A, browser journeys and ordered rollout/readiness remain
 open until their own receipts exist. No production schema rollback is authorized.
+
+Shared attempt05 (68a1227) passed30 normal checks. Omitted-migration phase
+produced7 API assertion failures of30, zero errors/skips: six issue detail reads
+and the issue-associated document read returned500. Independent private database
+diagnostics confirmed the missing IssueLink source-column error. The controller
+expected only the document failure, so it stopped before recovery; the five-phase
+run is not accepted. The corrected receipt requires exactly those7 named500
+assertions, with no changes to the normal30 tests or golden expectations, plus
+mandatory database missing-column diagnostic readback before recovery.
