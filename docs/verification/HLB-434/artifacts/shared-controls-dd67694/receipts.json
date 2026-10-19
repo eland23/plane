@@ -1,0 +1,27 @@
+[
+  {
+    "phase": "pass-known-state",
+    "exit": 0,
+    "controlled_defect": null
+  },
+  {
+    "phase": "failure-omitted-migration",
+    "exit": 1,
+    "controlled_defect": "schema"
+  },
+  {
+    "phase": "restore-schema-and-repeat",
+    "exit": 0,
+    "controlled_defect": null
+  },
+  {
+    "phase": "failure-corrupt-associated-asset",
+    "exit": 1,
+    "controlled_defect": "asset"
+  },
+  {
+    "phase": "restore-and-repeat",
+    "exit": 0,
+    "controlled_defect": null
+  }
+]

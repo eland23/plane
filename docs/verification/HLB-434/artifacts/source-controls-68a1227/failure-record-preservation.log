@@ -1,0 +1,202 @@
+.FFF.                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual1-ORIGINAL_ROW_CHANGED] _
+
+tmp_path = PosixPath('/var/tmp/plane-restore-contract-9rpp60so/fixtures/test_preservation_rejects_lost1')
+actual = {'issues': []}, error = 'ORIGINAL_ROW_CHANGED'
+
+    @pytest.mark.parametrize('actual,error',[
+        ({},'ORIGINAL_TABLE_LOST'),
+        ({'issues':[]},'ORIGINAL_ROW_CHANGED'),
+        ({'issues':[{'id':'fixture-1','name':'Changed','nullable':None,'body':{'items':['first','second']}}]},'ORIGINAL_ROW_CHANGED'),
+        ({'issues':[{'id':'fixture-1','name':'Original issue','nullable':None,'body':{'items':['second','first']}}]},'ORIGINAL_ROW_CHANGED'),
+        ({'issues':[{'id':'fixture-1','name':'Original issue','body':{'items':['first','second']}}]},'ORIGINAL_COLUMNS_LOST'),
+    ])
+    def test_preservation_rejects_lost_tables_columns_records_or_nested_values(tmp_path,actual,error):
+        expected=tmp_path/'expected.jsonl';readback=tmp_path/'actual.jsonl'
+        digest=snapshot_file(expected,{'issues':[{'id':'fixture-1','name':'Original issue','nullable':None,
+            'body':{'items':['first','second']}}]})
+        snapshot_file(readback,actual)
+>       assert command('compare-database','--expected',expected,'--actual',readback,'--expected-sha256',digest,
+                       '--allow-additions')==(1,{'status':'FAIL','error':error})
+E       AssertionError: assert (0, {'mode': ... 'PASS', ...}) == (1, {'error':...tus': 'FAIL'})
+E         
+E         At index 0 diff: 0 != 1
+E         
+E         Full diff:
+E           (
+E         -     1,
+E         ?     ^
+E         +     0,
+E         ?     ^
+E               {
+E         -         'error': 'ORIGINAL_ROW_CHANGED',
+E         +         'mode': 'preserve',
+E         +         'original_rows': 1,
+E         +         'original_values_preserved': True,
+E         -         'status': 'FAIL',
+E         ?                    ^ ^^
+E         +         'status': 'PASS',
+E         ?                    ^ ^^
+E         +         'tables': 1,
+E               },
+E           )
+
+tools/tests/test_plane_restore.py:152: AssertionError
+_ test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual2-ORIGINAL_ROW_CHANGED] _
+
+tmp_path = PosixPath('/var/tmp/plane-restore-contract-9rpp60so/fixtures/test_preservation_rejects_lost2')
+actual = {'issues': [{'body': {'items': ['first', 'second']}, 'id': 'fixture-1', 'name': 'Changed', 'nullable': None}]}
+error = 'ORIGINAL_ROW_CHANGED'
+
+    @pytest.mark.parametrize('actual,error',[
+        ({},'ORIGINAL_TABLE_LOST'),
+        ({'issues':[]},'ORIGINAL_ROW_CHANGED'),
+        ({'issues':[{'id':'fixture-1','name':'Changed','nullable':None,'body':{'items':['first','second']}}]},'ORIGINAL_ROW_CHANGED'),
+        ({'issues':[{'id':'fixture-1','name':'Original issue','nullable':None,'body':{'items':['second','first']}}]},'ORIGINAL_ROW_CHANGED'),
+        ({'issues':[{'id':'fixture-1','name':'Original issue','body':{'items':['first','second']}}]},'ORIGINAL_COLUMNS_LOST'),
+    ])
+    def test_preservation_rejects_lost_tables_columns_records_or_nested_values(tmp_path,actual,error):
+        expected=tmp_path/'expected.jsonl';readback=tmp_path/'actual.jsonl'
+        digest=snapshot_file(expected,{'issues':[{'id':'fixture-1','name':'Original issue','nullable':None,
+            'body':{'items':['first','second']}}]})
+        snapshot_file(readback,actual)
+>       assert command('compare-database','--expected',expected,'--actual',readback,'--expected-sha256',digest,
+                       '--allow-additions')==(1,{'status':'FAIL','error':error})
+E       AssertionError: assert (0, {'mode': ... 'PASS', ...}) == (1, {'error':...tus': 'FAIL'})
+E         
+E         At index 0 diff: 0 != 1
+E         
+E         Full diff:
+E           (
+E         -     1,
+E         ?     ^
+E         +     0,
+E         ?     ^
+E               {
+E         -         'error': 'ORIGINAL_ROW_CHANGED',
+E         +         'mode': 'preserve',
+E         +         'original_rows': 1,
+E         +         'original_values_preserved': True,
+E         -         'status': 'FAIL',
+E         ?                    ^ ^^
+E         +         'status': 'PASS',
+E         ?                    ^ ^^
+E         +         'tables': 1,
+E               },
+E           )
+
+tools/tests/test_plane_restore.py:152: AssertionError
+_ test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual3-ORIGINAL_ROW_CHANGED] _
+
+tmp_path = PosixPath('/var/tmp/plane-restore-contract-9rpp60so/fixtures/test_preservation_rejects_lost3')
+actual = {'issues': [{'body': {'items': ['second', 'first']}, 'id': 'fixture-1', 'name': 'Original issue', 'nullable': None}]}
+error = 'ORIGINAL_ROW_CHANGED'
+
+    @pytest.mark.parametrize('actual,error',[
+        ({},'ORIGINAL_TABLE_LOST'),
+        ({'issues':[]},'ORIGINAL_ROW_CHANGED'),
+        ({'issues':[{'id':'fixture-1','name':'Changed','nullable':None,'body':{'items':['first','second']}}]},'ORIGINAL_ROW_CHANGED'),
+        ({'issues':[{'id':'fixture-1','name':'Original issue','nullable':None,'body':{'items':['second','first']}}]},'ORIGINAL_ROW_CHANGED'),
+        ({'issues':[{'id':'fixture-1','name':'Original issue','body':{'items':['first','second']}}]},'ORIGINAL_COLUMNS_LOST'),
+    ])
+    def test_preservation_rejects_lost_tables_columns_records_or_nested_values(tmp_path,actual,error):
+        expected=tmp_path/'expected.jsonl';readback=tmp_path/'actual.jsonl'
+        digest=snapshot_file(expected,{'issues':[{'id':'fixture-1','name':'Original issue','nullable':None,
+            'body':{'items':['first','second']}}]})
+        snapshot_file(readback,actual)
+>       assert command('compare-database','--expected',expected,'--actual',readback,'--expected-sha256',digest,
+                       '--allow-additions')==(1,{'status':'FAIL','error':error})
+E       AssertionError: assert (0, {'mode': ... 'PASS', ...}) == (1, {'error':...tus': 'FAIL'})
+E         
+E         At index 0 diff: 0 != 1
+E         
+E         Full diff:
+E           (
+E         -     1,
+E         ?     ^
+E         +     0,
+E         ?     ^
+E               {
+E         -         'error': 'ORIGINAL_ROW_CHANGED',
+E         +         'mode': 'preserve',
+E         +         'original_rows': 1,
+E         +         'original_values_preserved': True,
+E         -         'status': 'FAIL',
+E         ?                    ^ ^^
+E         +         'status': 'PASS',
+E         ?                    ^ ^^
+E         +         'tables': 1,
+E               },
+E           )
+
+tools/tests/test_plane_restore.py:152: AssertionError
+- generated xml file: /home/runner/work/_temp/plane-restore-evidence/failure-record-preservation.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_plane_restore.py::test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual1-ORIGINAL_ROW_CHANGED] - AssertionError: assert (0, {'mode': ... 'PASS', ...}) == (1, {'error':...tus': 'FAIL'})
+  
+  At index 0 diff: 0 != 1
+  
+  Full diff:
+    (
+  -     1,
+  ?     ^
+  +     0,
+  ?     ^
+        {
+  -         'error': 'ORIGINAL_ROW_CHANGED',
+  +         'mode': 'preserve',
+  +         'original_rows': 1,
+  +         'original_values_preserved': True,
+  -         'status': 'FAIL',
+  ?                    ^ ^^
+  +         'status': 'PASS',
+  ?                    ^ ^^
+  +         'tables': 1,
+        },
+    )
+FAILED tools/tests/test_plane_restore.py::test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual2-ORIGINAL_ROW_CHANGED] - AssertionError: assert (0, {'mode': ... 'PASS', ...}) == (1, {'error':...tus': 'FAIL'})
+  
+  At index 0 diff: 0 != 1
+  
+  Full diff:
+    (
+  -     1,
+  ?     ^
+  +     0,
+  ?     ^
+        {
+  -         'error': 'ORIGINAL_ROW_CHANGED',
+  +         'mode': 'preserve',
+  +         'original_rows': 1,
+  +         'original_values_preserved': True,
+  -         'status': 'FAIL',
+  ?                    ^ ^^
+  +         'status': 'PASS',
+  ?                    ^ ^^
+  +         'tables': 1,
+        },
+    )
+FAILED tools/tests/test_plane_restore.py::test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual3-ORIGINAL_ROW_CHANGED] - AssertionError: assert (0, {'mode': ... 'PASS', ...}) == (1, {'error':...tus': 'FAIL'})
+  
+  At index 0 diff: 0 != 1
+  
+  Full diff:
+    (
+  -     1,
+  ?     ^
+  +     0,
+  ?     ^
+        {
+  -         'error': 'ORIGINAL_ROW_CHANGED',
+  +         'mode': 'preserve',
+  +         'original_rows': 1,
+  +         'original_values_preserved': True,
+  -         'status': 'FAIL',
+  ?                    ^ ^^
+  +         'status': 'PASS',
+  ?                    ^ ^^
+  +         'tables': 1,
+        },
+    )
+3 failed, 2 passed, 63 deselected in 0.29s

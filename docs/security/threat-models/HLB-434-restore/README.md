@@ -76,9 +76,9 @@ public outputs require review for original values and signed query parameters.
 The golden JSON contains synthetic FAS-like identifiers, never looked up in live
 Linear. Issue-linked project documents use existing IssueLink/PageLog fields;
 future portfolio, milestone and exclusive-label features are excluded by the
-parent runtime scope. Combined API/asset proof PASS at0a88a87:30PASS→2 intended checksum failures→30PASS, zero errors/skips. Mandatory four-service isolation readback, nine executed code hashes, exact saved dump equality, original-row preservation and independent cleanup PASS. Selected public artifacts were scanned for original values and signed/credential material. Browser journeys, combined Control A and ordered release/readiness remain pending.
+parent runtime scope. Combined API/asset proof PASS at0a88a87:30PASS→2 intended checksum failures→30PASS, zero errors/skips. Mandatory four-service isolation readback, nine executed code hashes, exact saved dump equality, original-row preservation and independent cleanup PASS. Selected public artifacts were scanned for original values and signed/credential material. At that revision, browser journeys, combined Control A and ordered release/readiness remained pending; the accepted combined control follows below.
 
-## Shared omitted-migration control (native execution pending)
+## Shared omitted-migration control
 
 The shared rehearsal now applies Control A to the same isolated restored fixture.
 After the normal suite passes and a seeded dump is saved, the owned API stops.
@@ -98,4 +98,10 @@ only after affirmative inspection of their owner label; foreign or indeterminate
 image state preserves private working data and cannot produce a clean receipt.
 No broad image/build cache pruning is performed. Cleanup boundary tests reproduce
 three failures on old code and pass after the guard/removal is added. Actual
-combined Control A evidence is pending and cannot be inferred from those tests.
+combined Control A evidence now PASS atdd67694:30PASS→7 intended schema failures→
+30PASS→2 intended checksum failures→30PASS, zero errors/skips. The full suite is
+unchanged across both faults and recoveries. Both saved-dump recoveries match
+112tables/895logicalrows exactly; original rows remain preserved. Independent
+cleanup confirms fault image/resource absence and unchanged originals. Native
+evidence is in artifacts/shared-controls-dd67694; browser and ordered release
+gates remain open. These results are separate from source cleanup tests.

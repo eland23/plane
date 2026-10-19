@@ -1,7 +1,7 @@
 # Verification evidence: HLB-434 Plane restore integrity
 
-Status: **NOT RUN for full acceptance; source contracts, native components and shared M API/assets PASS**. Author: Codex.
-Reviewer: separate Standards and Spec/security source reviews PASS at 0a88a87; final evidence review tracked on PR13. [Child](https://linear.app/fashionfindrs/issue/HLB-434),
+Status: **NOT RUN for full acceptance; source contracts, native components and shared M schema/asset controls PASS**. Author: Codex.
+Reviewer: separate Standards and Spec/security source reviews PASS at dd67694; final evidence review tracked on PR13. [Child](https://linear.app/fashionfindrs/issue/HLB-434),
 [parent](https://linear.app/fashionfindrs/issue/HLB-429). Policy: existing parent
 verification decisions and FashionFindr `docs/testing/REPORT-TEMPLATE.md`.
 
@@ -9,22 +9,23 @@ verification decisions and FashionFindr `docs/testing/REPORT-TEMPLATE.md`.
 
 | Behavior ID | Spec AC | Owner ticket | Test path/name | Independent assertion | Layers | Result | Evidence |
 |---|---|---|---|---|---|---|---|
-| REL-03 / archive | AC2 | HLB-434 | tools/tests/test_plane_restore.py / valid_archive, malformed_or_corrupt_archive, archive_symlink_member | Independent captured archive digest, literal `abc` SHA-256, exact member identities; reject missing/changed/duplicate/unsafe members | pytest/CLI | PASS source | source-controls |
-| REL-03 / bytes | AC2 | HLB-434 | downloaded_asset_matches_original_then_rejects_changed_bytes_and_recovers | Readback bytes equal literal original hash; same-size changed bytes fail; corrected readback passes | pytest/CLI | PASS source | source-controls |
-| REL-03 / exact database | AC2 | HLB-434 | database_compare, exact_snapshot | Exact table set and row-value multiset, including JSON types and nested array order | pytest/CLI | PASS source | source-controls |
-| REL-03 / preservation | AC2 | HLB-434 | preservation_rejects, duplicate_row_multiplicity | Old tables/columns/records retain values and multiplicity; additions require explicit mode | pytest/CLI | PASS source | source-controls |
-| REL-03 / destination | AC2/V1 | HLB-434 | tools/tests/test_asset_store_guards.py / foreign_connection | Foreign endpoint/bucket/default credentials/config rejected before S3 client import; fake external SDK marker remains absent | pytest/process | PASS source | source-controls |
-| REL-03 / execution mode | V1/V2 | HLB-434 | native_commands_deny_optimized_execution | Both native commands reject -O / PYTHONOPTIMIZE before protected operations | pytest/process | PASS source | source-controls |
-| REL-03 / inspection | V2 | HLB-434 | indeterminate_docker_state | Unavailable Docker state preserves private readbacks/config and cannot produce a clean receipt | pytest/CLI fake | PASS source | source-controls |
-| REL-03 / cleanup errors | V2 | HLB-434 | receipt_failure_still, diagnostic_failure_still | Receipt I/O failure still removes owned readbacks/credential files and closes lease; failed diagnostic retrieval/storage cannot prevent confirmed-owned resource removal | pytest/filesystem | PASS source | source-controls |
-| REL-03 / database destination | AC2/V1 | HLB-434 | tools/tests/test_database_restore_guards.py | Five foreign destinations rejected before Django import; both commands reject optimized execution | pytest/process | PASS source | source-controls/failure-database-destination.xml |
+| REL-03 / archive | AC2 | HLB-434 | tools/tests/test_plane_restore.py / valid_archive, malformed_or_corrupt_archive, archive_symlink_member | Independent captured archive digest, literal `abc` SHA-256, exact member identities; reject missing/changed/duplicate/unsafe members | pytest/CLI | PASS source | source-controls-68a1227 |
+| REL-03 / bytes | AC2 | HLB-434 | downloaded_asset_matches_original_then_rejects_changed_bytes_and_recovers | Readback bytes equal literal original hash; same-size changed bytes fail; corrected readback passes | pytest/CLI | PASS source | source-controls-68a1227 |
+| REL-03 / exact database | AC2 | HLB-434 | database_compare, exact_snapshot | Exact table set and row-value multiset, including JSON types and nested array order | pytest/CLI | PASS source | source-controls-68a1227 |
+| REL-03 / preservation | AC2 | HLB-434 | preservation_rejects, duplicate_row_multiplicity | Old tables/columns/records retain values and multiplicity; additions require explicit mode | pytest/CLI | PASS source | source-controls-68a1227 |
+| REL-03 / destination | AC2/V1 | HLB-434 | tools/tests/test_asset_store_guards.py / foreign_connection | Foreign endpoint/bucket/default credentials/config rejected before S3 client import; fake external SDK marker remains absent | pytest/process | PASS source | source-controls-68a1227 |
+| REL-03 / execution mode | V1/V2 | HLB-434 | native_commands_deny_optimized_execution | Both native commands reject -O / PYTHONOPTIMIZE before protected operations | pytest/process | PASS source | source-controls-68a1227 |
+| REL-03 / inspection | V2 | HLB-434 | indeterminate_docker_state | Unavailable Docker state preserves private readbacks/config and cannot produce a clean receipt | pytest/CLI fake | PASS source | source-controls-68a1227 |
+| REL-03 / cleanup errors | V2 | HLB-434 | receipt_failure_still, diagnostic_failure_still, test_shared_schema_control.py | Foreign or indeterminate fault image ownership preserves private data and blocks a clean receipt. Receipt I/O failure still removes owned readbacks/credential files and closes lease; failed diagnostic retrieval/storage cannot prevent confirmed-owned resource removal | pytest/filesystem | PASS source | source-controls-68a1227 |
+| REL-03 / database destination | AC2/V1 | HLB-434 | tools/tests/test_database_restore_guards.py | Five foreign destinations rejected before Django import; both commands reject optimized execution | pytest/process | PASS source | source-controls-68a1227/failure-database-destination.xml |
 | REL-03 / network isolation | AC2/V1 | HLB-434 | tools/tests/test_database_runtime_observer.py | Valid topology passes; additional network and wrong network ID produce no PASS receipt | pytest/CLI fake | PASS source | tdd/database-observer-red.xml and green.xml |
 | REL-03 / real asset restore | AC2/V1/V2 | HLB-434 | native/asset_store_rehearsal.py + test_asset_store.py | Signed S3 restore and fresh GET readback: exact original/fixture keys, metadata and hashes; anonymous GET denied; corrupt fixture fails unchanged checksum assertion; restore repeats | authenticated S3 API/pytest | PASS component | native-assets-4769e03 |
 | REL-03 / own database restore | AC2/V1 | HLB-434 | shared runtime fixture preparation | Own restored originals preserved; bounded synthetic link identity/content verified through authenticated API; full M remains separate | native DB/API | PASS bounded component | native-database-7b5ddfc |
 | REL-03 / shared M API/assets | V1/V3 | HLB-434 | native/test_shared_fixture_m.py + test_asset_store.py | Literal IDs/graph/order/DST/memberships/wiki/document/access and authenticated asset bytes; exact saved dump recovery | native API/S3/pytest | PASS bounded shared fixture | shared-m-0a88a87 |
-| REL-03 / combined browser/release | V3 | HLB-434/435/436 | wiki/cycle UI and release journeys | Actual edit/cancel/save/reload/error/retry, combined Control A and ordered release/readiness | Playwright/runtime | NOT RUN | owning gates remain open |
+| REL-03 / combined schema and asset controls | V1/V2 | HLB-434 | shared_fixture_rehearsal.py / full unchanged suite across both defects | Omitted migration fails six issue reads and document API; saved dump recovery restores all30 checks; asset corruption fails2checks; second recovery passes30 | native DB/API/S3/pytest | PASS combined controls | shared-controls-dd67694 |
+| REL-03 / combined browser/release | V3 | HLB-434/435/436 | wiki/cycle UI and release journeys | Actual edit/cancel/save/reload/error/retry and ordered release/readiness | Playwright/runtime | NOT RUN | owning gates remain open |
 
-Inventory: 14 scoped rows; 10 source rows, 2 native component rows and 1 shared API/asset row proven; 1 browser/release row NOT RUN,
+Inventory: 15 scoped rows; 10 source rows, 2 native component rows and 2 shared API/asset control rows proven; 1 browser/release row NOT RUN,
 0 approved deferrals. UI and Jest are N/A to this Python CLI/component slice;
 actual browser journeys remain required under HLB-436. Optional TesterArmy is N/A
 per the parent. No coverage claim extends beyond these rows.
@@ -77,10 +78,11 @@ run. No workers, mail, provider sends or production imports run here.
 
 | Check | Known state | Controlled defect | Restored state | Evidence |
 |---|---|---|---|---|
-| Source contracts | 65PASS | Six source guard defects cause intended failures, zero errors | 65PASS | source-controls/*.xml and receipts.json |
+| Source contracts | 68PASS | Six source guard defects cause intended failures, zero errors | 68PASS | source-controls-68a1227/*.xml and receipts.json |
 | Asset checksum | 4PASS | Same suite:1 intended checksum failure of4, zero errors/skips | 4PASS | native-assets-4769e03/ |
 | Database/API | 5PASS | Same suite:1 intended title-content failure of5, zero errors/skips | 5PASS | native-database-7b5ddfc/ |
 | Shared M API/assets | 30PASS | Same suite:2 intended checksum failures of30, zero errors/skips | 30PASS | shared-m-0a88a87/ |
+| Shared M combined controls | 30PASS | Same suite:7 schema failures of30; recover30PASS, then2checksum failures of30, zero errors/skips | 30PASS | shared-controls-dd67694/ |
 
 The six source defects bypass the asset checksum, original-row preservation,
 SDK endpoint admission, Docker inspection admission, cleanup on receipt failure,
@@ -161,7 +163,7 @@ The asset executed head has its own saved CI/provenance. Current evidence-head
 CI/review is tracked separately on PR13; runtime is not inferred from CI.
 
 Full HLB-434 remains INCOMPLETE. Shared supported fixture M API/asset proof now
-passes, while combined browser coverage, Control A and ordered release/readiness
+passes, while combined browser coverage and ordered release/readiness
 remain NOT RUN. API proof does not waive browser integration or HLB-435/436 gates. Prior HLB-433 proof
 does not waive this ticket's verification. No deferrals were approved. No child
 is marked complete to clear a dependency, and no merge, production delivery or
@@ -239,15 +241,15 @@ is logical data preservation, not a PostgreSQL roles/grants/catalog equivalence 
 
 Executed-head CI PASS: [restore39195518325](https://github.com/eland23/plane/actions/runs/39195518325)
 and [ReactDoctor39195518517](https://github.com/eland23/plane/actions/runs/39195518517).
-Final evidence-head CI is separate and tracked on PR13. Browser UI writes/reload,
-error/retry/cancel, combined missing-migration Control A and ordered release/worker
-readiness remain open. No production import, cutover, merge or full child completion.
+Final evidence-head CI is separate and tracked on PR13. At that revision, browser
+UI writes/reload, error/retry/cancel, combined Control A and ordered release/worker
+readiness remained open. Accepted combined Control A is recorded below. No production import, cutover, merge or full child completion.
 
-## Combined Control A preparation (NOT RUN)
+## Combined Control A preparation and accepted execution
 
 The saved shared rehearsal now adds the parent-defined omitted-migration control
 between the known-state pass and asset corruption. The intended five phases are:
-30PASS → one schema assertion failure of30 → 30PASS → two checksum failures of30
+30PASS → seven schema assertion failures of30 → 30PASS → two checksum failures of30
 → 30PASS, zero errors/skips. The same test source/fixtures run in every phase.
 The document assertion now names the schema HTTP200 contract explicitly; its
 literal identity, content and association expectations remain unchanged.
@@ -262,7 +264,8 @@ Cleanup guard development receipts are3FAIL→3PASS at the Docker process bounda
 these are source evidence, not native migration failure detection.
 
 The prior accepted shared API/asset run remains valid at its separate revision.
-Native combined Control A, browser journeys and ordered rollout/readiness remain
+Native combined Control A was pending at source68a1227 publication; its accepted
+execution is recorded below. Browser journeys and ordered rollout/readiness remain
 open until their own receipts exist. No production schema rollback is authorized.
 
 Shared attempt05 (68a1227) passed30 normal checks. Omitted-migration phase
@@ -272,4 +275,50 @@ diagnostics confirmed the missing IssueLink source-column error. The controller
 expected only the document failure, so it stopped before recovery; the five-phase
 run is not accepted. The corrected receipt requires exactly those7 named500
 assertions, with no changes to the normal30 tests or golden expectations, plus
-mandatory database missing-column diagnostic readback before recovery.
+mandatory database missing-column diagnostic readback before recovery. Selected
+failed-run receipts and independent cleanup are saved in shared-attempt05-68a1227/.
+
+## Accepted combined controls run
+
+Shared attempt06 executed pushed `dd6769428a6d9517f60739d48710dd2ab00c1bc8` on .130.
+The same30 tests produced **30PASS → 7 intended schema failures → 30PASS →
+2 intended asset checksum failures → 30PASS**, zero errors/skips in every phase.
+No assertions or fixtures changed between phases.
+
+Control A's derived image omits0123/0124 from the verified complete backend.
+A real file probe confirms both are absent, the actual migrator runs from that
+image, schema readback confirms the two IssueLink columns remain absent, and
+container inspection confirms the API uses that exact derived image. The full
+suite fails exactly the six issue-detail reads and named issue-associated document
+API HTTP200 assertions receiving500. PostgreSQL diagnostics confirm the missing
+IssueLink source column; raw logs remain private. The other23 checks pass. Recovery restores the actual saved seeded
+dump plus complete image, verifies112tables/895logicalrows exactly before API
+startup, then passes strict4service isolation observation and all30 checks.
+
+Control B then changes only the marked synthetic binary. Its authenticated API
+and independent storage checksum assertions fail; the other28 checks pass. Asset
+repair and another saved-dump recovery again require exact112table/895row equality,
+fresh strict runtime observation and the final30PASS. Original110tables/812rows
+remain preserved. This does not claim general PostgreSQL catalog/role/grant equality.
+
+Independent cleanup PASS: no owned containers, networks or fault image; temporary
+restored data/dump/readbacks/config/session files and fault build context removed;
+all3 original input hashes unchanged and lease reacquired. The9 executed file
+hashes and actual4 copied test/fixture files match pushedGit. Known-state and
+both recovery observers verify exclusive internal network IDs, pinned images,
+read-only roots and no published ports. Public artifacts passed original-value
+and credential-marker scanning; raw command/service diagnostics remain private.
+
+Exact executed-head CI PASS: [restore39198955624](https://github.com/eland23/plane/actions/runs/39198955624)
+and [ReactDoctor39198955678](https://github.com/eland23/plane/actions/runs/39198955678).
+The source-contract artifact records PR head68a1227 separately from the GitHub
+workflow merge revision e3cf4b584336e199f92b0846dfb91b53fcd28abf. It contains68PASS,
+six intended guard defects and68PASS again, with all temporary fixture directories
+removed. Cleanup development evidence separately records3FAIL→3PASS; its6 verified synthetic
+fixture directories were removed (tdd/shared-schema-cleanup-fixtures.json). Reviews and
+CI for the final evidence head are tracked on PR13.
+
+Browser journeys, serialized migration/service rollout, worker/dependency readiness
+and HLB-435/436 remain open. The isolated schema reversal is only a controlled
+defect on a disposable restored clone. It grants no production rollback, delivery,
+import, merge or cutover approval. Full child/epic acceptance remains INCOMPLETE.

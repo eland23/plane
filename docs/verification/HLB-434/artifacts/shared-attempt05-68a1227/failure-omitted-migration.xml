@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="7" skipped="0" tests="30" time="14.474" timestamp="2026-10-19T04:19:14.837559+00:00" hostname="b9edc6eaa126"><testcase classname="test_shared_fixture_m" name="test_anonymous_wiki_read_is_denied" time="0.125" /><testcase classname="test_shared_fixture_m" name="test_viewer_can_read_public_wiki" time="0.340" /><testcase classname="test_shared_fixture_m" name="test_outsider_cannot_read_fixture_wiki" time="0.197" /><testcase classname="test_shared_fixture_m" name="test_fixture_member_cannot_read_other_workspace" time="0.202" /><testcase classname="test_shared_fixture_m" name="test_six_issue_identities_states_parents_dates_and_modules_survive[FAS-2]" time="0.528"><failure message="AssertionError: Fixture M API read must succeed; got 500&#10;assert 500 == 200">expected = {'id': '43410000-0000-4000-8000-000000000102', 'module': 'Alpha', 'name': 'Fixture M FAS-2', 'parent': None, ...}
+
+    @pytest.mark.parametrize('expected',G['issues'],ids=lambda row:'FAS-'+str(row['sequence']))
+    def test_six_issue_identities_states_parents_dates_and_modules_survive(expected):
+&gt;       row=data(P+'issues/'+expected['id']+'/')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_shared_fixture_m.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = '/api/workspaces/plane-shared-m-434/projects/43410000-0000-4000-8000-000000000020/issues/43410000-0000-4000-8000-000000000102/'
+role = 'owner'
+
+    def data(path,role='owner'):
+        status,_,body=request(path,role)
+&gt;       assert status==200,f'Fixture M API read must succeed; got {status}'
+E       AssertionError: Fixture M API read must succeed; got 500
+E       assert 500 == 200
+
+tests/test_shared_fixture_m.py:37: AssertionError</failure></testcase><testcase classname="test_shared_fixture_m" name="test_six_issue_identities_states_parents_dates_and_modules_survive[FAS-5]" time="0.479"><failure message="AssertionError: Fixture M API read must succeed; got 500&#10;assert 500 == 200">expected = {'id': '43410000-0000-4000-8000-000000000105', 'module': 'Alpha', 'name': 'Fixture M FAS-5', 'parent': '43410000-0000-4000-8000-000000000102', ...}
+
+    @pytest.mark.parametrize('expected',G['issues'],ids=lambda row:'FAS-'+str(row['sequence']))
+    def test_six_issue_identities_states_parents_dates_and_modules_survive(expected):
+&gt;       row=data(P+'issues/'+expected['id']+'/')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_shared_fixture_m.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = '/api/workspaces/plane-shared-m-434/projects/43410000-0000-4000-8000-000000000020/issues/43410000-0000-4000-8000-000000000105/'
+role = 'owner'
+
+    def data(path,role='owner'):
+        status,_,body=request(path,role)
+&gt;       assert status==200,f'Fixture M API read must succeed; got {status}'
+E       AssertionError: Fixture M API read must succeed; got 500
+E       assert 500 == 200
+
+tests/test_shared_fixture_m.py:37: AssertionError</failure></testcase><testcase classname="test_shared_fixture_m" name="test_six_issue_identities_states_parents_dates_and_modules_survive[FAS-11]" time="0.606"><failure message="AssertionError: Fixture M API read must succeed; got 500&#10;assert 500 == 200">expected = {'id': '43410000-0000-4000-8000-000000000111', 'module': 'Beta', 'name': 'Fixture M FAS-11', 'parent': '43410000-0000-4000-8000-000000000105', ...}
+
+    @pytest.mark.parametrize('expected',G['issues'],ids=lambda row:'FAS-'+str(row['sequence']))
+    def test_six_issue_identities_states_parents_dates_and_modules_survive(expected):
+&gt;       row=data(P+'issues/'+expected['id']+'/')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_shared_fixture_m.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = '/api/workspaces/plane-shared-m-434/projects/43410000-0000-4000-8000-000000000020/issues/43410000-0000-4000-8000-000000000111/'
+role = 'owner'
+
+    def data(path,role='owner'):
+        status,_,body=request(path,role)
+&gt;       assert status==200,f'Fixture M API read must succeed; got {status}'
+E       AssertionError: Fixture M API read must succeed; got 500
+E       assert 500 == 200
+
+tests/test_shared_fixture_m.py:37: AssertionError</failure></testcase><testcase classname="test_shared_fixture_m" name="test_six_issue_identities_states_parents_dates_and_modules_survive[FAS-17]" time="0.522"><failure message="AssertionError: Fixture M API read must succeed; got 500&#10;assert 500 == 200">expected = {'id': '43410000-0000-4000-8000-000000000117', 'module': 'Beta', 'name': 'Fixture M FAS-17', 'parent': None, ...}
+
+    @pytest.mark.parametrize('expected',G['issues'],ids=lambda row:'FAS-'+str(row['sequence']))
+    def test_six_issue_identities_states_parents_dates_and_modules_survive(expected):
+&gt;       row=data(P+'issues/'+expected['id']+'/')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_shared_fixture_m.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = '/api/workspaces/plane-shared-m-434/projects/43410000-0000-4000-8000-000000000020/issues/43410000-0000-4000-8000-000000000117/'
+role = 'owner'
+
+    def data(path,role='owner'):
+        status,_,body=request(path,role)
+&gt;       assert status==200,f'Fixture M API read must succeed; got {status}'
+E       AssertionError: Fixture M API read must succeed; got 500
+E       assert 500 == 200
+
+tests/test_shared_fixture_m.py:37: AssertionError</failure></testcase><testcase classname="test_shared_fixture_m" name="test_six_issue_identities_states_parents_dates_and_modules_survive[FAS-21]" time="0.445"><failure message="AssertionError: Fixture M API read must succeed; got 500&#10;assert 500 == 200">expected = {'id': '43410000-0000-4000-8000-000000000121', 'module': 'Beta', 'name': 'Fixture M FAS-21', 'parent': None, ...}
+
+    @pytest.mark.parametrize('expected',G['issues'],ids=lambda row:'FAS-'+str(row['sequence']))
+    def test_six_issue_identities_states_parents_dates_and_modules_survive(expected):
+&gt;       row=data(P+'issues/'+expected['id']+'/')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_shared_fixture_m.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = '/api/workspaces/plane-shared-m-434/projects/43410000-0000-4000-8000-000000000020/issues/43410000-0000-4000-8000-000000000121/'
+role = 'owner'
+
+    def data(path,role='owner'):
+        status,_,body=request(path,role)
+&gt;       assert status==200,f'Fixture M API read must succeed; got {status}'
+E       AssertionError: Fixture M API read must succeed; got 500
+E       assert 500 == 200
+
+tests/test_shared_fixture_m.py:37: AssertionError</failure></testcase><testcase classname="test_shared_fixture_m" name="test_six_issue_identities_states_parents_dates_and_modules_survive[FAS-30]" time="0.549"><failure message="AssertionError: Fixture M API read must succeed; got 500&#10;assert 500 == 200">expected = {'id': '43410000-0000-4000-8000-000000000130', 'module': None, 'name': 'Fixture M FAS-30', 'parent': None, ...}
+
+    @pytest.mark.parametrize('expected',G['issues'],ids=lambda row:'FAS-'+str(row['sequence']))
+    def test_six_issue_identities_states_parents_dates_and_modules_survive(expected):
+&gt;       row=data(P+'issues/'+expected['id']+'/')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_shared_fixture_m.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = '/api/workspaces/plane-shared-m-434/projects/43410000-0000-4000-8000-000000000020/issues/43410000-0000-4000-8000-000000000130/'
+role = 'owner'
+
+    def data(path,role='owner'):
+        status,_,body=request(path,role)
+&gt;       assert status==200,f'Fixture M API read must succeed; got {status}'
+E       AssertionError: Fixture M API read must succeed; got 500
+E       assert 500 == 200
+
+tests/test_shared_fixture_m.py:37: AssertionError</failure></testcase><testcase classname="test_shared_fixture_m" name="test_modules_preserve_exact_membership[Alpha-expected_sequences0]" time="0.546" /><testcase classname="test_shared_fixture_m" name="test_modules_preserve_exact_membership[Beta-expected_sequences1]" time="0.491" /><testcase classname="test_shared_fixture_m" name="test_cycle_spans_dst_and_preserves_exact_instants" time="0.753" /><testcase classname="test_shared_fixture_m" name="test_cycle_preserves_six_issue_state_counts" time="0.989" /><testcase classname="test_shared_fixture_m" name="test_cycle_todo_membership_is_exactly_two_known_issues" time="0.467" /><testcase classname="test_shared_fixture_m" name="test_cycle_membership_preserves_all_six_and_numeric_order" time="0.506" /><testcase classname="test_shared_fixture_m" name="test_blocking_related_and_duplicate_edges_survive[2-blocked_by-0]" time="0.771" /><testcase classname="test_shared_fixture_m" name="test_blocking_related_and_duplicate_edges_survive[3-relates_to-1]" time="0.611" /><testcase classname="test_shared_fixture_m" name="test_blocking_related_and_duplicate_edges_survive[5-duplicate-0]" time="0.677" /><testcase classname="test_shared_fixture_m" name="test_thread_retains_inactive_author_and_parent" time="0.431" /><testcase classname="test_shared_fixture_m" name="test_wiki_content_and_inline_asset_reference_survive" time="0.322" /><testcase classname="test_shared_fixture_m" name="test_document_is_discovered_from_issue_link_and_retains_association" time="0.450"><failure message="AssertionError: Complete packaged schema must serve issue-linked document API; got 500&#10;assert 500 == 200">def test_document_is_discovered_from_issue_link_and_retains_association():
+        status,_,body=request(P+'issues/'+G['issues'][2]['id']+'/issue-links/')
+&gt;       assert status==200,f'Complete packaged schema must serve issue-linked document API; got {status}'
+E       AssertionError: Complete packaged schema must serve issue-linked document API; got 500
+E       assert 500 == 200
+
+tests/test_shared_fixture_m.py:118: AssertionError</failure></testcase><testcase classname="test_shared_fixture_m" name="test_associated_assets_download_through_authenticated_api_and_match_golden_bytes[inline-0]" time="0.786" /><testcase classname="test_shared_fixture_m" name="test_associated_assets_download_through_authenticated_api_and_match_golden_bytes[binary-1]" time="0.446" /><testcase classname="test_shared_fixture_m" name="test_anonymous_attachment_download_is_denied" time="0.094" /><testcase classname="test_shared_fixture_m" name="test_second_member_can_read_module_collection" time="0.644" /><testcase classname="test_asset_store" name="test_object_store_requires_authenticated_requests" time="0.003" /><testcase classname="test_asset_store" name="test_all_original_and_fixture_object_keys_are_present_exactly" time="0.046" /><testcase classname="test_asset_store" name="test_original_and_fixture_object_metadata_is_preserved" time="0.006" /><testcase classname="test_asset_store" name="test_restored_asset_bytes_match_original_and_golden_hashes" time="0.382" /></testsuite></testsuites>

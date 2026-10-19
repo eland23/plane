@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.282" timestamp="2026-10-19T04:12:48.728636+00:00" hostname="runnervm8k3b6"><testcase classname="tools.tests.test_plane_restore" name="test_downloaded_asset_matches_original_then_rejects_changed_bytes_and_recovers" time="0.208"><failure message="AssertionError: assert (0, {'bytes':...tus': 'PASS'}) == (1, {'error':...tus': 'FAIL'})&#10;  &#10;  At index 0 diff: 0 != 1&#10;  &#10;  Full diff:&#10;    (&#10;  -     1,&#10;  ?     ^&#10;  +     0,&#10;  ?     ^&#10;        {&#10;  -         'error': 'ASSET_HASH_MISMATCH',&#10;  +         'bytes': 3,&#10;  +         'key_sha256': '3547531dbd8928b5554af2f790e6e6587a5977485ddfffd37c226fab57ec1c29',&#10;  +         'sha256': '3608bca1e44ea6c4d268eb6db02260269892c0b42b86bbf1e77a6fa16c3c9282',&#10;  -         'status': 'FAIL',&#10;  ?                    ^ ^^&#10;  +         'status': 'PASS',&#10;  ?                    ^ ^^&#10;        },&#10;    )">tmp_path = PosixPath('/var/tmp/plane-restore-contract-72h9eipj/fixtures/test_downloaded_asset_matches_0')
+
+    def test_downloaded_asset_matches_original_then_rejects_changed_bytes_and_recovers(tmp_path):
+        path,digest=archive_fixture(tmp_path)
+        readback=tmp_path/'readback.bin'
+        arguments=['compare-asset','--archive',path,'--expected-sha256',digest,
+                   '--key-sha256',KEY_DIGEST,'--readback',readback]
+        readback.write_bytes(b'abc')
+        code,result=command(*arguments)
+        assert code==0
+        assert result=={'status':'PASS','key_sha256':KEY_DIGEST,'sha256':CONTENT_DIGEST,'bytes':3}
+        readback.write_bytes(b'xyz')
+&gt;       assert command(*arguments)==(1,{'status':'FAIL','error':'ASSET_HASH_MISMATCH'})
+E       AssertionError: assert (0, {'bytes':...tus': 'PASS'}) == (1, {'error':...tus': 'FAIL'})
+E         
+E         At index 0 diff: 0 != 1
+E         
+E         Full diff:
+E           (
+E         -     1,
+E         ?     ^
+E         +     0,
+E         ?     ^
+E               {
+E         -         'error': 'ASSET_HASH_MISMATCH',
+E         +         'bytes': 3,
+E         +         'key_sha256': '3547531dbd8928b5554af2f790e6e6587a5977485ddfffd37c226fab57ec1c29',
+E         +         'sha256': '3608bca1e44ea6c4d268eb6db02260269892c0b42b86bbf1e77a6fa16c3c9282',
+E         -         'status': 'FAIL',
+E         ?                    ^ ^^
+E         +         'status': 'PASS',
+E         ?                    ^ ^^
+E               },
+E           )
+
+tools/tests/test_plane_restore.py:60: AssertionError</failure></testcase></testsuite></testsuites>

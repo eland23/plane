@@ -1,0 +1,13 @@
+{
+  "image": "sha256:7cb04155e93bdb0409422b0c4b49d377b3b562f13ee3ef330342fce4386c26d8",
+  "base_image": "sha256:1c54c4fbe69d3a38740e1d05a6c0d31387050c351f0848e62c33c0a71a7c5a84",
+  "application_revision": "e5c7acf098a890436ab6300f0bc8491c7dd22725",
+  "omitted_migrations": [
+    "0123_issue_link_source_identity.py",
+    "0124_module_milestones.py"
+  ],
+  "database_leaf": "0122",
+  "missing_issue_link_columns": 2,
+  "actual_api_image_matches_fault": true,
+  "full_fixture_suite_required": true
+}
