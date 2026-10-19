@@ -1,0 +1,27 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__ test_inspection_failure_preserves_private_data_and_refuses_cleanup_receipt __
+
+fixture_scope = (<module 'schema_fixture_under_test' from '/var/tmp/plane-contract-8y9hyic2/docs/verification/HLB-433/native/schema_api_fixture.py'>, PosixPath('/var/tmp/plane-contract-8y9hyic2/fixtures/test_inspection_failure_preser0/private-fixture'))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fbe5db30ce0>
+
+    def test_inspection_failure_preserves_private_data_and_refuses_cleanup_receipt(fixture_scope,monkeypatch):
+        module,root=fixture_scope
+        monkeypatch.setenv('DOCKER_FIXTURE_MODE','denied')
+        error=None
+        try:module.cleanup()
+        except RuntimeError as caught:error=str(caught)
+>       assert (root/'pgdata/original-marker').exists(), 'Docker inspection failure must preserve private clone'
+E       AssertionError: Docker inspection failure must preserve private clone
+E       assert False
+E        +  where False = exists()
+E        +    where exists = (PosixPath('/var/tmp/plane-contract-8y9hyic2/fixtures/test_inspection_failure_preser0/private-fixture') / 'pgdata/original-marker').exists
+
+tools/tests/test_schema_fixture_safety.py:65: AssertionError
+- generated xml file: /home/runner/work/_temp/plane-release-evidence/failure-inspection-admission.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_schema_fixture_safety.py::test_inspection_failure_preserves_private_data_and_refuses_cleanup_receipt - AssertionError: Docker inspection failure must preserve private clone
+assert False
+ +  where False = exists()
+ +    where exists = (PosixPath('/var/tmp/plane-contract-8y9hyic2/fixtures/test_inspection_failure_preser0/private-fixture') / 'pgdata/original-marker').exists
+1 failed, 50 deselected in 0.22s

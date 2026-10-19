@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.492" timestamp="2026-10-19T00:53:14.511452+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_schema_fixture_safety" name="test_api_client_stays_on_private_network_without_host_publication" time="0.045"><failure message="AssertionError: Host HTTP access must not be used">fixture_scope = (&lt;module 'schema_fixture_under_test' from '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-429/docs/veri...ve/schema_api_fixture.py'&gt;, PosixPath('/tmp/pytest-of-root/pytest-93/test_api_client_stays_on_priva0/private-fixture'))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7deb545e3220&gt;
+
+    def test_api_client_stays_on_private_network_without_host_publication(fixture_scope,monkeypatch):
+        module,root=fixture_scope
+        (root/'evidence').mkdir()
+        calls=[]
+        def external(argv,**kwargs):
+            calls.append(argv)
+            if '-m' in argv and 'pytest' in argv:
+                (root/'evidence/pass-known-state.xml').write_text('&lt;testsuites&gt;&lt;testsuite tests="2" failures="0" errors="0"/&gt;&lt;/testsuites&gt;')
+            return subprocess.CompletedProcess(argv,0,b'200',b'')
+        monkeypatch.setattr(module,'run',external)
+        monkeypatch.setattr(module,'remove_container',lambda name:None)
+        # The old host-loopback path cannot reach an internal-only Docker network.
+        monkeypatch.setattr(module,'urlopen',lambda *a,**k:(_ for _ in ()).throw(AssertionError('Host HTTP access must not be used')),raising=False)
+&gt;       module.start_api()
+
+tools/tests/test_schema_fixture_safety.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+docs/verification/HLB-433/native/schema_api_fixture.py:165: in start_api
+    with urlopen('http://127.0.0.1:18191/api/instances/',timeout=5) as response:
+tools/tests/test_schema_fixture_safety.py:97: in &lt;lambda&gt;
+    monkeypatch.setattr(module,'urlopen',lambda *a,**k:(_ for _ in ()).throw(AssertionError('Host HTTP access must not be used')),raising=False)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = &lt;tuple_iterator object at 0x7deb545d5310&gt;
+
+&gt;   monkeypatch.setattr(module,'urlopen',lambda *a,**k:(_ for _ in ()).throw(AssertionError('Host HTTP access must not be used')),raising=False)
+E   AssertionError: Host HTTP access must not be used
+
+tools/tests/test_schema_fixture_safety.py:97: AssertionError</failure></testcase></testsuite></testsuites>

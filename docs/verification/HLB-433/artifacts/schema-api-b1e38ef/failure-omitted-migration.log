@@ -1,0 +1,16 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___________ test_complete_packaged_schema_serves_exact_fixture_link ____________
+
+    def test_complete_packaged_schema_serves_exact_fixture_link():
+        health, _ = get('/api/instances/')
+        assert health == 200, 'API fixture bootstrap must succeed before schema assertion'
+        status, body = get(PATH, authenticated=True)
+>       assert status == 200, f'Complete packaged schema must serve issue-link API; got {status}'
+E       AssertionError: Complete packaged schema must serve issue-link API; got 500
+E       assert 500 == 200
+
+tests/test_schema_api.py:39: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_schema_api.py::test_complete_packaged_schema_serves_exact_fixture_link
+1 failed, 1 deselected in 0.95s

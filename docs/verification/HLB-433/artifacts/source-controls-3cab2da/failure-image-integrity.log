@@ -1,0 +1,86 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+__ test_complete_image_manifest_detects_missing_or_changed_migration[missing] __
+
+release_module = <module 'plane_release' from '/var/tmp/plane-contract-z4iajqc7/tools/plane_release.py'>
+image_cli = (PosixPath('/var/tmp/plane-contract-z4iajqc7/fixtures/test_complete_image_manifest_d0'), <_pytest.monkeypatch.MonkeyPatch object at 0x78d7d6129b50>)
+defect = 'missing'
+
+    @pytest.mark.parametrize("defect", ["missing", "changed", "whiteout"])
+    def test_complete_image_manifest_detects_missing_or_changed_migration(release_module, image_cli, defect):
+        tmp, env = image_cli
+        name = "code/plane/db/migrations/0001_initial.py"
+        correct = b"# synthetic migration\n"
+        lower = tar_bytes({name: correct})
+        upper = tar_bytes({name: b"wrong"} if defect == "changed" else
+                          {"code/plane/db/migrations/.wh.0001_initial.py": b""} if defect == "whiteout" else {})
+        layers = {"first/layer.tar": lower, "second/layer.tar": upper}
+        if defect == "missing":
+            layers["first/layer.tar"] = tar_bytes({})
+        manifest = json.dumps([{"Layers": list(layers)}]).encode()
+        archive = tmp / "image.tar"
+        archive.write_bytes(tar_bytes({**layers, "manifest.json": manifest}))
+        env.setenv("IMAGE_TAR", str(archive))
+        with pytest.raises(release_module.GateError, match="IMAGE_CONTENT"):
+>           release_module.image_backend_files("fixture", {name: hashlib.sha256(correct).hexdigest()})
+E           Failed: DID NOT RAISE <class 'plane_release.GateError'>
+
+tools/tests/test_plane_release.py:207: Failed
+__ test_complete_image_manifest_detects_missing_or_changed_migration[changed] __
+
+release_module = <module 'plane_release' from '/var/tmp/plane-contract-z4iajqc7/tools/plane_release.py'>
+image_cli = (PosixPath('/var/tmp/plane-contract-z4iajqc7/fixtures/test_complete_image_manifest_d1'), <_pytest.monkeypatch.MonkeyPatch object at 0x78d7d619c550>)
+defect = 'changed'
+
+    @pytest.mark.parametrize("defect", ["missing", "changed", "whiteout"])
+    def test_complete_image_manifest_detects_missing_or_changed_migration(release_module, image_cli, defect):
+        tmp, env = image_cli
+        name = "code/plane/db/migrations/0001_initial.py"
+        correct = b"# synthetic migration\n"
+        lower = tar_bytes({name: correct})
+        upper = tar_bytes({name: b"wrong"} if defect == "changed" else
+                          {"code/plane/db/migrations/.wh.0001_initial.py": b""} if defect == "whiteout" else {})
+        layers = {"first/layer.tar": lower, "second/layer.tar": upper}
+        if defect == "missing":
+            layers["first/layer.tar"] = tar_bytes({})
+        manifest = json.dumps([{"Layers": list(layers)}]).encode()
+        archive = tmp / "image.tar"
+        archive.write_bytes(tar_bytes({**layers, "manifest.json": manifest}))
+        env.setenv("IMAGE_TAR", str(archive))
+        with pytest.raises(release_module.GateError, match="IMAGE_CONTENT"):
+>           release_module.image_backend_files("fixture", {name: hashlib.sha256(correct).hexdigest()})
+E           Failed: DID NOT RAISE <class 'plane_release.GateError'>
+
+tools/tests/test_plane_release.py:207: Failed
+_ test_complete_image_manifest_detects_missing_or_changed_migration[whiteout] __
+
+release_module = <module 'plane_release' from '/var/tmp/plane-contract-z4iajqc7/tools/plane_release.py'>
+image_cli = (PosixPath('/var/tmp/plane-contract-z4iajqc7/fixtures/test_complete_image_manifest_d2'), <_pytest.monkeypatch.MonkeyPatch object at 0x78d7d61f2df0>)
+defect = 'whiteout'
+
+    @pytest.mark.parametrize("defect", ["missing", "changed", "whiteout"])
+    def test_complete_image_manifest_detects_missing_or_changed_migration(release_module, image_cli, defect):
+        tmp, env = image_cli
+        name = "code/plane/db/migrations/0001_initial.py"
+        correct = b"# synthetic migration\n"
+        lower = tar_bytes({name: correct})
+        upper = tar_bytes({name: b"wrong"} if defect == "changed" else
+                          {"code/plane/db/migrations/.wh.0001_initial.py": b""} if defect == "whiteout" else {})
+        layers = {"first/layer.tar": lower, "second/layer.tar": upper}
+        if defect == "missing":
+            layers["first/layer.tar"] = tar_bytes({})
+        manifest = json.dumps([{"Layers": list(layers)}]).encode()
+        archive = tmp / "image.tar"
+        archive.write_bytes(tar_bytes({**layers, "manifest.json": manifest}))
+        env.setenv("IMAGE_TAR", str(archive))
+        with pytest.raises(release_module.GateError, match="IMAGE_CONTENT"):
+>           release_module.image_backend_files("fixture", {name: hashlib.sha256(correct).hexdigest()})
+E           Failed: DID NOT RAISE <class 'plane_release.GateError'>
+
+tools/tests/test_plane_release.py:207: Failed
+- generated xml file: /var/tmp/HLB-433-full-source-controls-20261018/failure-image-integrity.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_plane_release.py::test_complete_image_manifest_detects_missing_or_changed_migration[missing]
+FAILED tools/tests/test_plane_release.py::test_complete_image_manifest_detects_missing_or_changed_migration[changed]
+FAILED tools/tests/test_plane_release.py::test_complete_image_manifest_detects_missing_or_changed_migration[whiteout]
+3 failed, 44 deselected in 1.73s

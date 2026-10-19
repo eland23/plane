@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="6" skipped="0" tests="6" time="2.341" timestamp="2026-10-19T00:46:52.304502+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_schema_fixture_safety" name="test_seed_rejects_nonfixture_database_before_django[change0]" time="0.235"><failure message="AssertionError: Nonfixture DB must be rejected before Django initialization&#10;assert not True&#10; +  where True = exists()&#10; +    where exists = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d0/django-imported').exists">tmp_path = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d0')
+change = {'DATABASE_URL': 'postgresql://user:synthetic@192.168.1.129:5432/plane'}
+
+    @pytest.mark.parametrize('change', [
+        {'DATABASE_URL':'postgresql://user:synthetic@192.168.1.129:5432/plane'},
+        {'DATABASE_URL':'postgresql://user:synthetic@localhost:5432/plane'},
+        {'DATABASE_URL':''},
+        {'DATABASE_URL':f'postgresql://plane_fixture:synthetic@{NS}-db:bad/plane_schema_good'},
+        {'DJANGO_SETTINGS_MODULE':'plane.settings.test'},
+        {'DATABASE_READ_REPLICA_URL':'postgresql://user:synthetic@192.168.1.129/plane'},
+    ])
+    def test_seed_rejects_nonfixture_database_before_django(tmp_path, change):
+        marker=tmp_path/'django-imported'
+        (tmp_path/'django.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\nraise RuntimeError("UNSAFE_DJANGO_IMPORT")\n')
+        env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path),
+            'DATABASE_URL':f'postgresql://plane_fixture:synthetic@{NS}-db:5432/plane_schema_good',
+            'DJANGO_SETTINGS_MODULE':'plane.settings.production',
+            'REDIS_URL':f'redis://{NS}-redis:6379/0','AMQP_URL':f'redis://{NS}-redis:6379/1',**change}
+        result=subprocess.run([sys.executable,str(NATIVE/'seed_schema_fixture.py')],env=env,capture_output=True,text=True,timeout=10)
+&gt;       assert not marker.exists(), 'Nonfixture DB must be rejected before Django initialization'
+E       AssertionError: Nonfixture DB must be rejected before Django initialization
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d0/django-imported').exists
+
+tools/tests/test_schema_fixture_safety.py:31: AssertionError</failure></testcase><testcase classname="tools.tests.test_schema_fixture_safety" name="test_seed_rejects_nonfixture_database_before_django[change1]" time="0.254"><failure message="AssertionError: Nonfixture DB must be rejected before Django initialization&#10;assert not True&#10; +  where True = exists()&#10; +    where exists = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d1/django-imported').exists">tmp_path = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d1')
+change = {'DATABASE_URL': 'postgresql://user:synthetic@localhost:5432/plane'}
+
+    @pytest.mark.parametrize('change', [
+        {'DATABASE_URL':'postgresql://user:synthetic@192.168.1.129:5432/plane'},
+        {'DATABASE_URL':'postgresql://user:synthetic@localhost:5432/plane'},
+        {'DATABASE_URL':''},
+        {'DATABASE_URL':f'postgresql://plane_fixture:synthetic@{NS}-db:bad/plane_schema_good'},
+        {'DJANGO_SETTINGS_MODULE':'plane.settings.test'},
+        {'DATABASE_READ_REPLICA_URL':'postgresql://user:synthetic@192.168.1.129/plane'},
+    ])
+    def test_seed_rejects_nonfixture_database_before_django(tmp_path, change):
+        marker=tmp_path/'django-imported'
+        (tmp_path/'django.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\nraise RuntimeError("UNSAFE_DJANGO_IMPORT")\n')
+        env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path),
+            'DATABASE_URL':f'postgresql://plane_fixture:synthetic@{NS}-db:5432/plane_schema_good',
+            'DJANGO_SETTINGS_MODULE':'plane.settings.production',
+            'REDIS_URL':f'redis://{NS}-redis:6379/0','AMQP_URL':f'redis://{NS}-redis:6379/1',**change}
+        result=subprocess.run([sys.executable,str(NATIVE/'seed_schema_fixture.py')],env=env,capture_output=True,text=True,timeout=10)
+&gt;       assert not marker.exists(), 'Nonfixture DB must be rejected before Django initialization'
+E       AssertionError: Nonfixture DB must be rejected before Django initialization
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d1/django-imported').exists
+
+tools/tests/test_schema_fixture_safety.py:31: AssertionError</failure></testcase><testcase classname="tools.tests.test_schema_fixture_safety" name="test_seed_rejects_nonfixture_database_before_django[change2]" time="0.262"><failure message="AssertionError: Nonfixture DB must be rejected before Django initialization&#10;assert not True&#10; +  where True = exists()&#10; +    where exists = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d2/django-imported').exists">tmp_path = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d2')
+change = {'DATABASE_URL': ''}
+
+    @pytest.mark.parametrize('change', [
+        {'DATABASE_URL':'postgresql://user:synthetic@192.168.1.129:5432/plane'},
+        {'DATABASE_URL':'postgresql://user:synthetic@localhost:5432/plane'},
+        {'DATABASE_URL':''},
+        {'DATABASE_URL':f'postgresql://plane_fixture:synthetic@{NS}-db:bad/plane_schema_good'},
+        {'DJANGO_SETTINGS_MODULE':'plane.settings.test'},
+        {'DATABASE_READ_REPLICA_URL':'postgresql://user:synthetic@192.168.1.129/plane'},
+    ])
+    def test_seed_rejects_nonfixture_database_before_django(tmp_path, change):
+        marker=tmp_path/'django-imported'
+        (tmp_path/'django.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\nraise RuntimeError("UNSAFE_DJANGO_IMPORT")\n')
+        env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path),
+            'DATABASE_URL':f'postgresql://plane_fixture:synthetic@{NS}-db:5432/plane_schema_good',
+            'DJANGO_SETTINGS_MODULE':'plane.settings.production',
+            'REDIS_URL':f'redis://{NS}-redis:6379/0','AMQP_URL':f'redis://{NS}-redis:6379/1',**change}
+        result=subprocess.run([sys.executable,str(NATIVE/'seed_schema_fixture.py')],env=env,capture_output=True,text=True,timeout=10)
+&gt;       assert not marker.exists(), 'Nonfixture DB must be rejected before Django initialization'
+E       AssertionError: Nonfixture DB must be rejected before Django initialization
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d2/django-imported').exists
+
+tools/tests/test_schema_fixture_safety.py:31: AssertionError</failure></testcase><testcase classname="tools.tests.test_schema_fixture_safety" name="test_seed_rejects_nonfixture_database_before_django[change3]" time="0.319"><failure message="AssertionError: Nonfixture DB must be rejected before Django initialization&#10;assert not True&#10; +  where True = exists()&#10; +    where exists = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d3/django-imported').exists">tmp_path = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d3')
+change = {'DATABASE_URL': 'postgresql://plane_fixture:synthetic@plane-rehearsal-api-433-20261018-db:bad/plane_schema_good'}
+
+    @pytest.mark.parametrize('change', [
+        {'DATABASE_URL':'postgresql://user:synthetic@192.168.1.129:5432/plane'},
+        {'DATABASE_URL':'postgresql://user:synthetic@localhost:5432/plane'},
+        {'DATABASE_URL':''},
+        {'DATABASE_URL':f'postgresql://plane_fixture:synthetic@{NS}-db:bad/plane_schema_good'},
+        {'DJANGO_SETTINGS_MODULE':'plane.settings.test'},
+        {'DATABASE_READ_REPLICA_URL':'postgresql://user:synthetic@192.168.1.129/plane'},
+    ])
+    def test_seed_rejects_nonfixture_database_before_django(tmp_path, change):
+        marker=tmp_path/'django-imported'
+        (tmp_path/'django.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\nraise RuntimeError("UNSAFE_DJANGO_IMPORT")\n')
+        env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path),
+            'DATABASE_URL':f'postgresql://plane_fixture:synthetic@{NS}-db:5432/plane_schema_good',
+            'DJANGO_SETTINGS_MODULE':'plane.settings.production',
+            'REDIS_URL':f'redis://{NS}-redis:6379/0','AMQP_URL':f'redis://{NS}-redis:6379/1',**change}
+        result=subprocess.run([sys.executable,str(NATIVE/'seed_schema_fixture.py')],env=env,capture_output=True,text=True,timeout=10)
+&gt;       assert not marker.exists(), 'Nonfixture DB must be rejected before Django initialization'
+E       AssertionError: Nonfixture DB must be rejected before Django initialization
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d3/django-imported').exists
+
+tools/tests/test_schema_fixture_safety.py:31: AssertionError</failure></testcase><testcase classname="tools.tests.test_schema_fixture_safety" name="test_seed_rejects_nonfixture_database_before_django[change4]" time="0.246"><failure message="AssertionError: Nonfixture DB must be rejected before Django initialization&#10;assert not True&#10; +  where True = exists()&#10; +    where exists = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d4/django-imported').exists">tmp_path = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d4')
+change = {'DJANGO_SETTINGS_MODULE': 'plane.settings.test'}
+
+    @pytest.mark.parametrize('change', [
+        {'DATABASE_URL':'postgresql://user:synthetic@192.168.1.129:5432/plane'},
+        {'DATABASE_URL':'postgresql://user:synthetic@localhost:5432/plane'},
+        {'DATABASE_URL':''},
+        {'DATABASE_URL':f'postgresql://plane_fixture:synthetic@{NS}-db:bad/plane_schema_good'},
+        {'DJANGO_SETTINGS_MODULE':'plane.settings.test'},
+        {'DATABASE_READ_REPLICA_URL':'postgresql://user:synthetic@192.168.1.129/plane'},
+    ])
+    def test_seed_rejects_nonfixture_database_before_django(tmp_path, change):
+        marker=tmp_path/'django-imported'
+        (tmp_path/'django.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\nraise RuntimeError("UNSAFE_DJANGO_IMPORT")\n')
+        env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path),
+            'DATABASE_URL':f'postgresql://plane_fixture:synthetic@{NS}-db:5432/plane_schema_good',
+            'DJANGO_SETTINGS_MODULE':'plane.settings.production',
+            'REDIS_URL':f'redis://{NS}-redis:6379/0','AMQP_URL':f'redis://{NS}-redis:6379/1',**change}
+        result=subprocess.run([sys.executable,str(NATIVE/'seed_schema_fixture.py')],env=env,capture_output=True,text=True,timeout=10)
+&gt;       assert not marker.exists(), 'Nonfixture DB must be rejected before Django initialization'
+E       AssertionError: Nonfixture DB must be rejected before Django initialization
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d4/django-imported').exists
+
+tools/tests/test_schema_fixture_safety.py:31: AssertionError</failure></testcase><testcase classname="tools.tests.test_schema_fixture_safety" name="test_seed_rejects_nonfixture_database_before_django[change5]" time="0.216"><failure message="AssertionError: Nonfixture DB must be rejected before Django initialization&#10;assert not True&#10; +  where True = exists()&#10; +    where exists = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d5/django-imported').exists">tmp_path = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d5')
+change = {'DATABASE_READ_REPLICA_URL': 'postgresql://user:synthetic@192.168.1.129/plane'}
+
+    @pytest.mark.parametrize('change', [
+        {'DATABASE_URL':'postgresql://user:synthetic@192.168.1.129:5432/plane'},
+        {'DATABASE_URL':'postgresql://user:synthetic@localhost:5432/plane'},
+        {'DATABASE_URL':''},
+        {'DATABASE_URL':f'postgresql://plane_fixture:synthetic@{NS}-db:bad/plane_schema_good'},
+        {'DJANGO_SETTINGS_MODULE':'plane.settings.test'},
+        {'DATABASE_READ_REPLICA_URL':'postgresql://user:synthetic@192.168.1.129/plane'},
+    ])
+    def test_seed_rejects_nonfixture_database_before_django(tmp_path, change):
+        marker=tmp_path/'django-imported'
+        (tmp_path/'django.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\nraise RuntimeError("UNSAFE_DJANGO_IMPORT")\n')
+        env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path),
+            'DATABASE_URL':f'postgresql://plane_fixture:synthetic@{NS}-db:5432/plane_schema_good',
+            'DJANGO_SETTINGS_MODULE':'plane.settings.production',
+            'REDIS_URL':f'redis://{NS}-redis:6379/0','AMQP_URL':f'redis://{NS}-redis:6379/1',**change}
+        result=subprocess.run([sys.executable,str(NATIVE/'seed_schema_fixture.py')],env=env,capture_output=True,text=True,timeout=10)
+&gt;       assert not marker.exists(), 'Nonfixture DB must be rejected before Django initialization'
+E       AssertionError: Nonfixture DB must be rejected before Django initialization
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/var/tmp/plane-contract-kfyy90zb/fixtures/test_seed_rejects_nonfixture_d5/django-imported').exists
+
+tools/tests/test_schema_fixture_safety.py:31: AssertionError</failure></testcase></testsuite></testsuites>

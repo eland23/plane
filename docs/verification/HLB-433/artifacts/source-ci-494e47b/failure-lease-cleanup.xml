@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.318" timestamp="2026-10-19T00:54:12.166163+00:00" hostname="runnervm8k3b6"><testcase classname="tools.tests.test_schema_fixture_safety" name="test_receipt_failure_still_cleans_owned_data_and_closes_lease" time="0.238"><failure message="Failed: DID NOT RAISE &lt;class 'OSError'&gt;">fixture_scope = (&lt;module 'schema_fixture_under_test' from '/var/tmp/plane-contract-1az7njol/docs/verification/HLB-433/native/schema_api_fixture.py'&gt;, PosixPath('/var/tmp/plane-contract-1az7njol/fixtures/test_receipt_failure_still_cle0/private-fixture'))
+
+    def test_receipt_failure_still_cleans_owned_data_and_closes_lease(fixture_scope):
+        module,root=fixture_scope
+        (root/'receipts.json').mkdir()
+        lease=os.open(root/'lease',os.O_CREAT|os.O_RDWR,0o600)
+        with pytest.raises(OSError):
+            module.finish([],lease)
+        assert not (root/'pgdata').exists(), 'Receipt write failure must still clean owned clone'
+        assert not (root/'fixture.json').exists()
+        assert (root/'cleanup.json').exists()
+&gt;       with pytest.raises(OSError) as error:os.fstat(lease)
+E       Failed: DID NOT RAISE &lt;class 'OSError'&gt;
+
+tools/tests/test_schema_fixture_safety.py:81: Failed</failure></testcase></testsuite></testsuites>

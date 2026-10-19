@@ -1,8 +1,8 @@
 # HLB-433 — Plane release-candidate evidence
 
 Status: **INCOMPLETE for full acceptance**. Source contracts and scoped source
-reviews PASS. Complete application packaging and native runtime proof remain
-separate gates. [Child](https://linear.app/fashionfindrs/issue/HLB-433),
+reviews PASS. Complete application packaging and the bounded restored-schema API control
+PASS; shared runtime-fixture and full release proof remain separate gates. [Child](https://linear.app/fashionfindrs/issue/HLB-433),
 [parent](https://linear.app/fashionfindrs/issue/HLB-429),
 [PR4](https://github.com/eland23/plane/pull/4).
 
@@ -15,12 +15,12 @@ separate gates. [Child](https://linear.app/fashionfindrs/issue/HLB-433),
 | Packaging admission | Low capacity yields PACKAGING_ONLY with separate blocked runtime admission; normal release still fails TARGET_CAPACITY | PASS; cannot authorize deployment |
 | Private diagnostics | Foreign/enclosing/worktree/bare repository outputs denied before log creation or Docker; error marker stays private with 0700 directory/0600 logs | PASS source contracts |
 | Helper cleanup | Failed probe's owned child terminates; stream deadlines reap owned process groups | PASS source contracts |
-| REL-02 full image build | Complete API/worker/beat/migrator backend and full web, same application revision, offline payload verification | IN PROGRESS; no success candidate published yet |
+| REL-02 full image build | Complete API/worker/beat/migrator backend and full web, same application revision, offline payload verification | PASS complete images and 708 backend payload files |
 | Native packaged command | Actual image on .130: Django system check, migration leaf 0124, milestone import, four entrypoint syntax checks | PASS bounded offline CLI; no database/schema or HTTP claim |
-| Authenticated API | Omitted-migration business assertion and real authenticated readback | NOT RUN; required declared coverage remains open |
+| Authenticated API | Omitted-migration business assertion and real authenticated readback | PASS bounded normal / missing-schema / restored API sequence; shared fixture M integration remains open |
 | Restore / ordered deployment / recovery / browser | HLB-434/435/436 owned runtime gates | NOT RUN; no deployed readiness claim |
 
-All 35 source tests are committed in tools/tests/test_plane_release.py. They use
+The original 35 source tests are committed in tools/tests/test_plane_release.py. They use
 real temporary Git repositories/remotes and controlled external SSH/Docker fakes.
 The scratch image proves Docker export format only, not the complete application.
 UI/Jest are N/A to this CLI-only change. The parent's real authenticated API and
@@ -78,8 +78,14 @@ The second package attempt uses the full Git archive and upstream API/web build,
 with immutable Python/Node/nginx base digests, source labels, serial frontend
 build tasks and 2304 MiB Node heap. Backend build completed:
 sha256:0488a84e9e4c903d972420fa7c28ebaa6a006e27049dc3e57d6ec1e2d45717ec,
-307630465 bytes (Docker image Size). Frontend and final offline payload checks
-remain in progress. No candidate success manifest has been published. The actual
+307630465 bytes (Docker image Size). Frontend completed as
+sha256:9e5f1f51d8bd35efe70adb1385ea76b3ca88395a1a3ea24d9d9f52b7afdeb196,
+103280599 bytes. Both builds and offline payload checks pass, including 708 backend
+files. The [candidate](artifacts/full-package/candidate.json) and
+[checkpoint](artifacts/full-package/checkpoint.json) record PACKAGING_ONLY with
+runtime admission blocked. Combined image Size is 410911064 bytes; this is not
+full-stack disk usage or memory sizing. Both images are staged in the .130 image
+cache. The actual
 builder loaded the 08a15ab implementation before the later output guard; its logs
 are under a root-only /var/lib/plane-release directory, outside every checkout.
 The candidate records its actual builder checksum; source reviews of bcdee4f do
@@ -111,8 +117,9 @@ timeouts and owned process groups; errors expose codes. Dependency logs remain
 
 Independent Standards and Spec/security source reviews PASS at bcdee4f. Reviewers
 did not execute tests or inspect CI; CI is a separate gate. The full child remains
-incomplete pending complete images, final content verification and real native
-command/API proof. Registry signatures, target-side release locking, effect
+incomplete pending shared fixture M integration and remaining owned
+acceptance checks. Real authenticated schema-control proof now passes. Complete images, content verification and the bounded native
+command probe now pass. Registry signatures, target-side release locking, effect
 suppression, restored-data integrity, measured runtime admission and rollback
 are separate later acceptance gates. No risk acceptance, production import,
 cutover, deployed readiness or full migration completion is implied.
@@ -168,3 +175,161 @@ The fixed image must already be staged, and the small single-CLI reservation mus
 be available. The script rejects other hosts, optimized Python and mismatched
 image/provenance before starting the CLI container. This is a test admission
 boundary and does not override the full release preflight.
+
+## Expanded source safety controls
+
+Source 3cab2da61115bba1692133056760c413cca23a7f adds the isolated restored-schema
+controller and pre-Django seed boundary. The serial local matrix passes 47 checks
+from known state and 47 after restoration, with nine controlled fault phases.
+Each has zero setup errors: target (1 failure), payload identity (3), packaging
+admission (1), owned helper cleanup (1), private outputs (4), seed admission (6),
+inspection failure handling (1), receipt-failure cleanup (1), and lease cleanup
+(1). All 11 receipts are accepted and temporary source fixtures removed.
+
+The schema controller runs only on .130, with production settings, an internal
+network, API/client access confined to that network, random private credentials and no workers. It
+checks private backup hashes before restoring a dedicated clone. No original
+service or datastore is modified. Seed admission rejects foreign database names,
+hosts, settings, replica configuration and brokers before initializing Django.
+Indeterminate Docker inspection preserves the clone rather than reporting clean
+removal. Receipt I/O failure still attempts cleanup and closes the release lease.
+The controller is published for runtime execution; source safety checks alone do
+not establish its API result.
+
+[CI for source 3cab2da](https://github.com/eland23/plane/actions/runs/39182430122)
+passes all 11 phases on merge ref 134703620d78183231fdbd09c301fbd1550eddbe.
+Durable [CI receipts](artifacts/source-ci-3cab2da/receipts.json) and
+[local receipts](artifacts/source-controls-3cab2da/receipts.json) record the same
+47 clean/restored tests and nine intended controls. These are source contracts,
+separate from restored-data API execution.
+
+Independent Standards and Spec/security reviews PASS on committed harness source
+3cab2da61115bba1692133056760c413cca23a7f, including the pre-Django seed admission,
+failed-inspection behavior and receipt/lease cleanup corrections. Reviewers did
+not run tests or CI and do not grant runtime acceptance.
+
+The first schema API attempt restored all 110 source tables / 812 rows exactly
+before migrations, then completed migrations and synthetic setup. It did not
+reach API assertions: this VM does not publish host-loopback bindings for an
+internal-only Docker network. The owned attempt was interrupted, all containers
+and network removed, and cloned database/credentials removed; root-only
+diagnostics are retained. This is a setup failure, not the required omitted-
+migration negative control. Source 494e47b removes host publication and uses an
+internal-network HTTP client plus readiness inside the API container. A boundary
+regression fails on the old host HTTP path, then all 13 safety checks pass.
+
+[CI for network correction 494e47b](https://github.com/eland23/plane/actions/runs/39182821944)
+passes all 48 known-state/restored checks and nine intended source fault phases.
+[CI provenance](artifacts/source-ci-494e47b/provenance.json) pins the tested merge
+ref. Independent Standards and Spec/security review PASS on this correction.
+The separate [red/green regression](artifacts/network-regression/provenance.json)
+is source-boundary evidence; it does not replace the real API phases.
+
+Attempt 02 reached production-settings API readiness (HTTP 200) but the selected
+test image did not contain pytest. No business assertions ran; the attempt
+failed and removed its owned containers/network/clone/credentials. Private logs
+are retained separately. This setup failure is not counted as fault detection.
+
+A dedicated 71253286-byte test-only image now uses the pinned Python base and
+five SHA-256 locked wheels, including pytest 9.0.3 from the application test
+requirements. The offline build definition and requirements are committed at
+ee21e40. [Transfer provenance](artifacts/schema-runner/provenance.json) binds
+the editor config digest to the VM OCI manifest through identical RootFS and
+runtime configuration. It contains no application source or backup. Controller
+99aa49ff037daee145ed29a36aa29b81e52f2e58 verifies the pinned runner version in a
+network-none, read-only, 128 MiB container before creating a database or network.
+Wrong/empty-version boundary checks pass along with the existing 13 safety
+cases. Standards and Spec/security correction reviews PASS on this commit.
+
+Source 99aa49f also passes [51 known/restored source checks plus nine fault phases
+in CI](https://github.com/eland23/plane/actions/runs/39183430363).
+[Durable receipts](artifacts/source-ci-99aa49f/receipts.json) and merge-ref provenance
+remain separate from actual API evidence. A network-none native runner CLI on
+.130 returns exactly pytest 9.0.3 and removes itself.
+
+Attempt 03 stopped before creating resources at COMPONENT_DISK_RESERVATION:
+VM free disk had fallen to 1439404032 bytes. No API assertion or business-control
+result is claimed. Removing the old unreferenced plane-backend:homelab image
+reclaimed about 443 MB. Two obsolete HLB-464 source-fixture directories, mounted
+by no container, were archived privately, fully parsed/validated, then removed
+from .130, reclaiming a further 322486272 bytes. Their evidence and runner
+dependencies remain. [Cleanup receipt](artifacts/owned-storage-cleanup/receipt.json)
+records the archive checksum and checks; the archive is root-only outside Git.
+Free disk rose to 2204045312 bytes without lowering the component reservation or
+removing unrelated images, containers, volumes or live .129 data.
+
+Attempt 04 passes the real authenticated exact-link assertion (literal fixture
+ID/title/URL and null provenance). Its anonymous request correctly returns 401;
+the harness had incorrectly expected 403. Packaged source
+apps/api/plane/authentication/adapter/exception.py explicitly assigns 401 for
+NotAuthenticated, and common.EXCEPTION_HANDLER selects that function. Source
+b1e38efde29cddfa7eda620be61c1d0835166d31 changes the exact expectation to 401;
+it does not accept multiple statuses. Focused Standards and Spec/security
+reviews PASS. Attempt 04 as a whole is not accepted and never reaches the
+omitted-migration phase. Its containers/network/clone/credentials were removed.
+[Prior-attempt metadata](artifacts/schema-api-attempts/prior-attempts.json)
+keeps setup failures and the mistaken expectation separate from the required
+three-phase proof. Original native logs remain private outside Git.
+
+## Actual restored-schema API control — PASS
+
+Application revision e5c7acf098a890436ab6300f0bc8491c7dd22725 and test/controller
+source b1e38efde29cddfa7eda620be61c1d0835166d31 ran on 192.168.1.130. The
+[provenance](artifacts/schema-api-b1e38ef/provenance.json) binds the immutable
+backend manifest and exact executed test-file SHA-256 to pushed source. The same
+read-only test file is used throughout.
+
+| Phase | Actual result | Native JUnit |
+|---|---|---|
+| Known state | 2 pass, exit 0, 0 errors | [XML](artifacts/schema-api-b1e38ef/pass-known-state.xml) |
+| Omit required migrations / old schema | 1 intended schema assertion failure, exit 1, 0 errors | [XML](artifacts/schema-api-b1e38ef/failure-omitted-migration.xml) |
+| Restore complete image / good clone | 2 pass, exit 0, 0 errors | [XML](artifacts/schema-api-b1e38ef/restore-and-repeat.xml) |
+
+Anonymous requests return the exact application-contract 401. A real native
+session authenticates the fixture link GET and verifies its literal UUID, title,
+URL and null provenance through the complete image. The fault is a derived image
+with 0123/0124 files removed and a second restored database reversed to 0122;
+bootstrap /api/instances/ still returns 200 before the unchanged link-schema
+assertion fails with HTTP 500. A separate read-only Docker-log observation
+confirms the missing issue_links.external_source column, tying that failure to
+the injected schema defect rather than startup/authentication.
+[Fault identity](artifacts/schema-api-b1e38ef/fault-identity.json) and
+[private-log hash/cause](artifacts/schema-api-b1e38ef/fault-cause.json).
+
+The source backup restores with exact equality across all 110 tables / 812 rows
+before migration. After both successful phases, every original row retains all
+original field values; the synthetic fixture and added schema records are
+allowed additions. [Pre-migration integrity](artifacts/schema-api-b1e38ef/restore-integrity.json),
+[post-migration preservation](artifacts/schema-api-b1e38ef/preservation.json).
+This is documented fixture setup plus real authenticated readback, not an import
+or UI-write claim.
+
+[Native completion](artifacts/schema-api-b1e38ef/native-result.log) and
+[phase receipts](artifacts/schema-api-b1e38ef/receipts.json) pass. Independent
+[cleanup readback](artifacts/schema-api-b1e38ef/independent-cleanup.json) finds zero
+owned containers, no network, no fault tag or digest, no cloned PostgreSQL data
+or environment/session fixture files, and can reacquire the release lease.
+Original backup inputs are retained privately for the later restore rehearsal.
+Private diagnostic logs are retained root-only and may include invalidated
+fixture session output; no raw database, object keys, credentials or API logs
+are committed. Live .129 was not modified.
+
+[CI on b1e38ef](https://github.com/eland23/plane/actions/runs/39184401102) passes
+51 source checks from known state and after restoration, plus all nine intended
+source faults with zero errors. [CI provenance](artifacts/source-ci-b1e38ef/provenance.json)
+records the exact head and tested merge ref separately from the .130 execution.
+
+### Coverage limits still open
+
+This component fixture contains only a dedicated existing-field issue/link and
+session, plus the preserved original database. It is not the complete supported
+issue/module/cycle/wiki/asset fixture M. No applicable parent coverage is waived:
+shared fixture-M integration and the combined wiki/cycle reload belong to the
+remaining runtime preparation across HLB-434/435/436. HLB-433 remains open until
+its full owned acceptance is reviewed against that shared integration.
+
+Asset restore/checksum corruption, full compatible-service startup/readiness,
+migration rerun/maintenance/recovery, and browser editing/reload remain NOT RUN
+under their owning children. This API control does not admit a full release,
+prove full-stack sizing, authorize production import/cutover, or replace those
+gates. No public preview endpoint was published for the component test.

@@ -1,0 +1,16 @@
+{
+  "archived_entries": 13265,
+  "archive_bytes": 237398392,
+  "archive_sha256": "4960eefb992857e3bb274caf38122184ecb9da1b5592e442f80c2a1b6cf097bb",
+  "archive_validated": true,
+  "originals_removed": true,
+  "removed_only_archived_plane_source_fixtures": true,
+  "free_before_bytes": 1881559040,
+  "free_after_bytes": 2204045312,
+  "reclaimed_bytes": 322486272,
+  "old_unused_plane_image_removed": "sha256:f2470ea68b74b1746bc31a20112dac63e67f55e84e2580b30b03da8af49d2d7d",
+  "image_free_before_bytes": 1439404032,
+  "image_free_after_bytes": 1882718208,
+  "source_archive_private_outside_git": true,
+  "unrelated_images_containers_volumes_untouched": true
+}

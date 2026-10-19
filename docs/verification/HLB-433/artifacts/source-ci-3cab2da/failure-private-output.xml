@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="4" time="0.655" timestamp="2026-10-19T00:48:46.805008+00:00" hostname="runnervm8k3b6"><testcase classname="tools.tests.test_plane_release" name="test_packaging_denies_logs_inside_any_git_repository[foreign]" time="0.134"><failure message="assert (2 == 2 and 'DOCKERFILE_COMPATIBILITY' == 'OUTPUT_DENIED'&#10; +  where 2 = CompletedProcess(args=['/usr/bin/python3', '/var/tmp/plane-contract-a10570w1/tools/plane_release.py', 'package', '--re...cccccccccccccccccccccccccccccccccccccccccc'], returncode=2, stdout='', stderr='{&quot;code&quot;: &quot;DOCKERFILE_COMPATIBILITY&quot;}\n').returncode&#10;  &#10;  - OUTPUT_DENIED&#10;  + DOCKERFILE_COMPATIBILITY)">source = (PosixPath('/var/tmp/plane-contract-a10570w1/fixtures/test_packaging_denies_logs_ins0/source'), {'GIT_CONFIG_GLOBAL': ...dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', ...})
+tmp_path = PosixPath('/var/tmp/plane-contract-a10570w1/fixtures/test_packaging_denies_logs_ins0')
+location = 'foreign'
+
+    @pytest.mark.parametrize("location", ["foreign", "enclosing", "worktree", "bare"])
+    def test_packaging_denies_logs_inside_any_git_repository(source, tmp_path, location):
+        repo, env = source
+        if location == "enclosing":
+            git(tmp_path, "init")
+            root = tmp_path
+        elif location == "bare":
+            root = tmp_path / "other.git"
+            subprocess.run(["git", "init", "--bare", str(root)], check=True, capture_output=True)
+        else:
+            root = tmp_path / "other"
+            root.mkdir()
+            if location == "worktree":
+                (root / ".git").write_text("gitdir: /nonexistent/private-metadata")
+            else:
+                git(root, "init")
+        output = root / "candidate.json"
+        docker = Path(env["PATH"].split(os.pathsep)[0]) / "docker"
+        marker = tmp_path / "docker-called"
+        docker.write_text("#!/usr/bin/env python3\nfrom pathlib import Path\n" + f"Path({str(marker)!r}).touch()\n")
+        docker.chmod(0o755)
+        result = invoke(source, command="package", output=str(output),
+            **{"python-base": "python@sha256:" + "a" * 64,
+               "node-base": "node@sha256:" + "b" * 64, "nginx-base": "nginx@sha256:" + "c" * 64})
+&gt;       assert result.returncode == 2 and json.loads(result.stderr)["code"] == "OUTPUT_DENIED"
+E       assert (2 == 2 and 'DOCKERFILE_COMPATIBILITY' == 'OUTPUT_DENIED'
+E        +  where 2 = CompletedProcess(args=['/usr/bin/python3', '/var/tmp/plane-contract-a10570w1/tools/plane_release.py', 'package', '--re...cccccccccccccccccccccccccccccccccccccccccc'], returncode=2, stdout='', stderr='{"code": "DOCKERFILE_COMPATIBILITY"}\n').returncode
+E         
+E         - OUTPUT_DENIED
+E         + DOCKERFILE_COMPATIBILITY)
+
+tools/tests/test_plane_release.py:421: AssertionError</failure></testcase><testcase classname="tools.tests.test_plane_release" name="test_packaging_denies_logs_inside_any_git_repository[enclosing]" time="0.134"><failure message="assert (2 == 2 and 'DOCKERFILE_COMPATIBILITY' == 'OUTPUT_DENIED'&#10; +  where 2 = CompletedProcess(args=['/usr/bin/python3', '/var/tmp/plane-contract-a10570w1/tools/plane_release.py', 'package', '--re...cccccccccccccccccccccccccccccccccccccccccc'], returncode=2, stdout='', stderr='{&quot;code&quot;: &quot;DOCKERFILE_COMPATIBILITY&quot;}\n').returncode&#10;  &#10;  - OUTPUT_DENIED&#10;  + DOCKERFILE_COMPATIBILITY)">source = (PosixPath('/var/tmp/plane-contract-a10570w1/fixtures/test_packaging_denies_logs_ins1/source'), {'GIT_CONFIG_GLOBAL': ...dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', ...})
+tmp_path = PosixPath('/var/tmp/plane-contract-a10570w1/fixtures/test_packaging_denies_logs_ins1')
+location = 'enclosing'
+
+    @pytest.mark.parametrize("location", ["foreign", "enclosing", "worktree", "bare"])
+    def test_packaging_denies_logs_inside_any_git_repository(source, tmp_path, location):
+        repo, env = source
+        if location == "enclosing":
+            git(tmp_path, "init")
+            root = tmp_path
+        elif location == "bare":
+            root = tmp_path / "other.git"
+            subprocess.run(["git", "init", "--bare", str(root)], check=True, capture_output=True)
+        else:
+            root = tmp_path / "other"
+            root.mkdir()
+            if location == "worktree":
+                (root / ".git").write_text("gitdir: /nonexistent/private-metadata")
+            else:
+                git(root, "init")
+        output = root / "candidate.json"
+        docker = Path(env["PATH"].split(os.pathsep)[0]) / "docker"
+        marker = tmp_path / "docker-called"
+        docker.write_text("#!/usr/bin/env python3\nfrom pathlib import Path\n" + f"Path({str(marker)!r}).touch()\n")
+        docker.chmod(0o755)
+        result = invoke(source, command="package", output=str(output),
+            **{"python-base": "python@sha256:" + "a" * 64,
+               "node-base": "node@sha256:" + "b" * 64, "nginx-base": "nginx@sha256:" + "c" * 64})
+&gt;       assert result.returncode == 2 and json.loads(result.stderr)["code"] == "OUTPUT_DENIED"
+E       assert (2 == 2 and 'DOCKERFILE_COMPATIBILITY' == 'OUTPUT_DENIED'
+E        +  where 2 = CompletedProcess(args=['/usr/bin/python3', '/var/tmp/plane-contract-a10570w1/tools/plane_release.py', 'package', '--re...cccccccccccccccccccccccccccccccccccccccccc'], returncode=2, stdout='', stderr='{"code": "DOCKERFILE_COMPATIBILITY"}\n').returncode
+E         
+E         - OUTPUT_DENIED
+E         + DOCKERFILE_COMPATIBILITY)
+
+tools/tests/test_plane_release.py:421: AssertionError</failure></testcase><testcase classname="tools.tests.test_plane_release" name="test_packaging_denies_logs_inside_any_git_repository[worktree]" time="0.133"><failure message="assert (2 == 2 and 'DOCKERFILE_COMPATIBILITY' == 'OUTPUT_DENIED'&#10; +  where 2 = CompletedProcess(args=['/usr/bin/python3', '/var/tmp/plane-contract-a10570w1/tools/plane_release.py', 'package', '--re...cccccccccccccccccccccccccccccccccccccccccc'], returncode=2, stdout='', stderr='{&quot;code&quot;: &quot;DOCKERFILE_COMPATIBILITY&quot;}\n').returncode&#10;  &#10;  - OUTPUT_DENIED&#10;  + DOCKERFILE_COMPATIBILITY)">source = (PosixPath('/var/tmp/plane-contract-a10570w1/fixtures/test_packaging_denies_logs_ins2/source'), {'GIT_CONFIG_GLOBAL': ...dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', ...})
+tmp_path = PosixPath('/var/tmp/plane-contract-a10570w1/fixtures/test_packaging_denies_logs_ins2')
+location = 'worktree'
+
+    @pytest.mark.parametrize("location", ["foreign", "enclosing", "worktree", "bare"])
+    def test_packaging_denies_logs_inside_any_git_repository(source, tmp_path, location):
+        repo, env = source
+        if location == "enclosing":
+            git(tmp_path, "init")
+            root = tmp_path
+        elif location == "bare":
+            root = tmp_path / "other.git"
+            subprocess.run(["git", "init", "--bare", str(root)], check=True, capture_output=True)
+        else:
+            root = tmp_path / "other"
+            root.mkdir()
+            if location == "worktree":
+                (root / ".git").write_text("gitdir: /nonexistent/private-metadata")
+            else:
+                git(root, "init")
+        output = root / "candidate.json"
+        docker = Path(env["PATH"].split(os.pathsep)[0]) / "docker"
+        marker = tmp_path / "docker-called"
+        docker.write_text("#!/usr/bin/env python3\nfrom pathlib import Path\n" + f"Path({str(marker)!r}).touch()\n")
+        docker.chmod(0o755)
+        result = invoke(source, command="package", output=str(output),
+            **{"python-base": "python@sha256:" + "a" * 64,
+               "node-base": "node@sha256:" + "b" * 64, "nginx-base": "nginx@sha256:" + "c" * 64})
+&gt;       assert result.returncode == 2 and json.loads(result.stderr)["code"] == "OUTPUT_DENIED"
+E       assert (2 == 2 and 'DOCKERFILE_COMPATIBILITY' == 'OUTPUT_DENIED'
+E        +  where 2 = CompletedProcess(args=['/usr/bin/python3', '/var/tmp/plane-contract-a10570w1/tools/plane_release.py', 'package', '--re...cccccccccccccccccccccccccccccccccccccccccc'], returncode=2, stdout='', stderr='{"code": "DOCKERFILE_COMPATIBILITY"}\n').returncode
+E         
+E         - OUTPUT_DENIED
+E         + DOCKERFILE_COMPATIBILITY)
+
+tools/tests/test_plane_release.py:421: AssertionError</failure></testcase><testcase classname="tools.tests.test_plane_release" name="test_packaging_denies_logs_inside_any_git_repository[bare]" time="0.139"><failure message="assert (2 == 2 and 'DOCKERFILE_COMPATIBILITY' == 'OUTPUT_DENIED'&#10; +  where 2 = CompletedProcess(args=['/usr/bin/python3', '/var/tmp/plane-contract-a10570w1/tools/plane_release.py', 'package', '--re...cccccccccccccccccccccccccccccccccccccccccc'], returncode=2, stdout='', stderr='{&quot;code&quot;: &quot;DOCKERFILE_COMPATIBILITY&quot;}\n').returncode&#10;  &#10;  - OUTPUT_DENIED&#10;  + DOCKERFILE_COMPATIBILITY)">source = (PosixPath('/var/tmp/plane-contract-a10570w1/fixtures/test_packaging_denies_logs_ins3/source'), {'GIT_CONFIG_GLOBAL': ...dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', ...})
+tmp_path = PosixPath('/var/tmp/plane-contract-a10570w1/fixtures/test_packaging_denies_logs_ins3')
+location = 'bare'
+
+    @pytest.mark.parametrize("location", ["foreign", "enclosing", "worktree", "bare"])
+    def test_packaging_denies_logs_inside_any_git_repository(source, tmp_path, location):
+        repo, env = source
+        if location == "enclosing":
+            git(tmp_path, "init")
+            root = tmp_path
+        elif location == "bare":
+            root = tmp_path / "other.git"
+            subprocess.run(["git", "init", "--bare", str(root)], check=True, capture_output=True)
+        else:
+            root = tmp_path / "other"
+            root.mkdir()
+            if location == "worktree":
+                (root / ".git").write_text("gitdir: /nonexistent/private-metadata")
+            else:
+                git(root, "init")
+        output = root / "candidate.json"
+        docker = Path(env["PATH"].split(os.pathsep)[0]) / "docker"
+        marker = tmp_path / "docker-called"
+        docker.write_text("#!/usr/bin/env python3\nfrom pathlib import Path\n" + f"Path({str(marker)!r}).touch()\n")
+        docker.chmod(0o755)
+        result = invoke(source, command="package", output=str(output),
+            **{"python-base": "python@sha256:" + "a" * 64,
+               "node-base": "node@sha256:" + "b" * 64, "nginx-base": "nginx@sha256:" + "c" * 64})
+&gt;       assert result.returncode == 2 and json.loads(result.stderr)["code"] == "OUTPUT_DENIED"
+E       assert (2 == 2 and 'DOCKERFILE_COMPATIBILITY' == 'OUTPUT_DENIED'
+E        +  where 2 = CompletedProcess(args=['/usr/bin/python3', '/var/tmp/plane-contract-a10570w1/tools/plane_release.py', 'package', '--re...cccccccccccccccccccccccccccccccccccccccccc'], returncode=2, stdout='', stderr='{"code": "DOCKERFILE_COMPATIBILITY"}\n').returncode
+E         
+E         - OUTPUT_DENIED
+E         + DOCKERFILE_COMPATIBILITY)
+
+tools/tests/test_plane_release.py:421: AssertionError</failure></testcase></testsuite></testsuites>
