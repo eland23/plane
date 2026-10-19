@@ -54,3 +54,26 @@ exact seeded snapshot equality and original row preservation, mandatory singleto
 internal-network/NetworkID readback, and independent cleanup. Public evidence is
 in docs/verification/HLB-434/artifacts/native-database-7b5ddfc/. Full shared fixture
 M and combined integration remain pending; this bounded proof does not waive them.
+
+## Shared fixture M preparation
+
+The shared controller restores original rows and bytes into another fresh .130
+namespace, then seeds only supported synthetic fields. It uses fixed database,
+Redis and storage destinations; storage configuration is checked before Django
+initialization and after settings resolution. The private network contains four
+pinned services, all checked by mandatory exclusive-network/image readback.
+No workers or external provider sends run. Its larger component reservation is
+1536 MiB available memory plus the existing 2 GiB disk gate.
+
+Native tests receive only short-lived fixture sessions, with no storage credential
+mount. Asset redirects are not followed automatically: require the exact internal
+storage hostname, bucket/key path and port, then make a separate request without
+the session cookie. The bounded corruption target remains the marked synthetic
+binary. Recovery repairs that asset and restores the saved seeded DB dump. Raw
+storage reads, source backups and session/config values remain private; selected
+public outputs require review for original values and signed query parameters.
+
+The golden JSON contains synthetic FAS-like identifiers, never looked up in live
+Linear. Issue-linked project documents use existing IssueLink/PageLog fields;
+future portfolio, milestone and exclusive-label features are excluded by the
+parent runtime scope. Combined API/asset and browser results remain pending.

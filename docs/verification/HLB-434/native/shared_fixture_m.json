@@ -1,0 +1,158 @@
+{
+  "workspace": {
+    "id": "43410000-0000-4000-8000-000000000010",
+    "slug": "plane-shared-m-434"
+  },
+  "other_workspace": {
+    "id": "43410000-0000-4000-8000-000000000011",
+    "slug": "plane-shared-m-other-434"
+  },
+  "project": {
+    "id": "43410000-0000-4000-8000-000000000020",
+    "identifier": "FAS"
+  },
+  "members": {
+    "owner": "43410000-0000-4000-8000-000000000001",
+    "member": "43410000-0000-4000-8000-000000000002",
+    "viewer": "43410000-0000-4000-8000-000000000003",
+    "outsider": "43410000-0000-4000-8000-000000000004",
+    "inactive": "43410000-0000-4000-8000-000000000005"
+  },
+  "states": {
+    "Done": {
+      "id": "43410000-0000-4000-8000-000000000030",
+      "group": "completed"
+    },
+    "Todo": {
+      "id": "43410000-0000-4000-8000-000000000031",
+      "group": "unstarted"
+    },
+    "Canceled": {
+      "id": "43410000-0000-4000-8000-000000000032",
+      "group": "cancelled"
+    },
+    "Duplicate": {
+      "id": "43410000-0000-4000-8000-000000000033",
+      "group": "cancelled"
+    }
+  },
+  "modules": {
+    "Alpha": "43410000-0000-4000-8000-000000000040",
+    "Beta": "43410000-0000-4000-8000-000000000041"
+  },
+  "issues": [
+    {
+      "id": "43410000-0000-4000-8000-000000000102",
+      "sequence": 2,
+      "name": "Fixture M FAS-2",
+      "state": "Done",
+      "module": "Alpha",
+      "parent": null,
+      "target_date": "2026-11-01",
+      "sort_order": 200
+    },
+    {
+      "id": "43410000-0000-4000-8000-000000000105",
+      "sequence": 5,
+      "name": "Fixture M FAS-5",
+      "state": "Done",
+      "module": "Alpha",
+      "parent": "43410000-0000-4000-8000-000000000102",
+      "target_date": "2026-11-01",
+      "sort_order": 500
+    },
+    {
+      "id": "43410000-0000-4000-8000-000000000111",
+      "sequence": 11,
+      "name": "Fixture M FAS-11",
+      "state": "Todo",
+      "module": "Beta",
+      "parent": "43410000-0000-4000-8000-000000000105",
+      "target_date": "2026-11-02",
+      "sort_order": 1100
+    },
+    {
+      "id": "43410000-0000-4000-8000-000000000117",
+      "sequence": 17,
+      "name": "Fixture M FAS-17",
+      "state": "Todo",
+      "module": "Beta",
+      "parent": null,
+      "target_date": "2026-11-02",
+      "sort_order": 1700
+    },
+    {
+      "id": "43410000-0000-4000-8000-000000000121",
+      "sequence": 21,
+      "name": "Fixture M FAS-21",
+      "state": "Canceled",
+      "module": "Beta",
+      "parent": null,
+      "target_date": "2026-11-03",
+      "sort_order": 2100
+    },
+    {
+      "id": "43410000-0000-4000-8000-000000000130",
+      "sequence": 30,
+      "name": "Fixture M FAS-30",
+      "state": "Duplicate",
+      "module": null,
+      "parent": null,
+      "target_date": null,
+      "sort_order": 3000
+    }
+  ],
+  "relations": [
+    {
+      "issue": "43410000-0000-4000-8000-000000000111",
+      "related_issue": "43410000-0000-4000-8000-000000000102",
+      "type": "blocked_by"
+    },
+    {
+      "issue": "43410000-0000-4000-8000-000000000117",
+      "related_issue": "43410000-0000-4000-8000-000000000105",
+      "type": "relates_to"
+    },
+    {
+      "issue": "43410000-0000-4000-8000-000000000130",
+      "related_issue": "43410000-0000-4000-8000-000000000102",
+      "type": "duplicate"
+    }
+  ],
+  "cycle": {
+    "id": "43410000-0000-4000-8000-000000000050",
+    "name": "Fixture M DST cycle",
+    "timezone": "America/New_York",
+    "start": "2026-10-31T04:00:00Z",
+    "end": "2026-11-03T04:59:59Z"
+  },
+  "wiki": {
+    "id": "43410000-0000-4000-8000-000000000060",
+    "name": "Fixture M wiki",
+    "html": "<p>Fixture M wiki golden content</p>"
+  },
+  "document": {
+    "id": "43410000-0000-4000-8000-000000000061",
+    "name": "Associated document M",
+    "html": "<p>Document reached through FAS-11</p>",
+    "link_id": "43410000-0000-4000-8000-000000000062"
+  },
+  "comments": [
+    {
+      "id": "43410000-0000-4000-8000-000000000070",
+      "html": "<p>Inactive author M</p>",
+      "parent": null,
+      "actor": "43410000-0000-4000-8000-000000000005"
+    },
+    {
+      "id": "43410000-0000-4000-8000-000000000071",
+      "html": "<p>Thread reply M</p>",
+      "parent": "43410000-0000-4000-8000-000000000070",
+      "actor": "43410000-0000-4000-8000-000000000002"
+    }
+  ],
+  "assets": {
+    "inline": "43410000-0000-4000-8000-000000000080",
+    "binary": "43410000-0000-4000-8000-000000000081"
+  }
+}

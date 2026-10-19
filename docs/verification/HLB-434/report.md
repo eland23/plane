@@ -165,3 +165,20 @@ does not waive this ticket's verification. No deferrals were approved. No child
 is marked complete to clear a dependency, and no merge, production delivery or
 full runtime admission is claimed. Live .129 and unrelated .130 data/services
 remain unchanged.
+
+## Shared fixture M preparation (NOT RUN)
+
+A new isolated shared controller combines original database and object restore,
+supported fixture M setup, and 28 unchanged native API/asset checks. The fixture
+covers six literal FAS identifiers, state totals, module membership and the
+cross-module parent chain, blocking/related/duplicate edges, tied/null dates,
+a cycle spanning DST, an inactive comment author/thread, wiki/inline image,
+associated document and protected binary attachment. Two members, a guest viewer
+and another workspace's member supply read/isolation checks. Document association
+uses existing IssueLink and PageLog; its page is absent from workspace wiki.
+
+The same suite must fail its two byte assertions after only the marked binary is
+changed, then pass after asset repair and database dump recovery. Future portfolio
+fields excluded by the parent runtime scope are not seeded. Browser editing,
+cancel/save/error/retry, combined Control A and ordered release/readiness remain
+open; collection and source checks do not prove native combined behavior.
