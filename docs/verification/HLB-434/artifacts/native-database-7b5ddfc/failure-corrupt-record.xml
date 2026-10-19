@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="5" time="2.272" timestamp="2026-10-19T02:27:49.680307+00:00" hostname="c2c2474476ab"><testcase classname="test_database_restore" name="test_schema_api_requires_authenticated_session" time="0.254" /><testcase classname="test_database_restore" name="test_restored_database_retains_exact_fixture_identity" time="0.310" /><testcase classname="test_database_restore" name="test_restored_database_retains_golden_fixture_content" time="0.286"><failure message="AssertionError: Restored fixture content must equal golden value&#10;assert 'Deliberately...upted fixture' == 'Golden resto...tachment link'&#10;  &#10;  - Golden restored attachment link&#10;  + Deliberately corrupted fixture">def test_restored_database_retains_golden_fixture_content():
+&gt;       assert restored_link()['title'] == 'Golden restored attachment link', 'Restored fixture content must equal golden value'
+E       AssertionError: Restored fixture content must equal golden value
+E       assert 'Deliberately...upted fixture' == 'Golden resto...tachment link'
+E         
+E         - Golden restored attachment link
+E         + Deliberately corrupted fixture
+
+tests/test_database_restore.py:50: AssertionError</failure></testcase><testcase classname="test_database_restore" name="test_restored_database_retains_fixture_url" time="0.361" /><testcase classname="test_database_restore" name="test_restored_database_retains_nullable_source_identity" time="0.401" /></testsuite></testsuites>

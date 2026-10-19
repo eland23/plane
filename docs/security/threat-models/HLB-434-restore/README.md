@@ -49,5 +49,8 @@ Memory/disk reservations remain component gates. Ownership checks precede
 container/network deletion; failed state inspection preserves private database
 and readbacks. Once absence is confirmed, delete owned database data, dump,
 snapshots and session/environment files. Private diagnostics may retain expired
-session material outside Git. Native database/API and full shared fixture M proof
-remain pending; source guards alone do not mitigate the runtime risks.
+session material outside Git. Native database/API proof PASS at7b5ddfc:5PASS→1 intended content failure→5PASS,
+exact seeded snapshot equality and original row preservation, mandatory singleton
+internal-network/NetworkID readback, and independent cleanup. Public evidence is
+in docs/verification/HLB-434/artifacts/native-database-7b5ddfc/. Full shared fixture
+M and combined integration remain pending; this bounded proof does not waive them.

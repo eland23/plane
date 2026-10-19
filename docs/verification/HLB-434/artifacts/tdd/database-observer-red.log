@@ -1,0 +1,97 @@
+.FF                                                                      [100%]
+=================================== FAILURES ===================================
+_____ test_observer_requires_only_the_verified_internal_network[external] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-117/test_observer_requires_only_th1')
+attachment = 'external'
+
+    @pytest.mark.parametrize('attachment',['valid','external','wrong_id'])
+    def test_observer_requires_only_the_verified_internal_network(tmp_path,attachment):
+        root=tmp_path/'private';root.mkdir(mode=0o700)
+        (root/'owner').write_text('HLB-434-database-20261019')
+        # Relocate only the evidence directory in a source copy. VM/resource guards
+        # and the public CLI are exercised unchanged against external boundary fakes.
+        code=(NATIVE/'inspect_database_runtime.py').read_text()
+        original="ROOT=Path('/var/lib/plane-release')/OWNER"
+        assert code.count(original)==1
+        command=tmp_path/'observer.py';command.write_text(code.replace(original,'ROOT=Path('+repr(str(root))+')'))
+        (tmp_path/'socket.py').write_text("def gethostname():return 'fashionfindrs-dev'\n")
+        binary=tmp_path/'bin';binary.mkdir()
+        ip=binary/'ip';ip.write_text('#!'+sys.executable+'\nprint(\'[ {"addr_info":[{"local":"192.168.1.130"}]} ]\')\n');ip.chmod(0o755)
+        docker=binary/'docker'
+        docker.write_text('#!'+sys.executable+'''\nimport json,os,sys
+    ns='plane-rehearsal-db-434-20261019';net=ns+'-net'
+    labels={'io.plane.rehearsal.owner':'HLB-434-database-20261019'}
+    if sys.argv[1]=='network':print(json.dumps([{'Id':'internal-id','Internal':True,'Labels':labels}]));sys.exit(0)
+    images={'db':'sha256:468d34fefd6338031787c7b8e94078975b3aaf4d66c7ead25c39cd3ba46a15c6',
+            'redis':'sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2',
+            'api':'sha256:1c54c4fbe69d3a38740e1d05a6c0d31387050c351f0848e62c33c0a71a7c5a84'}
+    networks={net:{'NetworkID':'wrong-id' if os.environ['ATTACHMENT']=='wrong_id' else 'internal-id'}}
+    if os.environ['ATTACHMENT']=='external':networks['external-network']={'NetworkID':'external-id'}
+    print(json.dumps([{'Image':images[sys.argv[3].removeprefix(ns+'-')],'State':{'Running':True},
+     'Config':{'Labels':labels},'HostConfig':{'ReadonlyRootfs':True,'PortBindings':{},'Memory':134217728},
+     'NetworkSettings':{'Networks':networks}}]))
+    ''');docker.chmod(0o755)
+        result=subprocess.run([sys.executable,str(command)],env={'PATH':str(binary),'ATTACHMENT':attachment},
+            capture_output=True,text=True,timeout=15)
+        receipt=root/'independent-runtime.json'
+        if attachment=='valid':
+            assert result.returncode==0
+            assert json.loads(receipt.read_text())['status']=='PASS'
+        else:
+>           assert result.returncode!=0,'Additional or mismatched network must be rejected'
+E           AssertionError: Additional or mismatched network must be rejected
+E           assert 0 != 0
+E            +  where 0 = CompletedProcess(args=['/usr/bin/python3', '/tmp/pytest-of-root/pytest-117/test_observer_requires_only_th1/observer.py...ncode=0, stdout='{"status": "PASS", "containers": 3, "internal_network": true, "published_ports": false}\n', stderr='').returncode
+
+tools/tests/test_database_runtime_observer.py:47: AssertionError
+_____ test_observer_requires_only_the_verified_internal_network[wrong_id] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-117/test_observer_requires_only_th2')
+attachment = 'wrong_id'
+
+    @pytest.mark.parametrize('attachment',['valid','external','wrong_id'])
+    def test_observer_requires_only_the_verified_internal_network(tmp_path,attachment):
+        root=tmp_path/'private';root.mkdir(mode=0o700)
+        (root/'owner').write_text('HLB-434-database-20261019')
+        # Relocate only the evidence directory in a source copy. VM/resource guards
+        # and the public CLI are exercised unchanged against external boundary fakes.
+        code=(NATIVE/'inspect_database_runtime.py').read_text()
+        original="ROOT=Path('/var/lib/plane-release')/OWNER"
+        assert code.count(original)==1
+        command=tmp_path/'observer.py';command.write_text(code.replace(original,'ROOT=Path('+repr(str(root))+')'))
+        (tmp_path/'socket.py').write_text("def gethostname():return 'fashionfindrs-dev'\n")
+        binary=tmp_path/'bin';binary.mkdir()
+        ip=binary/'ip';ip.write_text('#!'+sys.executable+'\nprint(\'[ {"addr_info":[{"local":"192.168.1.130"}]} ]\')\n');ip.chmod(0o755)
+        docker=binary/'docker'
+        docker.write_text('#!'+sys.executable+'''\nimport json,os,sys
+    ns='plane-rehearsal-db-434-20261019';net=ns+'-net'
+    labels={'io.plane.rehearsal.owner':'HLB-434-database-20261019'}
+    if sys.argv[1]=='network':print(json.dumps([{'Id':'internal-id','Internal':True,'Labels':labels}]));sys.exit(0)
+    images={'db':'sha256:468d34fefd6338031787c7b8e94078975b3aaf4d66c7ead25c39cd3ba46a15c6',
+            'redis':'sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2',
+            'api':'sha256:1c54c4fbe69d3a38740e1d05a6c0d31387050c351f0848e62c33c0a71a7c5a84'}
+    networks={net:{'NetworkID':'wrong-id' if os.environ['ATTACHMENT']=='wrong_id' else 'internal-id'}}
+    if os.environ['ATTACHMENT']=='external':networks['external-network']={'NetworkID':'external-id'}
+    print(json.dumps([{'Image':images[sys.argv[3].removeprefix(ns+'-')],'State':{'Running':True},
+     'Config':{'Labels':labels},'HostConfig':{'ReadonlyRootfs':True,'PortBindings':{},'Memory':134217728},
+     'NetworkSettings':{'Networks':networks}}]))
+    ''');docker.chmod(0o755)
+        result=subprocess.run([sys.executable,str(command)],env={'PATH':str(binary),'ATTACHMENT':attachment},
+            capture_output=True,text=True,timeout=15)
+        receipt=root/'independent-runtime.json'
+        if attachment=='valid':
+            assert result.returncode==0
+            assert json.loads(receipt.read_text())['status']=='PASS'
+        else:
+>           assert result.returncode!=0,'Additional or mismatched network must be rejected'
+E           AssertionError: Additional or mismatched network must be rejected
+E           assert 0 != 0
+E            +  where 0 = CompletedProcess(args=['/usr/bin/python3', '/tmp/pytest-of-root/pytest-117/test_observer_requires_only_th2/observer.py...ncode=0, stdout='{"status": "PASS", "containers": 3, "internal_network": true, "published_ports": false}\n', stderr='').returncode
+
+tools/tests/test_database_runtime_observer.py:47: AssertionError
+----------- generated xml file: /var/tmp/HLB-434-db-observer-red.xml -----------
+=========================== short test summary info ============================
+FAILED tools/tests/test_database_runtime_observer.py::test_observer_requires_only_the_verified_internal_network[external]
+FAILED tools/tests/test_database_runtime_observer.py::test_observer_requires_only_the_verified_internal_network[wrong_id]
+2 failed, 1 passed in 3.97s

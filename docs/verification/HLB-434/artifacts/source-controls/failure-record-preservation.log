@@ -2,7 +2,7 @@
 =================================== FAILURES ===================================
 _ test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual1-ORIGINAL_ROW_CHANGED] _
 
-tmp_path = PosixPath('/var/tmp/plane-restore-contract-3wacxv_q/fixtures/test_preservation_rejects_lost1')
+tmp_path = PosixPath('/var/tmp/plane-restore-contract-ftgj7cca/fixtures/test_preservation_rejects_lost1')
 actual = {'issues': []}, error = 'ORIGINAL_ROW_CHANGED'
 
     @pytest.mark.parametrize('actual,error',[
@@ -27,7 +27,7 @@ E         Use -v to get more diff
 tools/tests/test_plane_restore.py:152: AssertionError
 _ test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual2-ORIGINAL_ROW_CHANGED] _
 
-tmp_path = PosixPath('/var/tmp/plane-restore-contract-3wacxv_q/fixtures/test_preservation_rejects_lost2')
+tmp_path = PosixPath('/var/tmp/plane-restore-contract-ftgj7cca/fixtures/test_preservation_rejects_lost2')
 actual = {'issues': [{'body': {'items': ['first', 'second']}, 'id': 'fixture-1', 'name': 'Changed', 'nullable': None}]}
 error = 'ORIGINAL_ROW_CHANGED'
 
@@ -53,7 +53,7 @@ E         Use -v to get more diff
 tools/tests/test_plane_restore.py:152: AssertionError
 _ test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual3-ORIGINAL_ROW_CHANGED] _
 
-tmp_path = PosixPath('/var/tmp/plane-restore-contract-3wacxv_q/fixtures/test_preservation_rejects_lost3')
+tmp_path = PosixPath('/var/tmp/plane-restore-contract-ftgj7cca/fixtures/test_preservation_rejects_lost3')
 actual = {'issues': [{'body': {'items': ['second', 'first']}, 'id': 'fixture-1', 'name': 'Original issue', 'nullable': None}]}
 error = 'ORIGINAL_ROW_CHANGED'
 
@@ -77,9 +77,9 @@ E         At index 0 diff: 0 != 1
 E         Use -v to get more diff
 
 tools/tests/test_plane_restore.py:152: AssertionError
-- generated xml file: /var/tmp/HLB-434-db-source-controls-v2-20261019/failure-record-preservation.xml -
+- generated xml file: /var/tmp/HLB-434-db-reviewed-controls-20261019/failure-record-preservation.xml -
 =========================== short test summary info ============================
 FAILED tools/tests/test_plane_restore.py::test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual1-ORIGINAL_ROW_CHANGED]
 FAILED tools/tests/test_plane_restore.py::test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual2-ORIGINAL_ROW_CHANGED]
 FAILED tools/tests/test_plane_restore.py::test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual3-ORIGINAL_ROW_CHANGED]
-3 failed, 2 passed, 47 deselected in 2.55s
+3 failed, 2 passed, 50 deselected in 3.94s
