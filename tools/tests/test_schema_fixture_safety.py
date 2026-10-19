@@ -80,3 +80,25 @@ def test_receipt_failure_still_cleans_owned_data_and_closes_lease(fixture_scope)
     assert (root/'cleanup.json').exists()
     with pytest.raises(OSError) as error:os.fstat(lease)
     assert error.value.errno==errno.EBADF
+
+
+def test_api_client_stays_on_private_network_without_host_publication(fixture_scope,monkeypatch):
+    module,root=fixture_scope
+    (root/'evidence').mkdir()
+    calls=[]
+    def external(argv,**kwargs):
+        calls.append(argv)
+        if '-m' in argv and 'pytest' in argv:
+            (root/'evidence/pass-known-state.xml').write_text('<testsuites><testsuite tests="2" failures="0" errors="0"/></testsuites>')
+        return subprocess.CompletedProcess(argv,0,b'200',b'')
+    monkeypatch.setattr(module,'run',external)
+    monkeypatch.setattr(module,'remove_container',lambda name:None)
+    # The old host-loopback path cannot reach an internal-only Docker network.
+    monkeypatch.setattr(module,'urlopen',lambda *a,**k:(_ for _ in ()).throw(AssertionError('Host HTTP access must not be used')),raising=False)
+    module.start_api()
+    module.test_phase('pass-known-state')
+    api=next(c for c in calls if 'gunicorn' in c)
+    client=next(c for c in calls if 'pytest' in c)
+    assert '-p' not in api and '--publish' not in api, 'Private schema API must never publish a host port'
+    assert client[client.index('--network')+1]==module.NETWORK, 'HTTP client must share the isolated API network'
+    assert any(c[:3]==['docker','exec',module.NS+'-api'] for c in calls), 'Readiness must execute within the isolated API container'

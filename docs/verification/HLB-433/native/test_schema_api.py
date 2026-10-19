@@ -8,7 +8,7 @@ from urllib.request import Request, urlopen
 if not __debug__:
     raise RuntimeError('OPTIMIZED_EXECUTION_DENIED')
 
-BASE = 'http://127.0.0.1:18191'
+BASE = 'http://plane-rehearsal-api-433-20261018-api:8000'
 PATH = '/api/workspaces/plane-image-schema-433/projects/43300000-0000-4000-8000-000000000003/issues/43300000-0000-4000-8000-000000000004/issue-links/'
 
 

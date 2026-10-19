@@ -20,8 +20,6 @@ import signal
 import socket
 import subprocess
 import time
-from urllib.error import HTTPError, URLError
-from urllib.request import urlopen
 import xml.etree.ElementTree as ET
 
 OWNER = 'HLB-433-api-schema-20261018'
@@ -157,21 +155,21 @@ def start_api(bad=False):
     run(['docker','run','-d','--name',NS+'-api','--label','io.plane.rehearsal.owner='+OWNER,
         '--network',NETWORK,'--memory','384m','--memory-swap','384m','--cpus','1','--pids-limit','128',
         '--read-only','--tmpfs','/tmp:rw,nosuid,size=32m','--tmpfs','/code/plane/logs:rw,nosuid,size=16m',
-        '--env-file',str(ROOT/('bad.env' if bad else 'app.env')),'-p','127.0.0.1:18191:8000',image,
+        '--env-file',str(ROOT/('bad.env' if bad else 'app.env')),image,
         'gunicorn','--bind','0.0.0.0:8000','--workers','1','--timeout','180','plane.wsgi:application'])
     deadline=time.monotonic()+180
     while time.monotonic()<deadline:
-        try:
-            with urlopen('http://127.0.0.1:18191/api/instances/',timeout=5) as response:
-                if response.status==200:return
-        except (HTTPError,URLError,TimeoutError):pass
+        response=run(['docker','exec',NS+'-api','python','-c',
+            'from urllib.request import urlopen; print(urlopen("http://127.0.0.1:8000/api/instances/",timeout=5).status)'],
+            timeout=15,accepted=(0,1))
+        if response.returncode==0 and response.stdout.strip()==b'200':return
         time.sleep(2)
     raise RuntimeError('API_BOOTSTRAP_FAILED')
 
 
 def test_phase(name, fault=False):
     args=['docker','run','--rm','--name',NS+'-tests','--label','io.plane.rehearsal.owner='+OWNER,
-        '--network','host','--memory','128m','--memory-swap','128m','--cpus','1','--pids-limit','64',
+        '--network',NETWORK,'--memory','128m','--memory-swap','128m','--cpus','1','--pids-limit','64',
         '--read-only','--tmpfs','/tmp:rw,nosuid,size=16m','-e','PYTEST_DISABLE_PLUGIN_AUTOLOAD=1',
         '-e','PYTHONDONTWRITEBYTECODE=1','-e','PLANE_SCHEMA_FIXTURE=/private/fixture.json',
         '-v',str(ROOT/'testsrc')+':/tests:ro','-v',str(ROOT/'fixture.json')+':/private/fixture.json:ro',
@@ -215,7 +213,7 @@ def prepare():
     shutil.copyfile(Path(__file__).with_name('test_schema_api.py'),ROOT/'testsrc/test_schema_api.py')
     password=secrets.token_urlsafe(32)
     private_file(ROOT/'db.env',f'POSTGRES_USER=plane_fixture\nPOSTGRES_PASSWORD={password}\nPOSTGRES_DB=plane_schema_good\n'.encode())
-    env=f'DJANGO_SETTINGS_MODULE=plane.settings.production\nSECRET_KEY={secrets.token_urlsafe(48)}\nDATABASE_URL=postgresql://plane_fixture:{password}@{NS}-db:5432/plane_schema_good\nREDIS_URL=redis://{NS}-redis:6379/0\nAMQP_URL=redis://{NS}-redis:6379/1\nWEB_URL=http://127.0.0.1:18191\nALLOWED_HOSTS=127.0.0.1\nDEBUG=0\nSCOUT_MONITOR=\n'
+    env=f'DJANGO_SETTINGS_MODULE=plane.settings.production\nSECRET_KEY={secrets.token_urlsafe(48)}\nDATABASE_URL=postgresql://plane_fixture:{password}@{NS}-db:5432/plane_schema_good\nREDIS_URL=redis://{NS}-redis:6379/0\nAMQP_URL=redis://{NS}-redis:6379/1\nWEB_URL=http://127.0.0.1:18191\nALLOWED_HOSTS=127.0.0.1,{NS}-api\nDEBUG=0\nSCOUT_MONITOR=\n'
     private_file(ROOT/'app.env',env.encode())
     private_file(ROOT/'bad.env',env.replace('/plane_schema_good','/plane_schema_bad').encode())
     run(['docker','network','create','--internal','--label','io.plane.rehearsal.owner='+OWNER,NETWORK])
