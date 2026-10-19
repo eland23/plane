@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="5" time="2.280" timestamp="2026-10-19T01:51:20.633825+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_plane_restore" name="test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual0-ORIGINAL_TABLE_LOST]" time="0.293" /><testcase classname="tools.tests.test_plane_restore" name="test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual1-ORIGINAL_ROW_CHANGED]" time="0.316"><failure message="AssertionError: assert (0, {'mode': ... 'PASS', ...}) == (1, {'error':...tus': 'FAIL'})&#10;  &#10;  At index 0 diff: 0 != 1&#10;  Use -v to get more diff">tmp_path = PosixPath('/var/tmp/plane-restore-contract-477asq3g/fixtures/test_preservation_rejects_lost1')
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="5" time="2.054" timestamp="2026-10-19T02:01:34.163771+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_plane_restore" name="test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual0-ORIGINAL_TABLE_LOST]" time="0.318" /><testcase classname="tools.tests.test_plane_restore" name="test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual1-ORIGINAL_ROW_CHANGED]" time="0.262"><failure message="AssertionError: assert (0, {'mode': ... 'PASS', ...}) == (1, {'error':...tus': 'FAIL'})&#10;  &#10;  At index 0 diff: 0 != 1&#10;  Use -v to get more diff">tmp_path = PosixPath('/var/tmp/plane-restore-contract-64ced9gb/fixtures/test_preservation_rejects_lost1')
 actual = {'issues': []}, error = 'ORIGINAL_ROW_CHANGED'
 
     @pytest.mark.parametrize('actual,error',[
@@ -20,7 +20,7 @@ E
 E         At index 0 diff: 0 != 1
 E         Use -v to get more diff
 
-tools/tests/test_plane_restore.py:152: AssertionError</failure></testcase><testcase classname="tools.tests.test_plane_restore" name="test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual2-ORIGINAL_ROW_CHANGED]" time="0.315"><failure message="AssertionError: assert (0, {'mode': ... 'PASS', ...}) == (1, {'error':...tus': 'FAIL'})&#10;  &#10;  At index 0 diff: 0 != 1&#10;  Use -v to get more diff">tmp_path = PosixPath('/var/tmp/plane-restore-contract-477asq3g/fixtures/test_preservation_rejects_lost2')
+tools/tests/test_plane_restore.py:152: AssertionError</failure></testcase><testcase classname="tools.tests.test_plane_restore" name="test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual2-ORIGINAL_ROW_CHANGED]" time="0.280"><failure message="AssertionError: assert (0, {'mode': ... 'PASS', ...}) == (1, {'error':...tus': 'FAIL'})&#10;  &#10;  At index 0 diff: 0 != 1&#10;  Use -v to get more diff">tmp_path = PosixPath('/var/tmp/plane-restore-contract-64ced9gb/fixtures/test_preservation_rejects_lost2')
 actual = {'issues': [{'body': {'items': ['first', 'second']}, 'id': 'fixture-1', 'name': 'Changed', 'nullable': None}]}
 error = 'ORIGINAL_ROW_CHANGED'
 
@@ -43,7 +43,7 @@ E
 E         At index 0 diff: 0 != 1
 E         Use -v to get more diff
 
-tools/tests/test_plane_restore.py:152: AssertionError</failure></testcase><testcase classname="tools.tests.test_plane_restore" name="test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual3-ORIGINAL_ROW_CHANGED]" time="0.266"><failure message="AssertionError: assert (0, {'mode': ... 'PASS', ...}) == (1, {'error':...tus': 'FAIL'})&#10;  &#10;  At index 0 diff: 0 != 1&#10;  Use -v to get more diff">tmp_path = PosixPath('/var/tmp/plane-restore-contract-477asq3g/fixtures/test_preservation_rejects_lost3')
+tools/tests/test_plane_restore.py:152: AssertionError</failure></testcase><testcase classname="tools.tests.test_plane_restore" name="test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual3-ORIGINAL_ROW_CHANGED]" time="0.251"><failure message="AssertionError: assert (0, {'mode': ... 'PASS', ...}) == (1, {'error':...tus': 'FAIL'})&#10;  &#10;  At index 0 diff: 0 != 1&#10;  Use -v to get more diff">tmp_path = PosixPath('/var/tmp/plane-restore-contract-64ced9gb/fixtures/test_preservation_rejects_lost3')
 actual = {'issues': [{'body': {'items': ['second', 'first']}, 'id': 'fixture-1', 'name': 'Original issue', 'nullable': None}]}
 error = 'ORIGINAL_ROW_CHANGED'
 
@@ -66,4 +66,4 @@ E
 E         At index 0 diff: 0 != 1
 E         Use -v to get more diff
 
-tools/tests/test_plane_restore.py:152: AssertionError</failure></testcase><testcase classname="tools.tests.test_plane_restore" name="test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual4-ORIGINAL_COLUMNS_LOST]" time="0.281" /></testsuite></testsuites>
+tools/tests/test_plane_restore.py:152: AssertionError</failure></testcase><testcase classname="tools.tests.test_plane_restore" name="test_preservation_rejects_lost_tables_columns_records_or_nested_values[actual4-ORIGINAL_COLUMNS_LOST]" time="0.268" /></testsuite></testsuites>

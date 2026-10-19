@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="3.604" timestamp="2026-10-19T02:00:30.613924+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_asset_store_guards" name="test_diagnostic_failure_still_removes_confirmed_owned_resources[retrieval]" time="0.747"><failure message="RuntimeError: FIXTURE_COMMAND_FAILED">cleanup_scope = (&lt;module 'asset_rehearsal_under_test' from '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-434/docs/ver...native/asset_store_rehearsal.py'&gt;, PosixPath('/tmp/pytest-of-root/pytest-110/test_diagnostic_failure_still_0/private'))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7122d9ad3790&gt;
+failure = 'retrieval'
+
+    @pytest.mark.parametrize('failure',['retrieval','storage'])
+    def test_diagnostic_failure_still_removes_confirmed_owned_resources(cleanup_scope,monkeypatch,failure):
+        module,root=cleanup_scope
+        state=root.parent/'docker-state';state.mkdir()
+        (state/'store').touch();(state/'network').touch()
+        docker=Path(os.environ['PATH'])/'docker'
+        docker.write_text('#!'+sys.executable+'''\nimport json,os,sys
+    from pathlib import Path
+    state=Path(os.environ['DOCKER_STATE'])
+    args=sys.argv[1:];ns='plane-rehearsal-434-assets-20261018'
+    label={'io.plane.rehearsal.owner':'HLB-434-assets-20261018'}
+    if args[0]=='logs':
+        print('synthetic diagnostic');sys.exit(1 if os.environ['LOG_FAILURE']=='retrieval' else 0)
+    if args[0]=='rm':(state/'store').unlink();sys.exit(0)
+    if args[:2]==['network','rm']:(state/'network').unlink();sys.exit(0)
+    kind,action=args[:2];present=(state/('store' if kind=='container' else 'network')).exists()
+    name=ns+('-minio' if kind=='container' else '-net')
+    if action=='ls':
+        if present:print(json.dumps({'Names' if kind=='container' else 'Name':name}))
+        sys.exit(0)
+    if action=='inspect':
+        if not present or args[2]!=name:sys.exit(1)
+        print(json.dumps([{'Id':'owned-resource','Config':{'Labels':label},'Labels':label,'Containers':{}}]));sys.exit(0)
+    raise RuntimeError('Unexpected boundary operation')
+    ''');docker.chmod(0o755)
+        monkeypatch.setenv('DOCKER_STATE',str(state));monkeypatch.setenv('LOG_FAILURE',failure)
+        if failure=='storage':
+            (root/'logs').rmdir();(root/'logs').write_text('unavailable diagnostic directory')
+        original=module.SOURCE.read_bytes()
+&gt;       module.cleanup()
+
+tools/tests/test_asset_store_guards.py:133: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+docs/verification/HLB-434/native/asset_store_rehearsal.py:193: in cleanup
+    run(['docker','logs',NS+'-minio'])
+docs/verification/HLB-434/native/asset_store_rehearsal.py:76: in run
+    require(process.returncode in accepted,'FIXTURE_COMMAND_FAILED')
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+condition = False, code = 'FIXTURE_COMMAND_FAILED'
+
+    def require(condition,code):
+&gt;       if not condition:raise RuntimeError(code)
+E       RuntimeError: FIXTURE_COMMAND_FAILED
+
+docs/verification/HLB-434/native/asset_store_rehearsal.py:36: RuntimeError</failure></testcase><testcase classname="tools.tests.test_asset_store_guards" name="test_diagnostic_failure_still_removes_confirmed_owned_resources[storage]" time="1.415"><failure message="NotADirectoryError: [Errno 20] Not a directory: '/tmp/pytest-of-root/pytest-110/test_diagnostic_failure_still_1/private/logs/b4e9c4b97f9debc2.log'">cleanup_scope = (&lt;module 'asset_rehearsal_under_test' from '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-434/docs/ver...native/asset_store_rehearsal.py'&gt;, PosixPath('/tmp/pytest-of-root/pytest-110/test_diagnostic_failure_still_1/private'))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7122d998a880&gt;
+failure = 'storage'
+
+    @pytest.mark.parametrize('failure',['retrieval','storage'])
+    def test_diagnostic_failure_still_removes_confirmed_owned_resources(cleanup_scope,monkeypatch,failure):
+        module,root=cleanup_scope
+        state=root.parent/'docker-state';state.mkdir()
+        (state/'store').touch();(state/'network').touch()
+        docker=Path(os.environ['PATH'])/'docker'
+        docker.write_text('#!'+sys.executable+'''\nimport json,os,sys
+    from pathlib import Path
+    state=Path(os.environ['DOCKER_STATE'])
+    args=sys.argv[1:];ns='plane-rehearsal-434-assets-20261018'
+    label={'io.plane.rehearsal.owner':'HLB-434-assets-20261018'}
+    if args[0]=='logs':
+        print('synthetic diagnostic');sys.exit(1 if os.environ['LOG_FAILURE']=='retrieval' else 0)
+    if args[0]=='rm':(state/'store').unlink();sys.exit(0)
+    if args[:2]==['network','rm']:(state/'network').unlink();sys.exit(0)
+    kind,action=args[:2];present=(state/('store' if kind=='container' else 'network')).exists()
+    name=ns+('-minio' if kind=='container' else '-net')
+    if action=='ls':
+        if present:print(json.dumps({'Names' if kind=='container' else 'Name':name}))
+        sys.exit(0)
+    if action=='inspect':
+        if not present or args[2]!=name:sys.exit(1)
+        print(json.dumps([{'Id':'owned-resource','Config':{'Labels':label},'Labels':label,'Containers':{}}]));sys.exit(0)
+    raise RuntimeError('Unexpected boundary operation')
+    ''');docker.chmod(0o755)
+        monkeypatch.setenv('DOCKER_STATE',str(state));monkeypatch.setenv('LOG_FAILURE',failure)
+        if failure=='storage':
+            (root/'logs').rmdir();(root/'logs').write_text('unavailable diagnostic directory')
+        original=module.SOURCE.read_bytes()
+&gt;       module.cleanup()
+
+tools/tests/test_asset_store_guards.py:133: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+docs/verification/HLB-434/native/asset_store_rehearsal.py:193: in cleanup
+    run(['docker','logs',NS+'-minio'])
+docs/verification/HLB-434/native/asset_store_rehearsal.py:75: in run
+    private(ROOT/'logs'/(secrets.token_hex(8)+'.log'),stdout+stderr)
+docs/verification/HLB-434/native/asset_store_rehearsal.py:63: in private
+    with path.open('xb') as stream:
+/usr/lib/python3.9/pathlib.py:1241: in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/tmp/pytest-of-root/pytest-110/test_diagnostic_failure_still_1/private/logs/b4e9c4b97f9debc2.log')
+name = '/tmp/pytest-of-root/pytest-110/test_diagnostic_failure_still_1/private/logs/b4e9c4b97f9debc2.log'
+flags = 524481, mode = 438
+
+    def _opener(self, name, flags, mode=0o666):
+        # A stub for the opener argument to built-in open()
+&gt;       return self._accessor.open(self, flags, mode)
+E       NotADirectoryError: [Errno 20] Not a directory: '/tmp/pytest-of-root/pytest-110/test_diagnostic_failure_still_1/private/logs/b4e9c4b97f9debc2.log'
+
+/usr/lib/python3.9/pathlib.py:1109: NotADirectoryError</failure></testcase></testsuite></testsuites>

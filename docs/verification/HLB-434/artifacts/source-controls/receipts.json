@@ -4,7 +4,7 @@
     "exit": 0,
     "expected_failure": false,
     "counts": {
-      "tests": 43,
+      "tests": 45,
       "failures": 0,
       "errors": 0
     },
@@ -76,7 +76,7 @@
     "exit": 0,
     "expected_failure": false,
     "counts": {
-      "tests": 43,
+      "tests": 45,
       "failures": 0,
       "errors": 0
     },

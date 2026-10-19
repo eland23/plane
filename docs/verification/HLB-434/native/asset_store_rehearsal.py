@@ -144,7 +144,7 @@ def preflight():
     run(['docker','run','-d','--name',NS+'-minio','--label','io.plane.rehearsal.owner='+OWNER,
         '--network',NETWORK,'--memory','256m','--memory-swap','256m','--cpus','1','--pids-limit','128',
         '--user','1000:1000','--cap-drop','ALL','--security-opt','no-new-privileges','--read-only',
-        '--tmpfs','/tmp:rw,nosuid,noexec,size=32m','--tmpfs','/data:rw,nosuid,noexec,size=1g',
+        '--tmpfs','/tmp:rw,nosuid,noexec,size=32m','--tmpfs','/data:rw,nosuid,noexec,size=1g,uid=1000,gid=1000,mode=0700',
         '--env-file',str(ROOT/'minio.env'),'--entrypoint','minio',MINIO,
         'server','--address',':9000','--quiet','/data'])
     deadline=time.monotonic()+90

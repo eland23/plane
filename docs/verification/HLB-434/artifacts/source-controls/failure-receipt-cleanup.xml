@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.450" timestamp="2026-10-19T01:51:39.181533+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_asset_store_guards" name="test_receipt_failure_still_removes_readbacks_credentials_and_releases_lease" time="0.030"><failure message="AssertionError: Receipt failure must still remove owned readbacks&#10;assert not True&#10; +  where True = exists()&#10; +    where exists = (PosixPath('/var/tmp/plane-restore-contract-txsp0o_3/fixtures/test_receipt_failure_still_rem0/private') / 'readbacks').exists">cleanup_scope = (&lt;module 'asset_rehearsal_under_test' from '/var/tmp/plane-restore-contract-txsp0o_3/docs/verification/HLB-434/native/...rehearsal.py'&gt;, PosixPath('/var/tmp/plane-restore-contract-txsp0o_3/fixtures/test_receipt_failure_still_rem0/private'))
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.495" timestamp="2026-10-19T02:01:54.817398+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_asset_store_guards" name="test_receipt_failure_still_removes_readbacks_credentials_and_releases_lease" time="0.032"><failure message="AssertionError: Receipt failure must still remove owned readbacks&#10;assert not True&#10; +  where True = exists()&#10; +    where exists = (PosixPath('/var/tmp/plane-restore-contract-j8ydhwiy/fixtures/test_receipt_failure_still_rem0/private') / 'readbacks').exists">cleanup_scope = (&lt;module 'asset_rehearsal_under_test' from '/var/tmp/plane-restore-contract-j8ydhwiy/docs/verification/HLB-434/native/...rehearsal.py'&gt;, PosixPath('/var/tmp/plane-restore-contract-j8ydhwiy/fixtures/test_receipt_failure_still_rem0/private'))
 
     def test_receipt_failure_still_removes_readbacks_credentials_and_releases_lease(cleanup_scope):
         import errno
@@ -10,6 +10,6 @@
 E       AssertionError: Receipt failure must still remove owned readbacks
 E       assert not True
 E        +  where True = exists()
-E        +    where exists = (PosixPath('/var/tmp/plane-restore-contract-txsp0o_3/fixtures/test_receipt_failure_still_rem0/private') / 'readbacks').exists
+E        +    where exists = (PosixPath('/var/tmp/plane-restore-contract-j8ydhwiy/fixtures/test_receipt_failure_still_rem0/private') / 'readbacks').exists
 
 tools/tests/test_asset_store_guards.py:96: AssertionError</failure></testcase></testsuite></testsuites>

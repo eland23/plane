@@ -1,7 +1,7 @@
 # Verification evidence: HLB-434 Plane restore integrity
 
 Status: **NOT RUN for full acceptance; source contracts PASS**. Author: Codex.
-Reviewer: pending scoped review. [Child](https://linear.app/fashionfindrs/issue/HLB-434),
+Reviewer: separate Standards and Spec/security review PASS at 8e5995c. [Child](https://linear.app/fashionfindrs/issue/HLB-434),
 [parent](https://linear.app/fashionfindrs/issue/HLB-429). Policy: existing parent
 verification decisions and FashionFindr `docs/testing/REPORT-TEMPLATE.md`.
 
@@ -110,8 +110,11 @@ by the controller; exact-head CI remains a separate gate before acceptance.
 
 Source JUnit/native phase outputs: artifacts/source-controls/ and artifacts/tdd/.
 No browser screenshots/traces are applicable to this source-only checkpoint.
-Secret/PII artifact review and independent Standards/Spec/security review: pending.
-CI: pending first pushed head. No source result proves native restoration.
+Independent Standards and Spec/security review PASS at 8e5995c; cleanup P2
+resolved with two red/green boundary regressions. Restore contracts CI
+[39188012985](https://github.com/eland23/plane/actions/runs/39188012985) and React
+Doctor 39188013027 PASS at that exact revision. Source artifacts contain synthetic
+inputs only. No source result proves native restoration.
 
 ## Execution metrics
 
@@ -132,3 +135,11 @@ integration are still open. Existing HLB-433 DB/schema proof is preparatory
 context and does not waive HLB-434 coverage. The prerequisite/acceptance alignment
 remains explicit; no child is falsely marked complete to clear a blocker. Live
 .129 and unrelated .130 workloads/data remain unchanged.
+
+## Native attempt 01 (not an accepted fault control)
+
+Revision 8e5995c reached the isolated server bootstrap, which failed before any
+restore assertions: the non-root store could not write its new ephemeral data
+filesystem. The correction assigns that new tmpfs to the existing UID/GID 1000
+with mode 0700; no host directory or existing object store is changed. Cleanup
+and rerun results will be recorded separately.
