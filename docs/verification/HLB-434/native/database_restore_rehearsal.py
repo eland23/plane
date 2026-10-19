@@ -283,11 +283,12 @@ def main():
         baseline('seeded-before-backup',preserve_only=True)
         private_file(ROOT/'good-fixture.dump',pg('pg_dump','plane_restore_good',('--format=custom','--no-owner','--no-acl')).stdout)
         start_api()
+        run([sys.executable,str(Path(__file__).with_name('inspect_database_runtime.py'))])
         identity={'target':'192.168.1.130','application_revision':REVISION,'backend_image':BACKEND,
             'postgres_image':PG,'redis_image':REDIS,'test_image':RUNNER,'internal_network':True,'published_ports':False,
             'code_sha256':{p:hashlib.sha256((SOURCE_TREE/p).read_bytes()).hexdigest() for p in
              ['tools/plane_restore.py']+['docs/verification/HLB-434/native/'+n for n in
-              ['database_restore_rehearsal.py','seed_database_fixture.py','test_database_restore.py']]}}
+              ['database_restore_rehearsal.py','seed_database_fixture.py','test_database_restore.py','inspect_database_runtime.py']]}}
         private_file(ROOT/'runtime-identity.json',json.dumps(identity,indent=2).encode())
         receipts.append(test_phase('pass-known-state'))
         pg('psql','plane_restore_good',('-X','-q','--set','ON_ERROR_STOP=1'),

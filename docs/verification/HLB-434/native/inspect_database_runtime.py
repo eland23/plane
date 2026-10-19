@@ -40,7 +40,7 @@ def main():
         cfg=info['HostConfig']
         require(info['Image']==image and info['State']['Running'],'IMAGE_OR_RUNNING_STATE_MISMATCH')
         require(info['Config']['Labels'].get('io.plane.rehearsal.owner')==OWNER,'OWNER_MISMATCH')
-        require(cfg['ReadonlyRootfs'] and not cfg.get('PortBindings') and NS+'-net' in info['NetworkSettings']['Networks'],'CONTAINER_ISOLATION_FAILED')
+        require(cfg['ReadonlyRootfs'] and not cfg.get('PortBindings') and set(info['NetworkSettings']['Networks'])=={NS+'-net'} and info['NetworkSettings']['Networks'][NS+'-net']['NetworkID']==network['Id'],'CONTAINER_ISOLATION_FAILED')
         rows[suffix]={'image':info['Image'],'running':True,'read_only_rootfs':True,'published_ports':False,
                       'memory_limit_bytes':cfg['Memory'],'network_id':info['NetworkSettings']['Networks'][NS+'-net']['NetworkID']}
     result={'target':'192.168.1.130','internal_network':True,'network_id':network['Id'],'containers':rows,

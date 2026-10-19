@@ -193,3 +193,12 @@ errors, and all temporary fixture copies were removed. CI restore contracts
 39189253529 and React Doctor39189253560 PASS at that exact pushed revision.
 Separate Standards and Spec/security review PASS. Native evidence remains
 separate and will be recorded after actual execution and cleanup.
+
+The first native database run completed its five checks → one intended record
+content failure → five checks, exact logical recovery and original preservation.
+Independent cleanup passed. Its separate isolation observer was subsequently
+found to accept an extra external network; that observer result is not accepted
+as complete isolation evidence. Two red regressions reproduced extra-network
+and wrong-network-ID admission. The corrected observer rejects both and accepts
+the valid topology; it is now mandatory in the controller, and a fresh native run
+will supply stricter runtime evidence. No business assertion expectation changed.
