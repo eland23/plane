@@ -65,6 +65,8 @@ with tempfile.TemporaryDirectory(prefix='plane-rehearsal-command-', dir='/var/tm
             '-e', 'DJANGO_SETTINGS_MODULE=plane.settings.test',
             '-e', 'SECRET_KEY=isolated-synthetic-command-probe-only',
             '-e', 'DATABASE_URL=postgresql://fixture:fixture@127.0.0.1:5432/unavailable',
+            '-e', 'REDIS_URL=redis://127.0.0.1:6379/0',
+            '-e', 'WEB_URL=http://plane-rehearsal.invalid',
             '-e', 'DEBUG=0', '-e', 'SCOUT_MONITOR=false', IMAGE, 'python', '-c', probe],
             capture_output=True, text=True, timeout=180)
         if result.returncode:
