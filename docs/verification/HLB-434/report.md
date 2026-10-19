@@ -169,7 +169,7 @@ remain unchanged.
 ## Shared fixture M preparation (NOT RUN)
 
 A new isolated shared controller combines original database and object restore,
-supported fixture M setup, and 29 unchanged native API/asset checks. The fixture
+supported fixture M setup, and 30 unchanged native API/asset checks. The fixture
 covers six literal FAS identifiers, state totals, module membership and the
 cross-module parent chain, blocking/related/duplicate edges, tied/null dates,
 a cycle spanning DST, an inactive comment author/thread, wiki/inline image,
@@ -189,3 +189,10 @@ York offsets represent the golden UTC instants. This is an expectation defect,
 not a controlled-failure result or accepted normal pass. The corrected contract
 compares exact aware instants and the literal DST offsets (-04:00→-05:00); cycle
 state totals now have an independent test. The rerun expects29 cases.
+
+Shared attempt02 (474f2dd) normal28PASS/1FAIL, zero errors/skips. DST instant and
+offset checks passed. The remaining harness assertion requested an unstarted_issues
+summary field that this API does not expose. The corrected contract preserves
+total/completed/cancelled expectations6/2/2 and separately requires the supported
+filtered cycle-issues API to return exactly Todo FAS-11/FAS-17. This run is not
+accepted normal/fault evidence; the next run expects30 cases.

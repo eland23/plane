@@ -79,7 +79,12 @@ def test_cycle_spans_dst_and_preserves_exact_instants():
 
 def test_cycle_preserves_six_issue_state_counts():
     row=data(P+'cycles/'+G['cycle']['id']+'/')
-    assert (row['total_issues'],row['completed_issues'],row['unstarted_issues'],row['cancelled_issues'])==(6,2,2,2)
+    assert (row['total_issues'],row['completed_issues'],row['cancelled_issues'])==(6,2,2)
+
+
+def test_cycle_todo_membership_is_exactly_two_known_issues():
+    actual=rows(P+'cycles/'+G['cycle']['id']+'/cycle-issues/?state_group=unstarted&order_by=sequence_id')
+    assert [row['sequence_id'] for row in actual]==[11,17]
 
 
 def test_cycle_membership_preserves_all_six_and_numeric_order():

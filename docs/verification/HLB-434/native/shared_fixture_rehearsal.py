@@ -185,7 +185,7 @@ def test_phase(name, fault=False):
     suites=list(tree.getroot().iter('testsuite'))
     require(sum(int(s.get('errors','0')) for s in suites)==0,'API_TEST_SETUP_ERROR')
     require(sum(int(s.get('failures','0')) for s in suites)==(2 if fault else 0),'WRONG_API_TEST_RESULT')
-    require(sum(int(s.get('tests','0')) for s in suites)==29,'API_TEST_COUNT_CHANGED')
+    require(sum(int(s.get('tests','0')) for s in suites)==30,'API_TEST_COUNT_CHANGED')
     require(sum(int(s.get('skipped','0')) for s in suites)==0,'API_TEST_SKIPPED')
     if fault:
         failures=[case.get('name') for case in tree.getroot().iter('testcase') if case.find('failure') is not None]
