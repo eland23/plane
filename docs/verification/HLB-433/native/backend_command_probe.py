@@ -6,13 +6,18 @@ if not __debug__:
     raise SystemExit(2)
 
 import json
+import hashlib
 import os
 from pathlib import Path
 import socket
 import subprocess
 import tempfile
 
-IMAGE = 'sha256:0488a84e9e4c903d972420fa7c28ebaa6a006e27049dc3e57d6ec1e2d45717ec'
+# Builder's classic image config ID is 0488a84e...; .130's containerd store
+# exposes the imported OCI manifest ID. Bind it to all source rootfs layers and
+# meaningful runtime configuration, not just mutable labels or a tag.
+IMAGE = 'sha256:1c54c4fbe69d3a38740e1d05a6c0d31387050c351f0848e62c33c0a71a7c5a84'
+PAYLOAD_SHA256 = '8e7ddf80e918f7a1360a43aeb0cbc68902ef33878ce2215b7bd6135e61ba94cc'
 REVISION = 'e5c7acf098a890436ab6300f0bc8491c7dd22725'
 TREE = '0f1626a2415b52b29ec661cca2958bb97275a9bc'
 assert socket.gethostname() == 'fashionfindrs-dev', 'Dedicated VM required'
@@ -20,6 +25,9 @@ addresses = json.loads(subprocess.check_output(['ip', '-j', 'address']))
 assert any(a.get('local') == '192.168.1.130' for item in addresses for a in item.get('addr_info', []))
 info = json.loads(subprocess.check_output(['docker', 'image', 'inspect', IMAGE]))[0]
 assert info['Id'] == IMAGE
+keys = ('Env','Cmd','Entrypoint','WorkingDir','User','Labels','ExposedPorts','Volumes','Healthcheck','Shell','StopSignal')
+payload = {'rootfs': info['RootFS'], 'config': {key: info['Config'].get(key) for key in keys}}
+assert hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(',', ':')).encode()).hexdigest() == PAYLOAD_SHA256
 assert info['Config']['Labels']['org.opencontainers.image.revision'] == REVISION
 assert info['Config']['Labels']['io.plane.source.tree'] == TREE
 memory = dict(line.split(':', 1) for line in Path('/proc/meminfo').read_text().splitlines())
@@ -68,7 +76,7 @@ with tempfile.TemporaryDirectory(prefix='plane-rehearsal-command-', dir='/var/tm
         payload = json.loads(result.stdout.splitlines()[-1])
         state = json.loads(subprocess.check_output(['docker', 'inspect', cidfile.read_text().strip()]))[0]
         assert not state['State']['OOMKilled']
-        print(json.dumps({'image': IMAGE, 'revision': REVISION, 'tree': TREE,
+        print(json.dumps({'image': IMAGE, 'payload_sha256': PAYLOAD_SHA256, 'revision': REVISION, 'tree': TREE,
             'result': payload, 'network': 'none', 'memory_limit_mib': 512,
             'deployment_admitted': False, 'api_and_database_proven': False}))
     finally:
