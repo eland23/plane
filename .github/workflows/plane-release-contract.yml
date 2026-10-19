@@ -6,6 +6,9 @@ on:
       - tools/plane_release.py
       - tools/check_plane_release.py
       - tools/tests/test_plane_release.py
+      - tools/PLANE_RELEASE.md
+      - docs/verification/HLB-433/**
+      - docs/security/threat-models/HLB-429-plane-runtime/**
       - .github/workflows/plane-release-contract.yml
   workflow_dispatch:
 

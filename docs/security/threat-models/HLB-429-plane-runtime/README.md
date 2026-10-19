@@ -21,3 +21,10 @@ HLB-434 owns private backup/asset restore, HLB-435 owns target-side release lock
 measured runtime admission, ordered migration, effect suppression and recovery.
 The existing .129 instance cannot be a deployment target. New trust boundaries
 and live runtime evidence must be added when those commands are implemented.
+
+External commands run in owned process groups. Success/error/timeout cleanup
+terminates remaining helpers and reaps the leader; no unbounded helper survives a
+failed Git/SSH probe. Public CLI tests include a probe that leaves a child and
+require its termination. Controlled defects verify helper cleanup and packaging
+status independently of source/image integrity. Source hydration fetches only the
+missing objects reachable from the selected tree, without changing tracked files.

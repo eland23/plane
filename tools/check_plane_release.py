@@ -22,6 +22,7 @@ def main():
         ("failure-target-guard", "if args.target != TARGET:", "release_preflight_rejects_wrong_target", None),
         ("failure-image-integrity", "if any(actual.get(k) != v for k, v in expected.items()):", "detects_missing_or_changed_migration", None),
         ("failure-packaging-admission", 'status="PACKAGING_ONLY" if packaging else "PASS"', "package_preflight_reports", 'status="PASS"'),
+        ("failure-owned-helper-cleanup", "os.killpg(process.pid, signal.SIGKILL)", "probe_error_terminates", "pass"),
         ("restore-and-repeat", None, None, None),
     ]
     for name, defect, selection, replacement in cases:
@@ -53,7 +54,7 @@ def main():
             break
     (output / "receipts.json").write_text(json.dumps(runs, indent=2) + "\n")
     print(json.dumps(runs))
-    return 0 if len(runs) == 5 and all(r["accepted"] and r["fixture_directory_removed"] for r in runs) else 1
+    return 0 if len(runs) == 6 and all(r["accepted"] and r["fixture_directory_removed"] for r in runs) else 1
 
 
 if __name__ == "__main__":
