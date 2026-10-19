@@ -16,7 +16,8 @@ separate gates. [Child](https://linear.app/fashionfindrs/issue/HLB-433),
 | Private diagnostics | Foreign/enclosing/worktree/bare repository outputs denied before log creation or Docker; error marker stays private with 0700 directory/0600 logs | PASS source contracts |
 | Helper cleanup | Failed probe's owned child terminates; stream deadlines reap owned process groups | PASS source contracts |
 | REL-02 full image build | Complete API/worker/beat/migrator backend and full web, same application revision, offline payload verification | IN PROGRESS; no success candidate published yet |
-| Native commands / authenticated API | Actual packaged image command execution and omitted-migration business assertion | NOT RUN; required before full acceptance |
+| Native packaged command | Actual image on .130: Django system check, migration leaf 0124, milestone import, four entrypoint syntax checks | PASS bounded offline CLI; no database/schema or HTTP claim |
+| Authenticated API | Omitted-migration business assertion and real authenticated readback | NOT RUN; required declared coverage remains open |
 | Restore / ordered deployment / recovery / browser | HLB-434/435/436 owned runtime gates | NOT RUN; no deployed readiness claim |
 
 All 35 source tests are committed in tools/tests/test_plane_release.py. They use
@@ -115,3 +116,55 @@ command/API proof. Registry signatures, target-side release locking, effect
 suppression, restored-data integrity, measured runtime admission and rollback
 are separate later acceptance gates. No risk acceptance, production import,
 cutover, deployed readiness or full migration completion is implied.
+
+## Bounded native backend command result
+
+Pushed probe source e9c3d63ea051a845e6a444fdef63febb351f8b4e ran on .130
+against the transferred complete backend. [Native result](artifacts/native-command/attempt-03.log),
+[provenance](artifacts/native-command/provenance.json),
+[independent cleanup](artifacts/native-command/cleanup.json).
+[Source CI](https://github.com/eland23/plane/actions/runs/39180147308) passed on
+that exact head, including both optimized-execution guard cases.
+
+The editor's classic Docker store identifies this image by config digest 0488a84e;
+.130's containerd store imports it as immutable OCI manifest 1c54c4fb. The probe
+pins the target digest and checks every source RootFS diffID plus the canonical
+runtime configuration fingerprint 8e7ddf80e918f7a1360a43aeb0cbc68902ef33878ce2215b7bd6135e61ba94cc,
+source revision and tree before execution. Mutable labels alone cannot pass.
+The two image-store Size values differ; they are not additive runtime storage.
+
+The probe runs a short-lived CLI container with network none, no ports, read-only
+rootfs, bounded tmpfs, 512 MiB / 1 CPU / 128 PIDs and no real credentials or records.
+Django's native system check passes; the loader finds 0124_module_milestones;
+the native milestone module imports and all four service entrypoint files are
+executable and pass sh syntax checks. Entrypoints are not started as services.
+A single docker stats observation was 103.5 MiB under the 512 MiB cap; this is not
+peak-memory or full-stack sizing evidence. No live database/schema, authenticated
+HTTP, worker startup, restore or deployment readiness is proved by this result.
+
+The first attempt stopped before container creation because config vs manifest
+image identity differed. The second found a missing synthetic Redis URL during
+Django setup and removed its owned container. Those are setup failures, not
+intended business fault controls. After correction, the third passes and its
+container is removed; independent readback finds zero remaining containers using
+that image. Failed attempt logs are retained alongside the pass. No original
+records, database, bucket, external provider or live .129 service was accessed.
+
+Source review caught assertion guards bypassable under optimized Python. Outer
+and inner probes now reject optimized execution before protected operations.
+Two unchanged public subprocess tests (-O and PYTHONOPTIMIZE) first failed against
+the old source reaching fake external commands, then pass with exact exit 2/code
+and no marker. JUnit records both red and green separately. Scoped correction
+Standards and Spec/security reviews PASS; all full-child remaining gates stay open.
+
+Reproduce from the clean pushed source using the trusted target only:
+
+```bash
+ssh -o BatchMode=yes -o StrictHostKeyChecking=yes root@192.168.1.130 python3 - \
+  < docs/verification/HLB-433/native/backend_command_probe.py
+```
+
+The fixed image must already be staged, and the small single-CLI reservation must
+be available. The script rejects other hosts, optimized Python and mismatched
+image/provenance before starting the CLI container. This is a test admission
+boundary and does not override the full release preflight.

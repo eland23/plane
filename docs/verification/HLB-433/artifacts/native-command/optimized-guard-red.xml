@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="4.344" timestamp="2026-10-19T00:15:02.983150+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_native_backend_probe_guard" name="test_optimized_probe_cannot_reach_external_commands[flag]" time="2.299"><failure message="AssertionError: assert 1 == 2&#10; +  where 1 = CompletedProcess(args=['/usr/bin/python3', '-O', '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-429/do...loads(subprocess.check_output([\'docker\', \'image\', \'inspect\', IMAGE]))[0]\nIndexError: list index out of range\n').returncode">tmp_path = PosixPath('/var/tmp/hlb433-probe-guard-red/test_optimized_probe_cannot_re0')
+mode = 'flag'
+
+    @pytest.mark.parametrize('mode', ['flag', 'environment'])
+    def test_optimized_probe_cannot_reach_external_commands(tmp_path, mode):
+        marker = tmp_path / 'external-command-called'
+        binary = tmp_path / 'bin'
+        binary.mkdir()
+        for name in ['ip', 'docker']:
+            file = binary / name
+            file.write_text('#!' + sys.executable + '\nfrom pathlib import Path\n'
+                + f'Path({str(marker)!r}).touch()\nprint("[]")\n')
+            file.chmod(0o755)
+        env = {'PATH': str(binary), **({'PYTHONOPTIMIZE': '1'} if mode == 'environment' else {})}
+        result = subprocess.run([sys.executable, *(['-O'] if mode == 'flag' else []), str(PROBE)],
+            capture_output=True, text=True, env=env, timeout=10)
+&gt;       assert result.returncode == 2
+E       AssertionError: assert 1 == 2
+E        +  where 1 = CompletedProcess(args=['/usr/bin/python3', '-O', '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-429/do...loads(subprocess.check_output([\'docker\', \'image\', \'inspect\', IMAGE]))[0]\nIndexError: list index out of range\n').returncode
+
+tools/tests/test_native_backend_probe_guard.py:25: AssertionError</failure></testcase><testcase classname="tools.tests.test_native_backend_probe_guard" name="test_optimized_probe_cannot_reach_external_commands[environment]" time="1.319"><failure message="AssertionError: assert 1 == 2&#10; +  where 1 = CompletedProcess(args=['/usr/bin/python3', '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-429/docs/ver...loads(subprocess.check_output([\'docker\', \'image\', \'inspect\', IMAGE]))[0]\nIndexError: list index out of range\n').returncode">tmp_path = PosixPath('/var/tmp/hlb433-probe-guard-red/test_optimized_probe_cannot_re1')
+mode = 'environment'
+
+    @pytest.mark.parametrize('mode', ['flag', 'environment'])
+    def test_optimized_probe_cannot_reach_external_commands(tmp_path, mode):
+        marker = tmp_path / 'external-command-called'
+        binary = tmp_path / 'bin'
+        binary.mkdir()
+        for name in ['ip', 'docker']:
+            file = binary / name
+            file.write_text('#!' + sys.executable + '\nfrom pathlib import Path\n'
+                + f'Path({str(marker)!r}).touch()\nprint("[]")\n')
+            file.chmod(0o755)
+        env = {'PATH': str(binary), **({'PYTHONOPTIMIZE': '1'} if mode == 'environment' else {})}
+        result = subprocess.run([sys.executable, *(['-O'] if mode == 'flag' else []), str(PROBE)],
+            capture_output=True, text=True, env=env, timeout=10)
+&gt;       assert result.returncode == 2
+E       AssertionError: assert 1 == 2
+E        +  where 1 = CompletedProcess(args=['/usr/bin/python3', '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-429/docs/ver...loads(subprocess.check_output([\'docker\', \'image\', \'inspect\', IMAGE]))[0]\nIndexError: list index out of range\n').returncode
+
+tools/tests/test_native_backend_probe_guard.py:25: AssertionError</failure></testcase></testsuite></testsuites>

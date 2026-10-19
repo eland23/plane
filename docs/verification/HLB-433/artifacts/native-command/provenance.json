@@ -1,0 +1,30 @@
+{
+  "test_revision": "e9c3d63ea051a845e6a444fdef63febb351f8b4e",
+  "test_sha256": "018e2e358b3b1a2bb15c9fc24747b10b539206a76a41877cb9b15e1214f5b9ff",
+  "application_revision": "e5c7acf098a890436ab6300f0bc8491c7dd22725",
+  "host": "192.168.1.130",
+  "observation": {
+    "memory_mib": 103.5,
+    "memory_limit_mib": 512,
+    "cpu_limit": 1,
+    "is_peak_measurement": false
+  },
+  "attempts": [
+    {
+      "id": 1,
+      "status": "SETUP_FAILURE",
+      "reason": "Builder config ID differs from imported OCI manifest identity; no container started"
+    },
+    {
+      "id": 2,
+      "status": "SETUP_FAILURE",
+      "reason": "Missing synthetic REDIS_URL; owned container removed"
+    },
+    {
+      "id": 3,
+      "status": "PASS",
+      "result": "Packaged check, migration leaf, native import and entrypoint syntax; owned container removed"
+    }
+  ],
+  "database_api_or_deployment_proven": false
+}
