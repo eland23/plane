@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.757" timestamp="2026-10-19T01:38:22.177428+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_plane_restore" name="test_database_compare_checks_exact_values_then_allows_only_explicit_additions" time="0.313"><failure message="assert 1 == 0">tmp_path = PosixPath('/tmp/pytest-of-root/pytest-103/test_database_compare_checks_e0')
+
+    def test_database_compare_checks_exact_values_then_allows_only_explicit_additions(tmp_path):
+        expected=tmp_path/'expected.jsonl';actual=tmp_path/'actual.jsonl'
+        source={'issues':[{'id':'fixture-1','name':'Original issue','nullable':None,'body':{'items':['first','second']}}],
+                'pages':[]}
+        digest=snapshot_file(expected,source);snapshot_file(actual,source)
+        arguments=['compare-database','--expected',expected,'--actual',actual,'--expected-sha256',digest]
+        code,result=command(*arguments)
+&gt;       assert code==0
+E       assert 1 == 0
+
+tools/tests/test_plane_restore.py:131: AssertionError</failure></testcase></testsuite></testsuites>

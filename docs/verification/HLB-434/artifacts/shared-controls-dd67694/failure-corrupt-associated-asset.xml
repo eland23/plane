@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="30" time="14.181" timestamp="2026-10-19T04:29:22.811625+00:00" hostname="69e46fac9cea"><testcase classname="test_shared_fixture_m" name="test_anonymous_wiki_read_is_denied" time="0.093" /><testcase classname="test_shared_fixture_m" name="test_viewer_can_read_public_wiki" time="0.267" /><testcase classname="test_shared_fixture_m" name="test_outsider_cannot_read_fixture_wiki" time="0.215" /><testcase classname="test_shared_fixture_m" name="test_fixture_member_cannot_read_other_workspace" time="0.233" /><testcase classname="test_shared_fixture_m" name="test_six_issue_identities_states_parents_dates_and_modules_survive[FAS-2]" time="0.502" /><testcase classname="test_shared_fixture_m" name="test_six_issue_identities_states_parents_dates_and_modules_survive[FAS-5]" time="0.414" /><testcase classname="test_shared_fixture_m" name="test_six_issue_identities_states_parents_dates_and_modules_survive[FAS-11]" time="0.497" /><testcase classname="test_shared_fixture_m" name="test_six_issue_identities_states_parents_dates_and_modules_survive[FAS-17]" time="0.409" /><testcase classname="test_shared_fixture_m" name="test_six_issue_identities_states_parents_dates_and_modules_survive[FAS-21]" time="0.410" /><testcase classname="test_shared_fixture_m" name="test_six_issue_identities_states_parents_dates_and_modules_survive[FAS-30]" time="0.434" /><testcase classname="test_shared_fixture_m" name="test_modules_preserve_exact_membership[Alpha-expected_sequences0]" time="0.453" /><testcase classname="test_shared_fixture_m" name="test_modules_preserve_exact_membership[Beta-expected_sequences1]" time="0.497" /><testcase classname="test_shared_fixture_m" name="test_cycle_spans_dst_and_preserves_exact_instants" time="0.648" /><testcase classname="test_shared_fixture_m" name="test_cycle_preserves_six_issue_state_counts" time="1.169" /><testcase classname="test_shared_fixture_m" name="test_cycle_todo_membership_is_exactly_two_known_issues" time="0.518" /><testcase classname="test_shared_fixture_m" name="test_cycle_membership_preserves_all_six_and_numeric_order" time="0.731" /><testcase classname="test_shared_fixture_m" name="test_blocking_related_and_duplicate_edges_survive[2-blocked_by-0]" time="0.728" /><testcase classname="test_shared_fixture_m" name="test_blocking_related_and_duplicate_edges_survive[3-relates_to-1]" time="0.710" /><testcase classname="test_shared_fixture_m" name="test_blocking_related_and_duplicate_edges_survive[5-duplicate-0]" time="0.667" /><testcase classname="test_shared_fixture_m" name="test_thread_retains_inactive_author_and_parent" time="0.504" /><testcase classname="test_shared_fixture_m" name="test_wiki_content_and_inline_asset_reference_survive" time="0.425" /><testcase classname="test_shared_fixture_m" name="test_document_is_discovered_from_issue_link_and_retains_association" time="1.085" /><testcase classname="test_shared_fixture_m" name="test_associated_assets_download_through_authenticated_api_and_match_golden_bytes[inline-0]" time="0.435" /><testcase classname="test_shared_fixture_m" name="test_associated_assets_download_through_authenticated_api_and_match_golden_bytes[binary-1]" time="0.374"><failure message="AssertionError: Associated fixture asset bytes must match golden SHA-256&#10;assert '263a4c9b9b13...f63b3d4ed1914' == 'afe2651d21f5...50a8cd8d23df5'&#10;  &#10;  - afe2651d21f5afd5212e29ea37925ae21634af409aad0a1873850a8cd8d23df5&#10;  + 263a4c9b9b135975dbcf444f05e5bb02aa91fee4c38886aacf4f63b3d4ed1914">name = 'binary', index = 1
+
+    @pytest.mark.parametrize('name,index',[('inline',0),('binary',1)])
+    def test_associated_assets_download_through_authenticated_api_and_match_golden_bytes(name,index):
+        if name=='inline':path='/api/assets/v2/workspaces/'+G['workspace']['slug']+'/projects/'+G['project']['id']+'/'+G['assets'][name]+'/'
+        else:path='/api/assets/v2/workspaces/'+G['workspace']['slug']+'/projects/'+G['project']['id']+'/issues/'+G['issues'][2]['id']+'/attachments/'+G['assets'][name]+'/'
+        status,headers,_=request(path)
+        assert status==302,'Authenticated fixture asset must produce a signed redirect'
+        signed=headers['Location'];target=urlsplit(signed)
+        assert not target.username and not target.password and not target.fragment
+        assert target.scheme=='http' and target.hostname==NS+'-minio' and target.port==9000 and target.path=='/plane-rehearsal-hlb434-m-20261019/'+FIXTURES[index]['key']
+        # No session cookie is forwarded to the storage host.
+        with build_opener(NoRedirect()).open(signed,timeout=30) as response:
+            body=response.read(1024*1024)
+            assert response.headers['Content-Type']==FIXTURES[index]['headers']['ContentType']
+&gt;       assert hashlib.sha256(body).hexdigest()==FIXTURES[index]['sha256'],'Associated fixture asset bytes must match golden SHA-256'
+E       AssertionError: Associated fixture asset bytes must match golden SHA-256
+E       assert '263a4c9b9b13...f63b3d4ed1914' == 'afe2651d21f5...50a8cd8d23df5'
+E         
+E         - afe2651d21f5afd5212e29ea37925ae21634af409aad0a1873850a8cd8d23df5
+E         + 263a4c9b9b135975dbcf444f05e5bb02aa91fee4c38886aacf4f63b3d4ed1914
+
+tests/test_shared_fixture_m.py:142: AssertionError</failure></testcase><testcase classname="test_shared_fixture_m" name="test_anonymous_attachment_download_is_denied" time="0.083" /><testcase classname="test_shared_fixture_m" name="test_second_member_can_read_module_collection" time="0.595" /><testcase classname="test_asset_store" name="test_object_store_requires_authenticated_requests" time="0.003" /><testcase classname="test_asset_store" name="test_all_original_and_fixture_object_keys_are_present_exactly" time="0.012" /><testcase classname="test_asset_store" name="test_original_and_fixture_object_metadata_is_preserved" time="0.006" /><testcase classname="test_asset_store" name="test_restored_asset_bytes_match_original_and_golden_hashes" time="0.417"><failure message="AssertionError: Fixture asset bytes must match golden SHA-256&#10;assert '263a4c9b9b13...f63b3d4ed1914' == 'afe2651d21f5...50a8cd8d23df5'&#10;  &#10;  - afe2651d21f5afd5212e29ea37925ae21634af409aad0a1873850a8cd8d23df5&#10;  + 263a4c9b9b135975dbcf444f05e5bb02aa91fee4c38886aacf4f63b3d4ed1914">def test_restored_asset_bytes_match_original_and_golden_hashes():
+        for row in original_rows():
+            key_digest=hashlib.sha256(row['key'].encode()).hexdigest()
+            command=[sys.executable,str(TOOL),'compare-asset','--archive',str(ARCHIVE),
+                     '--expected-sha256',EXPECTED_ARCHIVE,'--key-sha256',key_digest,
+                     '--readback',str(READBACK/(key_digest+'.bin'))]
+            result=subprocess.run(command,capture_output=True,text=True,timeout=30)
+            assert result.returncode==0,'Original asset checksum gate must pass: '+result.stdout
+        for row in FIXTURES:
+            actual=hashlib.sha256((READBACK/(row['key_sha256']+'.bin')).read_bytes()).hexdigest()
+&gt;           assert actual==row['sha256'],'Fixture asset bytes must match golden SHA-256'
+E           AssertionError: Fixture asset bytes must match golden SHA-256
+E           assert '263a4c9b9b13...f63b3d4ed1914' == 'afe2651d21f5...50a8cd8d23df5'
+E             
+E             - afe2651d21f5afd5212e29ea37925ae21634af409aad0a1873850a8cd8d23df5
+E             + 263a4c9b9b135975dbcf444f05e5bb02aa91fee4c38886aacf4f63b3d4ed1914
+
+tests/test_asset_store.py:58: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,24 @@
+{
+  "target": "192.168.1.130",
+  "owner": "HLB-434-assets-20261018",
+  "object_store_image": "sha256:30cfd6ed962109b44a4bf2122e0b64c172feaf5453f9eb30888eda03585ee50f",
+  "sdk_image": "sha256:1c54c4fbe69d3a38740e1d05a6c0d31387050c351f0848e62c33c0a71a7c5a84",
+  "test_image": "sha256:25c7d4cbb046e0929072c2197f074222e7fe9e5b1f09c75e2e3e8dc36635560f",
+  "internal_network": true,
+  "published_ports": false,
+  "read_only_rootfs": true,
+  "store_memory_bytes": 268435456,
+  "sdk_runtime": {
+    "action": "ready",
+    "status": "PASS",
+    "sdk_version": "1.34.96",
+    "python": "3.12.10"
+  },
+  "code_sha256": {
+    "tools/plane_restore.py": "bf1aff905c30b564c35cf578e3114fc7fb5b573f71f6d04a1e2829cf9f24759a",
+    "docs/verification/HLB-434/native/asset_store_rehearsal.py": "beee6a83f6003e8df85ca9c7c8af3c71465f1b4df22eb59038584809312ba3ab",
+    "docs/verification/HLB-434/native/asset_store_sdk.py": "fff90f52db3af151f3fd2daf6a43b69dfce6f699eec5a1b551c3e7b486e9c39e",
+    "docs/verification/HLB-434/native/test_asset_store.py": "1fdbbb00da9d813c10e8da732d7df6b14b6515903680f4408501503adbc213a2",
+    "docs/verification/HLB-434/native/asset_fixture.py": "5ce8f5d9642c66f3cdfa1e7a2b6b6ba5e4a355d8315d82efa9e20df5f144fa1f"
+  }
+}

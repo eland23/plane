@@ -1,0 +1,98 @@
+[
+  {
+    "phase": "pass-known-state",
+    "exit": 0,
+    "expected_failure": false,
+    "counts": {
+      "tests": 65,
+      "failures": 0,
+      "errors": 0
+    },
+    "accepted": true,
+    "fixture_removed": true
+  },
+  {
+    "phase": "failure-asset-checksum",
+    "exit": 1,
+    "expected_failure": true,
+    "counts": {
+      "tests": 1,
+      "failures": 1,
+      "errors": 0
+    },
+    "accepted": true,
+    "fixture_removed": true
+  },
+  {
+    "phase": "failure-record-preservation",
+    "exit": 1,
+    "expected_failure": true,
+    "counts": {
+      "tests": 5,
+      "failures": 3,
+      "errors": 0
+    },
+    "accepted": true,
+    "fixture_removed": true
+  },
+  {
+    "phase": "failure-sdk-endpoint",
+    "exit": 1,
+    "expected_failure": true,
+    "counts": {
+      "tests": 6,
+      "failures": 2,
+      "errors": 0
+    },
+    "accepted": true,
+    "fixture_removed": true
+  },
+  {
+    "phase": "failure-inspection-admission",
+    "exit": 1,
+    "expected_failure": true,
+    "counts": {
+      "tests": 1,
+      "failures": 1,
+      "errors": 0
+    },
+    "accepted": true,
+    "fixture_removed": true
+  },
+  {
+    "phase": "failure-receipt-cleanup",
+    "exit": 1,
+    "expected_failure": true,
+    "counts": {
+      "tests": 1,
+      "failures": 1,
+      "errors": 0
+    },
+    "accepted": true,
+    "fixture_removed": true
+  },
+  {
+    "phase": "failure-database-destination",
+    "exit": 1,
+    "expected_failure": true,
+    "counts": {
+      "tests": 5,
+      "failures": 2,
+      "errors": 0
+    },
+    "accepted": true,
+    "fixture_removed": true
+  },
+  {
+    "phase": "restore-and-repeat",
+    "exit": 0,
+    "expected_failure": false,
+    "counts": {
+      "tests": 65,
+      "failures": 0,
+      "errors": 0
+    },
+    "accepted": true,
+    "fixture_removed": true
+  }
+]

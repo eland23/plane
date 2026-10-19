@@ -1,0 +1,17 @@
+[
+  {
+    "phase": "pass-known-state",
+    "exit": 0,
+    "intended_asset_corruption_failure": false
+  },
+  {
+    "phase": "failure-corrupt-associated-asset",
+    "exit": 1,
+    "intended_asset_corruption_failure": true
+  },
+  {
+    "phase": "restore-and-repeat",
+    "exit": 0,
+    "intended_asset_corruption_failure": false
+  }
+]

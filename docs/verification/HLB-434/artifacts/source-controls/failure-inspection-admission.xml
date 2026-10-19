@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.973" timestamp="2026-10-19T03:18:29.871318+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_asset_store_guards" name="test_indeterminate_docker_state_preserves_data_and_refuses_clean_receipt" time="1.401"><failure message="AssertionError: Indeterminate Docker state must preserve readbacks&#10;assert False&#10; +  where False = exists()&#10; +    where exists = (PosixPath('/var/tmp/plane-restore-contract-b0i8ac93/fixtures/test_indeterminate_docker_stat0/private') / 'readbacks/original-marker').exists">cleanup_scope = (&lt;module 'asset_rehearsal_under_test' from '/var/tmp/plane-restore-contract-b0i8ac93/docs/verification/HLB-434/native/...rehearsal.py'&gt;, PosixPath('/var/tmp/plane-restore-contract-b0i8ac93/fixtures/test_indeterminate_docker_stat0/private'))
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7ee378d170a0&gt;
+
+    def test_indeterminate_docker_state_preserves_data_and_refuses_clean_receipt(cleanup_scope,monkeypatch):
+        module,root=cleanup_scope
+        monkeypatch.setenv('DOCKER_FIXTURE_MODE','denied')
+        error=None
+        try:module.cleanup()
+        except RuntimeError as caught:error=str(caught)
+&gt;       assert (root/'readbacks/original-marker').exists(),'Indeterminate Docker state must preserve readbacks'
+E       AssertionError: Indeterminate Docker state must preserve readbacks
+E       assert False
+E        +  where False = exists()
+E        +    where exists = (PosixPath('/var/tmp/plane-restore-contract-b0i8ac93/fixtures/test_indeterminate_docker_stat0/private') / 'readbacks/original-marker').exists
+
+tools/tests/test_asset_store_guards.py:84: AssertionError</failure></testcase></testsuite></testsuites>

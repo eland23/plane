@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="6" time="0.319" timestamp="2026-10-19T04:12:49.727882+00:00" hostname="runnervm8k3b6"><testcase classname="tools.tests.test_asset_store_guards" name="test_sdk_rejects_foreign_connection_before_loading_s3_client[change0]" time="0.050"><failure message="AssertionError: Foreign connection must be denied before S3 client initialization&#10;assert not True&#10; +  where True = exists()&#10; +    where exists = PosixPath('/var/tmp/plane-restore-contract-qnqcnp_6/fixtures/test_sdk_rejects_foreign_conne0/client-initialized').exists">tmp_path = PosixPath('/var/tmp/plane-restore-contract-qnqcnp_6/fixtures/test_sdk_rejects_foreign_conne0')
+change = {'endpoint': 'http://192.168.1.129:9000'}
+
+    @pytest.mark.parametrize('change',[
+        {'endpoint':'http://192.168.1.129:9000'},
+        {'endpoint':'http://127.0.0.1:9000'},
+        {'bucket':'uploads'},
+        {'access_key':'minioadmin'},
+        {'secret_key':''},
+        {'unexpected':'extra-configuration'},
+    ])
+    def test_sdk_rejects_foreign_connection_before_loading_s3_client(tmp_path,change):
+        archive,digest=archive_fixture(tmp_path)
+        marker=tmp_path/'client-initialized'
+        (tmp_path/'socket.py').write_text(f'def gethostname():return {NS+"-sdk"!r}\n')
+        (tmp_path/'boto3.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\nraise RuntimeError("UNSAFE_CLIENT_IMPORT")\n')
+        connection=tmp_path/'connection.json'
+        config={'endpoint':'http://'+NS+'-minio:9000','bucket':'plane-rehearsal-hlb434-assets-20261018',
+                'access_key':'fixture-access-key','secret_key':'fixture-secret-key-is-private-only',**change}
+        connection.write_text(json.dumps(config));connection.chmod(0o600)
+        result=subprocess.run([sys.executable,str(NATIVE/'asset_store_sdk.py'),'ready','--connection',str(connection),
+                               '--archive',str(archive),'--expected-sha256',digest],
+                              env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path)},capture_output=True,text=True,timeout=10)
+&gt;       assert not marker.exists(),'Foreign connection must be denied before S3 client initialization'
+E       AssertionError: Foreign connection must be denied before S3 client initialization
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/var/tmp/plane-restore-contract-qnqcnp_6/fixtures/test_sdk_rejects_foreign_conne0/client-initialized').exists
+
+tools/tests/test_asset_store_guards.py:35: AssertionError</failure></testcase><testcase classname="tools.tests.test_asset_store_guards" name="test_sdk_rejects_foreign_connection_before_loading_s3_client[change1]" time="0.042"><failure message="AssertionError: Foreign connection must be denied before S3 client initialization&#10;assert not True&#10; +  where True = exists()&#10; +    where exists = PosixPath('/var/tmp/plane-restore-contract-qnqcnp_6/fixtures/test_sdk_rejects_foreign_conne1/client-initialized').exists">tmp_path = PosixPath('/var/tmp/plane-restore-contract-qnqcnp_6/fixtures/test_sdk_rejects_foreign_conne1')
+change = {'endpoint': 'http://127.0.0.1:9000'}
+
+    @pytest.mark.parametrize('change',[
+        {'endpoint':'http://192.168.1.129:9000'},
+        {'endpoint':'http://127.0.0.1:9000'},
+        {'bucket':'uploads'},
+        {'access_key':'minioadmin'},
+        {'secret_key':''},
+        {'unexpected':'extra-configuration'},
+    ])
+    def test_sdk_rejects_foreign_connection_before_loading_s3_client(tmp_path,change):
+        archive,digest=archive_fixture(tmp_path)
+        marker=tmp_path/'client-initialized'
+        (tmp_path/'socket.py').write_text(f'def gethostname():return {NS+"-sdk"!r}\n')
+        (tmp_path/'boto3.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\nraise RuntimeError("UNSAFE_CLIENT_IMPORT")\n')
+        connection=tmp_path/'connection.json'
+        config={'endpoint':'http://'+NS+'-minio:9000','bucket':'plane-rehearsal-hlb434-assets-20261018',
+                'access_key':'fixture-access-key','secret_key':'fixture-secret-key-is-private-only',**change}
+        connection.write_text(json.dumps(config));connection.chmod(0o600)
+        result=subprocess.run([sys.executable,str(NATIVE/'asset_store_sdk.py'),'ready','--connection',str(connection),
+                               '--archive',str(archive),'--expected-sha256',digest],
+                              env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path)},capture_output=True,text=True,timeout=10)
+&gt;       assert not marker.exists(),'Foreign connection must be denied before S3 client initialization'
+E       AssertionError: Foreign connection must be denied before S3 client initialization
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/var/tmp/plane-restore-contract-qnqcnp_6/fixtures/test_sdk_rejects_foreign_conne1/client-initialized').exists
+
+tools/tests/test_asset_store_guards.py:35: AssertionError</failure></testcase><testcase classname="tools.tests.test_asset_store_guards" name="test_sdk_rejects_foreign_connection_before_loading_s3_client[change2]" time="0.038" /><testcase classname="tools.tests.test_asset_store_guards" name="test_sdk_rejects_foreign_connection_before_loading_s3_client[change3]" time="0.037" /><testcase classname="tools.tests.test_asset_store_guards" name="test_sdk_rejects_foreign_connection_before_loading_s3_client[change4]" time="0.036" /><testcase classname="tools.tests.test_asset_store_guards" name="test_sdk_rejects_foreign_connection_before_loading_s3_client[change5]" time="0.038" /></testsuite></testsuites>

@@ -1,0 +1,19 @@
+{
+  "executed_revision": "68a12278e3b9f2139b5ff33f9fb37c6e5c1793ff",
+  "normal": {
+    "tests": 30,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "schema_phase": {
+    "tests": 30,
+    "failures": 7,
+    "errors": 0,
+    "skipped": 0
+  },
+  "accepted_complete_run": false,
+  "reason": "Controller expected one schema failure; full suite exposed seven, so recovery did not run",
+  "independent_cleanup": "PASS",
+  "original_value_and_credential_marker_scan": "PASS"
+}

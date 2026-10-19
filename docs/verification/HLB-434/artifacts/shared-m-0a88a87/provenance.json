@@ -1,0 +1,35 @@
+{
+  "executed_revision": "0a88a87d99a3e262ce81450925ae77f3f40de66d",
+  "application_revision": "e5c7acf098a890436ab6300f0bc8491c7dd22725",
+  "executed_code_files_match_pushed_git": true,
+  "executed_code_file_count": 9,
+  "executed_test_copies_match_git": true,
+  "native_assertions_unchanged_across_phases": true,
+  "native_results": [
+    {
+      "tests": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "tests": 30,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "tests": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "ci_runs": [
+    39195518325,
+    39195518517
+  ],
+  "original_value_and_credential_marker_scan": "PASS",
+  "full_child_acceptance": "INCOMPLETE",
+  "remaining": "browser journeys, combined Control A, ordered release/readiness and HLB-435/436 gates"
+}

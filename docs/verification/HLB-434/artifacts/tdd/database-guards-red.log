@@ -1,0 +1,181 @@
+FFFFFFF                                                                  [100%]
+=================================== FAILURES ===================================
+_ test_database_seed_denies_foreign_destination_before_django_import[postgresql://plane_fixture:synthetic@192.168.1.129:5432/plane_restore_good] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-113/test_database_seed_denies_fore0')
+url = 'postgresql://plane_fixture:synthetic@192.168.1.129:5432/plane_restore_good'
+
+    @pytest.mark.parametrize('url',[
+        'postgresql://plane_fixture:synthetic@192.168.1.129:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@127.0.0.1:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/postgres',
+        'postgresql://postgres:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good?options=unsafe',
+    ])
+    def test_database_seed_denies_foreign_destination_before_django_import(tmp_path,url):
+        marker=tmp_path/'django-imported'
+        (tmp_path/'django.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\n')
+        result=subprocess.run([sys.executable,str(NATIVE/'seed_database_fixture.py')],
+            env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path),'DATABASE_URL':url},
+            capture_output=True,text=True,timeout=10)
+        assert not marker.exists(),'Foreign database must be rejected before Django initializes'
+        assert result.returncode==2
+>       assert result.stderr.strip()=='FIXTURE_DATABASE_DENIED'
+E       AssertionError: assert '/usr/bin/pyt... or directory' == 'FIXTURE_DATABASE_DENIED'
+E         
+E         - FIXTURE_DATABASE_DENIED
+E         + /usr/bin/python3: can't open file '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-434/docs/verification/HLB-434/native/seed_database_fixture.py': [Errno 2] No such file or directory
+
+tools/tests/test_database_restore_guards.py:27: AssertionError
+_ test_database_seed_denies_foreign_destination_before_django_import[postgresql://plane_fixture:synthetic@127.0.0.1:5432/plane_restore_good] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-113/test_database_seed_denies_fore1')
+url = 'postgresql://plane_fixture:synthetic@127.0.0.1:5432/plane_restore_good'
+
+    @pytest.mark.parametrize('url',[
+        'postgresql://plane_fixture:synthetic@192.168.1.129:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@127.0.0.1:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/postgres',
+        'postgresql://postgres:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good?options=unsafe',
+    ])
+    def test_database_seed_denies_foreign_destination_before_django_import(tmp_path,url):
+        marker=tmp_path/'django-imported'
+        (tmp_path/'django.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\n')
+        result=subprocess.run([sys.executable,str(NATIVE/'seed_database_fixture.py')],
+            env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path),'DATABASE_URL':url},
+            capture_output=True,text=True,timeout=10)
+        assert not marker.exists(),'Foreign database must be rejected before Django initializes'
+        assert result.returncode==2
+>       assert result.stderr.strip()=='FIXTURE_DATABASE_DENIED'
+E       AssertionError: assert '/usr/bin/pyt... or directory' == 'FIXTURE_DATABASE_DENIED'
+E         
+E         - FIXTURE_DATABASE_DENIED
+E         + /usr/bin/python3: can't open file '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-434/docs/verification/HLB-434/native/seed_database_fixture.py': [Errno 2] No such file or directory
+
+tools/tests/test_database_restore_guards.py:27: AssertionError
+_ test_database_seed_denies_foreign_destination_before_django_import[postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/postgres] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-113/test_database_seed_denies_fore2')
+url = 'postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/postgres'
+
+    @pytest.mark.parametrize('url',[
+        'postgresql://plane_fixture:synthetic@192.168.1.129:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@127.0.0.1:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/postgres',
+        'postgresql://postgres:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good?options=unsafe',
+    ])
+    def test_database_seed_denies_foreign_destination_before_django_import(tmp_path,url):
+        marker=tmp_path/'django-imported'
+        (tmp_path/'django.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\n')
+        result=subprocess.run([sys.executable,str(NATIVE/'seed_database_fixture.py')],
+            env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path),'DATABASE_URL':url},
+            capture_output=True,text=True,timeout=10)
+        assert not marker.exists(),'Foreign database must be rejected before Django initializes'
+        assert result.returncode==2
+>       assert result.stderr.strip()=='FIXTURE_DATABASE_DENIED'
+E       AssertionError: assert '/usr/bin/pyt... or directory' == 'FIXTURE_DATABASE_DENIED'
+E         
+E         - FIXTURE_DATABASE_DENIED
+E         + /usr/bin/python3: can't open file '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-434/docs/verification/HLB-434/native/seed_database_fixture.py': [Errno 2] No such file or directory
+
+tools/tests/test_database_restore_guards.py:27: AssertionError
+_ test_database_seed_denies_foreign_destination_before_django_import[postgresql://postgres:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-113/test_database_seed_denies_fore3')
+url = 'postgresql://postgres:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good'
+
+    @pytest.mark.parametrize('url',[
+        'postgresql://plane_fixture:synthetic@192.168.1.129:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@127.0.0.1:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/postgres',
+        'postgresql://postgres:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good?options=unsafe',
+    ])
+    def test_database_seed_denies_foreign_destination_before_django_import(tmp_path,url):
+        marker=tmp_path/'django-imported'
+        (tmp_path/'django.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\n')
+        result=subprocess.run([sys.executable,str(NATIVE/'seed_database_fixture.py')],
+            env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path),'DATABASE_URL':url},
+            capture_output=True,text=True,timeout=10)
+        assert not marker.exists(),'Foreign database must be rejected before Django initializes'
+        assert result.returncode==2
+>       assert result.stderr.strip()=='FIXTURE_DATABASE_DENIED'
+E       AssertionError: assert '/usr/bin/pyt... or directory' == 'FIXTURE_DATABASE_DENIED'
+E         
+E         - FIXTURE_DATABASE_DENIED
+E         + /usr/bin/python3: can't open file '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-434/docs/verification/HLB-434/native/seed_database_fixture.py': [Errno 2] No such file or directory
+
+tools/tests/test_database_restore_guards.py:27: AssertionError
+_ test_database_seed_denies_foreign_destination_before_django_import[postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good?options=unsafe] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-113/test_database_seed_denies_fore4')
+url = 'postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good?options=unsafe'
+
+    @pytest.mark.parametrize('url',[
+        'postgresql://plane_fixture:synthetic@192.168.1.129:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@127.0.0.1:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/postgres',
+        'postgresql://postgres:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good',
+        'postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good?options=unsafe',
+    ])
+    def test_database_seed_denies_foreign_destination_before_django_import(tmp_path,url):
+        marker=tmp_path/'django-imported'
+        (tmp_path/'django.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\n')
+        result=subprocess.run([sys.executable,str(NATIVE/'seed_database_fixture.py')],
+            env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path),'DATABASE_URL':url},
+            capture_output=True,text=True,timeout=10)
+        assert not marker.exists(),'Foreign database must be rejected before Django initializes'
+        assert result.returncode==2
+>       assert result.stderr.strip()=='FIXTURE_DATABASE_DENIED'
+E       AssertionError: assert '/usr/bin/pyt... or directory' == 'FIXTURE_DATABASE_DENIED'
+E         
+E         - FIXTURE_DATABASE_DENIED
+E         + /usr/bin/python3: can't open file '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-434/docs/verification/HLB-434/native/seed_database_fixture.py': [Errno 2] No such file or directory
+
+tools/tests/test_database_restore_guards.py:27: AssertionError
+_ test_database_commands_deny_optimized_execution[database_restore_rehearsal.py] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-113/test_database_commands_deny_op0')
+name = 'database_restore_rehearsal.py'
+
+    @pytest.mark.parametrize('name',['database_restore_rehearsal.py','seed_database_fixture.py'])
+    def test_database_commands_deny_optimized_execution(tmp_path,name):
+        result=subprocess.run([sys.executable,'-O',str(NATIVE/name)],env={'PATH':os.environ['PATH']},
+            capture_output=True,text=True,timeout=10)
+        assert result.returncode==2
+>       assert result.stderr.strip()=='OPTIMIZED_EXECUTION_DENIED'
+E       AssertionError: assert '/usr/bin/pyt... or directory' == 'OPTIMIZED_EXECUTION_DENIED'
+E         
+E         - OPTIMIZED_EXECUTION_DENIED
+E         + /usr/bin/python3: can't open file '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-434/docs/verification/HLB-434/native/database_restore_rehearsal.py': [Errno 2] No such file or directory
+
+tools/tests/test_database_restore_guards.py:35: AssertionError
+__ test_database_commands_deny_optimized_execution[seed_database_fixture.py] ___
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-113/test_database_commands_deny_op1')
+name = 'seed_database_fixture.py'
+
+    @pytest.mark.parametrize('name',['database_restore_rehearsal.py','seed_database_fixture.py'])
+    def test_database_commands_deny_optimized_execution(tmp_path,name):
+        result=subprocess.run([sys.executable,'-O',str(NATIVE/name)],env={'PATH':os.environ['PATH']},
+            capture_output=True,text=True,timeout=10)
+        assert result.returncode==2
+>       assert result.stderr.strip()=='OPTIMIZED_EXECUTION_DENIED'
+E       AssertionError: assert '/usr/bin/pyt... or directory' == 'OPTIMIZED_EXECUTION_DENIED'
+E         
+E         - OPTIMIZED_EXECUTION_DENIED
+E         + /usr/bin/python3: can't open file '/root/.vscode-server/Projects/Homelab/plane/src/worktrees/HLB-434/docs/verification/HLB-434/native/seed_database_fixture.py': [Errno 2] No such file or directory
+
+tools/tests/test_database_restore_guards.py:35: AssertionError
+------------ generated xml file: /var/tmp/HLB-434-db-guards-red.xml ------------
+=========================== short test summary info ============================
+FAILED tools/tests/test_database_restore_guards.py::test_database_seed_denies_foreign_destination_before_django_import[postgresql://plane_fixture:synthetic@192.168.1.129:5432/plane_restore_good]
+FAILED tools/tests/test_database_restore_guards.py::test_database_seed_denies_foreign_destination_before_django_import[postgresql://plane_fixture:synthetic@127.0.0.1:5432/plane_restore_good]
+FAILED tools/tests/test_database_restore_guards.py::test_database_seed_denies_foreign_destination_before_django_import[postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/postgres]
+FAILED tools/tests/test_database_restore_guards.py::test_database_seed_denies_foreign_destination_before_django_import[postgresql://postgres:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good]
+FAILED tools/tests/test_database_restore_guards.py::test_database_seed_denies_foreign_destination_before_django_import[postgresql://plane_fixture:synthetic@plane-rehearsal-db-434-20261019-db:5432/plane_restore_good?options=unsafe]
+FAILED tools/tests/test_database_restore_guards.py::test_database_commands_deny_optimized_execution[database_restore_rehearsal.py]
+FAILED tools/tests/test_database_restore_guards.py::test_database_commands_deny_optimized_execution[seed_database_fixture.py]
+7 failed in 1.63s

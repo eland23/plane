@@ -1,0 +1,41 @@
+{
+  "target": "192.168.1.130",
+  "internal_network": true,
+  "network_id": "57ac2d282ae00c1f588c572a9b6b6c9f32342fdb7d47e38dff111405e6f72b57",
+  "containers": {
+    "minio": {
+      "image": "sha256:30cfd6ed962109b44a4bf2122e0b64c172feaf5453f9eb30888eda03585ee50f",
+      "running": true,
+      "read_only_rootfs": true,
+      "published_ports": false,
+      "memory_limit_bytes": 268435456,
+      "network_id": "57ac2d282ae00c1f588c572a9b6b6c9f32342fdb7d47e38dff111405e6f72b57"
+    },
+    "db": {
+      "image": "sha256:468d34fefd6338031787c7b8e94078975b3aaf4d66c7ead25c39cd3ba46a15c6",
+      "running": true,
+      "read_only_rootfs": true,
+      "published_ports": false,
+      "memory_limit_bytes": 268435456,
+      "network_id": "57ac2d282ae00c1f588c572a9b6b6c9f32342fdb7d47e38dff111405e6f72b57"
+    },
+    "redis": {
+      "image": "sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2",
+      "running": true,
+      "read_only_rootfs": true,
+      "published_ports": false,
+      "memory_limit_bytes": 67108864,
+      "network_id": "57ac2d282ae00c1f588c572a9b6b6c9f32342fdb7d47e38dff111405e6f72b57"
+    },
+    "api": {
+      "image": "sha256:1c54c4fbe69d3a38740e1d05a6c0d31387050c351f0848e62c33c0a71a7c5a84",
+      "running": true,
+      "read_only_rootfs": true,
+      "published_ports": false,
+      "memory_limit_bytes": 402653184,
+      "network_id": "57ac2d282ae00c1f588c572a9b6b6c9f32342fdb7d47e38dff111405e6f72b57"
+    }
+  },
+  "observer_sha256": "2265fcc91b0c94f93943f5e8159579baf2dcbb80f67738698d8ed7831727070e",
+  "status": "PASS"
+}

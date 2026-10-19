@@ -1,0 +1,16 @@
+..F..                                                                    [100%]
+=================================== FAILURES ===================================
+____________ test_restored_database_retains_golden_fixture_content _____________
+
+    def test_restored_database_retains_golden_fixture_content():
+>       assert restored_link()['title'] == 'Golden restored attachment link', 'Restored fixture content must equal golden value'
+E       AssertionError: Restored fixture content must equal golden value
+E       assert 'Deliberately...upted fixture' == 'Golden resto...tachment link'
+E         
+E         - Golden restored attachment link
+E         + Deliberately corrupted fixture
+
+tests/test_database_restore.py:50: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_database_restore.py::test_restored_database_retains_golden_fixture_content
+1 failed, 4 passed in 2.26s

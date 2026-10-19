@@ -1,0 +1,53 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_______ test_shared_seed_rejects_foreign_storage_before_django[change0] ________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-128/test_shared_seed_rejects_forei0')
+change = {'AWS_S3_ENDPOINT_URL': 'http://192.168.1.129:9000'}
+
+    @pytest.mark.parametrize('change',[{'AWS_S3_ENDPOINT_URL':'http://192.168.1.129:9000'},{'AWS_S3_BUCKET_NAME':'uploads'}])
+    def test_shared_seed_rejects_foreign_storage_before_django(tmp_path,change):
+        marker=tmp_path/'django-initialized'
+        (tmp_path/'socket.py').write_text(f'def gethostname():return {NS+"-cli"!r}\n')
+        (tmp_path/'django.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\n')
+        env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path),
+             'DATABASE_URL':'postgresql://plane_fixture:synthetic@'+NS+'-db:5432/plane_fixture_m',
+             'DJANGO_SETTINGS_MODULE':'plane.settings.production','REDIS_URL':'redis://'+NS+'-redis:6379/0','AMQP_URL':'redis://'+NS+'-redis:6379/1',
+             'AWS_S3_ENDPOINT_URL':'http://'+NS+'-minio:9000','AWS_S3_BUCKET_NAME':'plane-rehearsal-hlb434-m-20261019',
+             'AWS_ACCESS_KEY_ID':'synthetic-fixture-access','AWS_SECRET_ACCESS_KEY':'synthetic-fixture-secret-is-private','USE_MINIO':'0',**change}
+        result=subprocess.run([sys.executable,str(NATIVE/'seed_shared_fixture.py')],env=env,capture_output=True,text=True,timeout=10)
+>       assert not marker.exists(),'Foreign asset destination must be denied before database setup'
+E       AssertionError: Foreign asset destination must be denied before database setup
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/tmp/pytest-of-root/pytest-128/test_shared_seed_rejects_forei0/django-initialized').exists
+
+tools/tests/test_shared_fixture_guards.py:26: AssertionError
+_______ test_shared_seed_rejects_foreign_storage_before_django[change1] ________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-128/test_shared_seed_rejects_forei1')
+change = {'AWS_S3_BUCKET_NAME': 'uploads'}
+
+    @pytest.mark.parametrize('change',[{'AWS_S3_ENDPOINT_URL':'http://192.168.1.129:9000'},{'AWS_S3_BUCKET_NAME':'uploads'}])
+    def test_shared_seed_rejects_foreign_storage_before_django(tmp_path,change):
+        marker=tmp_path/'django-initialized'
+        (tmp_path/'socket.py').write_text(f'def gethostname():return {NS+"-cli"!r}\n')
+        (tmp_path/'django.py').write_text('from pathlib import Path\n'+f'Path({str(marker)!r}).touch()\n')
+        env={'PATH':os.environ['PATH'],'PYTHONPATH':str(tmp_path),
+             'DATABASE_URL':'postgresql://plane_fixture:synthetic@'+NS+'-db:5432/plane_fixture_m',
+             'DJANGO_SETTINGS_MODULE':'plane.settings.production','REDIS_URL':'redis://'+NS+'-redis:6379/0','AMQP_URL':'redis://'+NS+'-redis:6379/1',
+             'AWS_S3_ENDPOINT_URL':'http://'+NS+'-minio:9000','AWS_S3_BUCKET_NAME':'plane-rehearsal-hlb434-m-20261019',
+             'AWS_ACCESS_KEY_ID':'synthetic-fixture-access','AWS_SECRET_ACCESS_KEY':'synthetic-fixture-secret-is-private','USE_MINIO':'0',**change}
+        result=subprocess.run([sys.executable,str(NATIVE/'seed_shared_fixture.py')],env=env,capture_output=True,text=True,timeout=10)
+>       assert not marker.exists(),'Foreign asset destination must be denied before database setup'
+E       AssertionError: Foreign asset destination must be denied before database setup
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/tmp/pytest-of-root/pytest-128/test_shared_seed_rejects_forei1/django-initialized').exists
+
+tools/tests/test_shared_fixture_guards.py:26: AssertionError
+------------- generated xml file: /var/tmp/HLB-434-M-guard-red.xml -------------
+=========================== short test summary info ============================
+FAILED tools/tests/test_shared_fixture_guards.py::test_shared_seed_rejects_foreign_storage_before_django[change0]
+FAILED tools/tests/test_shared_fixture_guards.py::test_shared_seed_rejects_foreign_storage_before_django[change1]
+2 failed, 8 deselected in 0.71s

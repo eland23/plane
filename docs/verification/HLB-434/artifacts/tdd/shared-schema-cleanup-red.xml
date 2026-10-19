@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="3" time="14.087" timestamp="2026-10-19T04:10:12.172179+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_shared_schema_control" name="test_schema_fault_image_cleanup_preserves_foreign_or_unknown_state[owned]" time="3.259"><failure message="AssertionError: Owned fault image must be removed&#10;assert not True&#10; +  where True = exists()&#10; +    where exists = PosixPath('/tmp/pytest-of-root/pytest-130/test_schema_fault_image_cleanu0/fault-present').exists">tmp_path = PosixPath('/tmp/pytest-of-root/pytest-130/test_schema_fault_image_cleanu0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7534c4d8ed30&gt;
+image_state = 'owned'
+
+    @pytest.mark.parametrize('image_state',['owned','foreign','unknown'])
+    def test_schema_fault_image_cleanup_preserves_foreign_or_unknown_state(tmp_path,monkeypatch,image_state):
+        spec=importlib.util.spec_from_file_location('shared_control',NATIVE/'shared_fixture_rehearsal.py')
+        module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        root=tmp_path/'private';root.mkdir(mode=0o700)
+        (root/'owner').write_text('HLB-434-shared-m-20261019')
+        for name in ['readbacks','scratch','pgdata','logs']:(root/name).mkdir(mode=0o700)
+        marker=root/'readbacks/preserve-me';marker.write_text('synthetic private readback')
+        (root/'app.env').write_text('synthetic private config')
+        source=tmp_path/'source';source.mkdir();(source/'backup').write_bytes(b'synthetic backup')
+        monkeypatch.setattr(module,'ROOT',root);monkeypatch.setattr(module,'SOURCE',source)
+        monkeypatch.setattr(module,'INPUTS',{'backup':hashlib.sha256(b'synthetic backup').hexdigest()})
+        state=tmp_path/'fault-present';state.touch()
+        binary=tmp_path/'bin';binary.mkdir();docker=binary/'docker'
+        docker.write_text('#!'+sys.executable+'''\nimport json,os,sys
+    from pathlib import Path
+    args=sys.argv[1:];state=Path(os.environ['FAULT_STATE']);mode=os.environ['IMAGE_STATE']
+    if args[:2]==['image','rm']:
+        assert args[2]=='sha256:'+('a'*64)
+        state.unlink();sys.exit(0)
+    if args[0]=='image':
+        if mode=='unknown':sys.exit(1)
+        if args[1]=='inspect':
+            if not state.exists():sys.exit(1)
+            owner='HLB-434-shared-m-20261019' if mode=='owned' else 'someone-else'
+            print(json.dumps([{'Id':'sha256:'+('a'*64),'Config':{'Labels':{'io.plane.rehearsal.owner':owner}}}]))
+        elif args[1]=='ls' and state.exists():
+            print(json.dumps({'ID':'sha256:'+('a'*64),'Repository':'plane-rehearsal-m-434-20261019-fault','Tag':'missing0123'}))
+        sys.exit(0)
+    if args[1]=='inspect':sys.exit(1)
+    if args[1]=='ls':sys.exit(0)
+    raise RuntimeError('Unexpected Docker operation')
+    ''');docker.chmod(0o755)
+        monkeypatch.setenv('PATH',str(binary));monkeypatch.setenv('FAULT_STATE',str(state));monkeypatch.setenv('IMAGE_STATE',image_state)
+        if image_state=='owned':
+            module.cleanup()
+&gt;           assert not state.exists(),'Owned fault image must be removed'
+E           AssertionError: Owned fault image must be removed
+E           assert not True
+E            +  where True = exists()
+E            +    where exists = PosixPath('/tmp/pytest-of-root/pytest-130/test_schema_fault_image_cleanu0/fault-present').exists
+
+tools/tests/test_shared_schema_control.py:50: AssertionError</failure></testcase><testcase classname="tools.tests.test_shared_schema_control" name="test_schema_fault_image_cleanup_preserves_foreign_or_unknown_state[foreign]" time="4.380"><failure message="Failed: DID NOT RAISE &lt;class 'RuntimeError'&gt;">tmp_path = PosixPath('/tmp/pytest-of-root/pytest-130/test_schema_fault_image_cleanu1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7534c4d5c490&gt;
+image_state = 'foreign'
+
+    @pytest.mark.parametrize('image_state',['owned','foreign','unknown'])
+    def test_schema_fault_image_cleanup_preserves_foreign_or_unknown_state(tmp_path,monkeypatch,image_state):
+        spec=importlib.util.spec_from_file_location('shared_control',NATIVE/'shared_fixture_rehearsal.py')
+        module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        root=tmp_path/'private';root.mkdir(mode=0o700)
+        (root/'owner').write_text('HLB-434-shared-m-20261019')
+        for name in ['readbacks','scratch','pgdata','logs']:(root/name).mkdir(mode=0o700)
+        marker=root/'readbacks/preserve-me';marker.write_text('synthetic private readback')
+        (root/'app.env').write_text('synthetic private config')
+        source=tmp_path/'source';source.mkdir();(source/'backup').write_bytes(b'synthetic backup')
+        monkeypatch.setattr(module,'ROOT',root);monkeypatch.setattr(module,'SOURCE',source)
+        monkeypatch.setattr(module,'INPUTS',{'backup':hashlib.sha256(b'synthetic backup').hexdigest()})
+        state=tmp_path/'fault-present';state.touch()
+        binary=tmp_path/'bin';binary.mkdir();docker=binary/'docker'
+        docker.write_text('#!'+sys.executable+'''\nimport json,os,sys
+    from pathlib import Path
+    args=sys.argv[1:];state=Path(os.environ['FAULT_STATE']);mode=os.environ['IMAGE_STATE']
+    if args[:2]==['image','rm']:
+        assert args[2]=='sha256:'+('a'*64)
+        state.unlink();sys.exit(0)
+    if args[0]=='image':
+        if mode=='unknown':sys.exit(1)
+        if args[1]=='inspect':
+            if not state.exists():sys.exit(1)
+            owner='HLB-434-shared-m-20261019' if mode=='owned' else 'someone-else'
+            print(json.dumps([{'Id':'sha256:'+('a'*64),'Config':{'Labels':{'io.plane.rehearsal.owner':owner}}}]))
+        elif args[1]=='ls' and state.exists():
+            print(json.dumps({'ID':'sha256:'+('a'*64),'Repository':'plane-rehearsal-m-434-20261019-fault','Tag':'missing0123'}))
+        sys.exit(0)
+    if args[1]=='inspect':sys.exit(1)
+    if args[1]=='ls':sys.exit(0)
+    raise RuntimeError('Unexpected Docker operation')
+    ''');docker.chmod(0o755)
+        monkeypatch.setenv('PATH',str(binary));monkeypatch.setenv('FAULT_STATE',str(state));monkeypatch.setenv('IMAGE_STATE',image_state)
+        if image_state=='owned':
+            module.cleanup()
+            assert not state.exists(),'Owned fault image must be removed'
+            assert not marker.exists()
+            assert json.loads((root/'cleanup.json').read_text())['fault_image_removed']
+        else:
+            with pytest.raises(RuntimeError,match='FOREIGN_IMAGE_DENIED' if image_state=='foreign' else 'INSPECTION_FAILED'):
+&gt;               module.cleanup()
+E               Failed: DID NOT RAISE &lt;class 'RuntimeError'&gt;
+
+tools/tests/test_shared_schema_control.py:55: Failed</failure></testcase><testcase classname="tools.tests.test_shared_schema_control" name="test_schema_fault_image_cleanup_preserves_foreign_or_unknown_state[unknown]" time="6.049"><failure message="Failed: DID NOT RAISE &lt;class 'RuntimeError'&gt;">tmp_path = PosixPath('/tmp/pytest-of-root/pytest-130/test_schema_fault_image_cleanu2')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7534c4dc3970&gt;
+image_state = 'unknown'
+
+    @pytest.mark.parametrize('image_state',['owned','foreign','unknown'])
+    def test_schema_fault_image_cleanup_preserves_foreign_or_unknown_state(tmp_path,monkeypatch,image_state):
+        spec=importlib.util.spec_from_file_location('shared_control',NATIVE/'shared_fixture_rehearsal.py')
+        module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        root=tmp_path/'private';root.mkdir(mode=0o700)
+        (root/'owner').write_text('HLB-434-shared-m-20261019')
+        for name in ['readbacks','scratch','pgdata','logs']:(root/name).mkdir(mode=0o700)
+        marker=root/'readbacks/preserve-me';marker.write_text('synthetic private readback')
+        (root/'app.env').write_text('synthetic private config')
+        source=tmp_path/'source';source.mkdir();(source/'backup').write_bytes(b'synthetic backup')
+        monkeypatch.setattr(module,'ROOT',root);monkeypatch.setattr(module,'SOURCE',source)
+        monkeypatch.setattr(module,'INPUTS',{'backup':hashlib.sha256(b'synthetic backup').hexdigest()})
+        state=tmp_path/'fault-present';state.touch()
+        binary=tmp_path/'bin';binary.mkdir();docker=binary/'docker'
+        docker.write_text('#!'+sys.executable+'''\nimport json,os,sys
+    from pathlib import Path
+    args=sys.argv[1:];state=Path(os.environ['FAULT_STATE']);mode=os.environ['IMAGE_STATE']
+    if args[:2]==['image','rm']:
+        assert args[2]=='sha256:'+('a'*64)
+        state.unlink();sys.exit(0)
+    if args[0]=='image':
+        if mode=='unknown':sys.exit(1)
+        if args[1]=='inspect':
+            if not state.exists():sys.exit(1)
+            owner='HLB-434-shared-m-20261019' if mode=='owned' else 'someone-else'
+            print(json.dumps([{'Id':'sha256:'+('a'*64),'Config':{'Labels':{'io.plane.rehearsal.owner':owner}}}]))
+        elif args[1]=='ls' and state.exists():
+            print(json.dumps({'ID':'sha256:'+('a'*64),'Repository':'plane-rehearsal-m-434-20261019-fault','Tag':'missing0123'}))
+        sys.exit(0)
+    if args[1]=='inspect':sys.exit(1)
+    if args[1]=='ls':sys.exit(0)
+    raise RuntimeError('Unexpected Docker operation')
+    ''');docker.chmod(0o755)
+        monkeypatch.setenv('PATH',str(binary));monkeypatch.setenv('FAULT_STATE',str(state));monkeypatch.setenv('IMAGE_STATE',image_state)
+        if image_state=='owned':
+            module.cleanup()
+            assert not state.exists(),'Owned fault image must be removed'
+            assert not marker.exists()
+            assert json.loads((root/'cleanup.json').read_text())['fault_image_removed']
+        else:
+            with pytest.raises(RuntimeError,match='FOREIGN_IMAGE_DENIED' if image_state=='foreign' else 'INSPECTION_FAILED'):
+&gt;               module.cleanup()
+E               Failed: DID NOT RAISE &lt;class 'RuntimeError'&gt;
+
+tools/tests/test_shared_schema_control.py:55: Failed</failure></testcase></testsuite></testsuites>

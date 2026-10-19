@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "task_fixture_directories_removed": 6,
+  "expected_removed": 6,
+  "only_verified_synthetic_owned_fixture_directories_removed": true
+}

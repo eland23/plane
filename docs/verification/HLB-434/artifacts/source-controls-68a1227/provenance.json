@@ -1,0 +1,11 @@
+{
+  "checked_pr_head": "68a12278e3b9f2139b5ff33f9fb37c6e5c1793ff",
+  "workflow_merge_revision": "e3cf4b584336e199f92b0846dfb91b53fcd28abf",
+  "ci_run": 39198306808,
+  "source_phases": 8,
+  "normal_test_count": 68,
+  "controlled_defects": 6,
+  "all_phase_receipts_accepted": true,
+  "temporary_fixtures_removed": true,
+  "runtime_proof": false
+}

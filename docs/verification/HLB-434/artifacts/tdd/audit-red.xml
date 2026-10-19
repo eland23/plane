@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.467" timestamp="2026-10-19T01:35:19.549187+00:00" hostname="vscode-server"><testcase classname="tools.tests.test_plane_restore" name="test_valid_archive_audit_reports_only_integrity_metadata" time="0.152"><failure message="assert 1 == 0">tmp_path = PosixPath('/tmp/pytest-of-root/pytest-98/test_valid_archive_audit_repor0')
+
+    def test_valid_archive_audit_reports_only_integrity_metadata(tmp_path):
+        path,digest=archive_fixture(tmp_path)
+        code,result=command('audit-assets','--archive',path,'--expected-sha256',digest)
+&gt;       assert code==0
+E       assert 1 == 0
+
+tools/tests/test_plane_restore.py:39: AssertionError</failure></testcase></testsuite></testsuites>

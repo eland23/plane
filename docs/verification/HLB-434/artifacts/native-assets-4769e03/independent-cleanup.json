@@ -1,0 +1,8 @@
+{
+  "independent_cleanup": "PASS",
+  "containers": 0,
+  "networks": 0,
+  "private_readbacks_and_credentials_removed": true,
+  "archive_unchanged": true,
+  "lease_reacquired": true
+}

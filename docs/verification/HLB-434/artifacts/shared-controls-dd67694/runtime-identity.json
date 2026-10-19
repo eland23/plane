@@ -1,0 +1,21 @@
+{
+  "target": "192.168.1.130",
+  "application_revision": "e5c7acf098a890436ab6300f0bc8491c7dd22725",
+  "backend_image": "sha256:1c54c4fbe69d3a38740e1d05a6c0d31387050c351f0848e62c33c0a71a7c5a84",
+  "postgres_image": "sha256:468d34fefd6338031787c7b8e94078975b3aaf4d66c7ead25c39cd3ba46a15c6",
+  "redis_image": "sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2",
+  "test_image": "sha256:25c7d4cbb046e0929072c2197f074222e7fe9e5b1f09c75e2e3e8dc36635560f",
+  "internal_network": true,
+  "published_ports": false,
+  "code_sha256": {
+    "tools/plane_restore.py": "bf1aff905c30b564c35cf578e3114fc7fb5b573f71f6d04a1e2829cf9f24759a",
+    "docs/verification/HLB-434/native/shared_fixture_rehearsal.py": "af5a19e0373c1198de5b8dd14e5a5665671003305f175c5a9095604f9cd3e7f7",
+    "docs/verification/HLB-434/native/seed_shared_fixture.py": "a326890ba46755ff00eaaca8fa1957beb3f490cca0c8b353b3aa1e09dba0b3cb",
+    "docs/verification/HLB-434/native/test_shared_fixture_m.py": "583c625df44552b28332432bd6b533a20f0c3a01936b0c63608fa3238f438e07",
+    "docs/verification/HLB-434/native/inspect_shared_runtime.py": "2265fcc91b0c94f93943f5e8159579baf2dcbb80f67738698d8ed7831727070e",
+    "docs/verification/HLB-434/native/shared_fixture_m.json": "85f7fc2dad5d6fc9a2ed2c38bba1f19a42af09c08431b189f7b31c59fbe83e82",
+    "docs/verification/HLB-434/native/shared_asset_sdk.py": "0a6ce2bb51d8d928d4c15d0d130a6c6424002feb71b01ced08a7776054b7d325",
+    "docs/verification/HLB-434/native/asset_fixture.py": "5ce8f5d9642c66f3cdfa1e7a2b6b6ba5e4a355d8315d82efa9e20df5f144fa1f",
+    "docs/verification/HLB-434/native/test_asset_store.py": "1fdbbb00da9d813c10e8da732d7df6b14b6515903680f4408501503adbc213a2"
+  }
+}

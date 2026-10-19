@@ -1,0 +1,64 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_downloaded_asset_matches_original_then_rejects_changed_bytes_and_recovers _
+
+tmp_path = PosixPath('/var/tmp/plane-restore-contract-72h9eipj/fixtures/test_downloaded_asset_matches_0')
+
+    def test_downloaded_asset_matches_original_then_rejects_changed_bytes_and_recovers(tmp_path):
+        path,digest=archive_fixture(tmp_path)
+        readback=tmp_path/'readback.bin'
+        arguments=['compare-asset','--archive',path,'--expected-sha256',digest,
+                   '--key-sha256',KEY_DIGEST,'--readback',readback]
+        readback.write_bytes(b'abc')
+        code,result=command(*arguments)
+        assert code==0
+        assert result=={'status':'PASS','key_sha256':KEY_DIGEST,'sha256':CONTENT_DIGEST,'bytes':3}
+        readback.write_bytes(b'xyz')
+>       assert command(*arguments)==(1,{'status':'FAIL','error':'ASSET_HASH_MISMATCH'})
+E       AssertionError: assert (0, {'bytes':...tus': 'PASS'}) == (1, {'error':...tus': 'FAIL'})
+E         
+E         At index 0 diff: 0 != 1
+E         
+E         Full diff:
+E           (
+E         -     1,
+E         ?     ^
+E         +     0,
+E         ?     ^
+E               {
+E         -         'error': 'ASSET_HASH_MISMATCH',
+E         +         'bytes': 3,
+E         +         'key_sha256': '3547531dbd8928b5554af2f790e6e6587a5977485ddfffd37c226fab57ec1c29',
+E         +         'sha256': '3608bca1e44ea6c4d268eb6db02260269892c0b42b86bbf1e77a6fa16c3c9282',
+E         -         'status': 'FAIL',
+E         ?                    ^ ^^
+E         +         'status': 'PASS',
+E         ?                    ^ ^^
+E               },
+E           )
+
+tools/tests/test_plane_restore.py:60: AssertionError
+- generated xml file: /home/runner/work/_temp/plane-restore-evidence/failure-asset-checksum.xml -
+=========================== short test summary info ============================
+FAILED tools/tests/test_plane_restore.py::test_downloaded_asset_matches_original_then_rejects_changed_bytes_and_recovers - AssertionError: assert (0, {'bytes':...tus': 'PASS'}) == (1, {'error':...tus': 'FAIL'})
+  
+  At index 0 diff: 0 != 1
+  
+  Full diff:
+    (
+  -     1,
+  ?     ^
+  +     0,
+  ?     ^
+        {
+  -         'error': 'ASSET_HASH_MISMATCH',
+  +         'bytes': 3,
+  +         'key_sha256': '3547531dbd8928b5554af2f790e6e6587a5977485ddfffd37c226fab57ec1c29',
+  +         'sha256': '3608bca1e44ea6c4d268eb6db02260269892c0b42b86bbf1e77a6fa16c3c9282',
+  -         'status': 'FAIL',
+  ?                    ^ ^^
+  +         'status': 'PASS',
+  ?                    ^ ^^
+        },
+    )
+1 failed, 67 deselected in 0.28s

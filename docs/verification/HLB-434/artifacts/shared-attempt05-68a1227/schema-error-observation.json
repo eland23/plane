@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "owner_verified": true,
+  "database_image": "sha256:468d34fefd6338031787c7b8e94078975b3aaf4d66c7ead25c39cd3ba46a15c6",
+  "fault_image": "sha256:b756b7eb1ee743380c608b22bfd7dc230c42a05f4c00e22e696e101e9d0a6103",
+  "postgres_missing_issue_link_source_column_error_observed": true,
+  "raw_diagnostics_private": true
+}

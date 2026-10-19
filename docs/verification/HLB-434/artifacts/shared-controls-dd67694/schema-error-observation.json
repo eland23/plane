@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "database_image": "sha256:468d34fefd6338031787c7b8e94078975b3aaf4d66c7ead25c39cd3ba46a15c6",
+  "postgres_missing_issue_link_source_column_error_observed": true,
+  "raw_diagnostics_private": true
+}

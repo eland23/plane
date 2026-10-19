@@ -1,0 +1,14 @@
+{
+  "executed_revision": "7b5ddfcd2a39680d681c2cc980d301d848d5ce57",
+  "executed_code_files_match_pushed_git": true,
+  "executed_test_copy_matches_git": true,
+  "test_sha256": "68ac2bc851a1f81cc7ff2dcbf42bc3a8c5e51973244402765f8ce9ff91fadd99",
+  "native_assertions_unchanged_across_phases": true,
+  "ci_runs": [
+    39189763635,
+    39189763645
+  ],
+  "original_value_and_credential_marker_scan": "PASS",
+  "full_child_acceptance": "INCOMPLETE",
+  "remaining": "supported shared fixture M and combined integration"
+}

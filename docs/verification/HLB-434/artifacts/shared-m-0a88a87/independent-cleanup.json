@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "containers_remaining": 0,
+  "networks_remaining": 0,
+  "private_working_data_and_credentials_removed": true,
+  "original_input_hashes_unchanged": true,
+  "executed_test_copy_hashes": {
+    "test_shared_fixture_m.py": "7b8728404280bc1d0e4d189d907f0571f573b614a5e169d4dd4bf45393b9e570",
+    "test_asset_store.py": "1fdbbb00da9d813c10e8da732d7df6b14b6515903680f4408501503adbc213a2",
+    "shared_fixture_m.json": "85f7fc2dad5d6fc9a2ed2c38bba1f19a42af09c08431b189f7b31c59fbe83e82",
+    "asset_fixture.py": "5ce8f5d9642c66f3cdfa1e7a2b6b6ba5e4a355d8315d82efa9e20df5f144fa1f"
+  },
+  "observer_hash_matches_identity": true,
+  "lease_reacquired": true
+}

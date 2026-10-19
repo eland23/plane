@@ -1,0 +1,25 @@
+...F                                                                     [100%]
+=================================== FAILURES ===================================
+__________ test_restored_asset_bytes_match_original_and_golden_hashes __________
+
+    def test_restored_asset_bytes_match_original_and_golden_hashes():
+        for row in original_rows():
+            key_digest=hashlib.sha256(row['key'].encode()).hexdigest()
+            command=[sys.executable,str(TOOL),'compare-asset','--archive',str(ARCHIVE),
+                     '--expected-sha256',EXPECTED_ARCHIVE,'--key-sha256',key_digest,
+                     '--readback',str(READBACK/(key_digest+'.bin'))]
+            result=subprocess.run(command,capture_output=True,text=True,timeout=30)
+            assert result.returncode==0,'Original asset checksum gate must pass: '+result.stdout
+        for row in FIXTURES:
+            actual=hashlib.sha256((READBACK/(row['key_sha256']+'.bin')).read_bytes()).hexdigest()
+>           assert actual==row['sha256'],'Fixture asset bytes must match golden SHA-256'
+E           AssertionError: Fixture asset bytes must match golden SHA-256
+E           assert '263a4c9b9b13...f63b3d4ed1914' == 'afe2651d21f5...50a8cd8d23df5'
+E             
+E             - afe2651d21f5afd5212e29ea37925ae21634af409aad0a1873850a8cd8d23df5
+E             + 263a4c9b9b135975dbcf444f05e5bb02aa91fee4c38886aacf4f63b3d4ed1914
+
+workspace/docs/verification/HLB-434/native/test_asset_store.py:58: AssertionError
+=========================== short test summary info ============================
+FAILED workspace/docs/verification/HLB-434/native/test_asset_store.py::test_restored_asset_bytes_match_original_and_golden_hashes
+1 failed, 3 passed in 0.56s
