@@ -79,7 +79,9 @@ def test_cycle_spans_dst_and_preserves_exact_instants():
 
 def test_cycle_preserves_six_issue_state_counts():
     row=data(P+'cycles/'+G['cycle']['id']+'/')
-    assert (row['total_issues'],row['completed_issues'],row['cancelled_issues'])==(6,2,2)
+    assert (row['total_issues'],row['completed_issues'])==(6,2)
+    canceled=rows(P+'cycles/'+G['cycle']['id']+'/cycle-issues/?state_group=cancelled&order_by=sequence_id')
+    assert [item['sequence_id'] for item in canceled]==[21,30]
 
 
 def test_cycle_todo_membership_is_exactly_two_known_issues():

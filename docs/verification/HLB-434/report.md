@@ -76,7 +76,7 @@ run. No workers, mail, provider sends or production imports run here.
 
 | Check | Known state | Controlled defect | Restored state | Evidence |
 |---|---|---|---|---|
-| Source contracts | 55PASS | Six source guard defects cause intended failures, zero errors | 55PASS | source-controls/*.xml and receipts.json |
+| Source contracts | 65PASS | Six source guard defects cause intended failures, zero errors | 65PASS | source-controls/*.xml and receipts.json |
 | Asset checksum | 4PASS | Same suite:1 intended checksum failure of4, zero errors/skips | 4PASS | native-assets-4769e03/ |
 | Database/API | 5PASS | Same suite:1 intended title-content failure of5, zero errors/skips | 5PASS | native-database-7b5ddfc/ |
 
@@ -166,7 +166,7 @@ is marked complete to clear a dependency, and no merge, production delivery or
 full runtime admission is claimed. Live .129 and unrelated .130 data/services
 remain unchanged.
 
-## Shared fixture M preparation (NOT RUN)
+## Shared fixture M rehearsal
 
 A new isolated shared controller combines original database and object restore,
 supported fixture M setup, and 30 unchanged native API/asset checks. The fixture
@@ -188,7 +188,7 @@ The failure required identical ISO timestamp text even though the returned New
 York offsets represent the golden UTC instants. This is an expectation defect,
 not a controlled-failure result or accepted normal pass. The corrected contract
 compares exact aware instants and the literal DST offsets (-04:00→-05:00); cycle
-state totals now have an independent test. The rerun expects29 cases.
+state totals now have an independent test. The second run expected29 cases.
 
 Shared attempt02 (474f2dd) normal28PASS/1FAIL, zero errors/skips. DST instant and
 offset checks passed. The remaining harness assertion requested an unstarted_issues
@@ -196,3 +196,10 @@ summary field that this API does not expose. The corrected contract preserves
 total/completed/cancelled expectations6/2/2 and separately requires the supported
 filtered cycle-issues API to return exactly Todo FAS-11/FAS-17. This run is not
 accepted normal/fault evidence; the next run expects30 cases.
+
+Shared attempt03 (36f1854) normal29PASS/1FAIL, zero errors/skips. Todo filtering
+passed. The remaining harness assumption required cancelled_issues on cycle
+detail, whose explicit response fields include only total_issues/completed_issues.
+The corrected test requires6/2 there and exactly canceled FAS-21/FAS-30 through
+the same supported filtered cycle-issues API. No golden membership/count changed.
+This attempt is not accepted normal/fault proof; the next run retains30 cases.
