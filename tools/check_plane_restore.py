@@ -18,13 +18,13 @@ def main():
     helper='tools/plane_restore.py'
     sdk='docs/verification/HLB-434/native/asset_store_sdk.py'
     native='docs/verification/HLB-434/native/asset_store_rehearsal.py'
-    cases=[('pass-known-state',helper,None,None,None,43,0),
+    cases=[('pass-known-state',helper,None,None,None,45,0),
            ('failure-asset-checksum',helper,"                    require(digest==row['sha256'], 'ASSET_HASH_MISMATCH')",None,'downloaded_asset',1,1),
            ('failure-record-preservation',helper,"            require(not (row_values(rows)-row_values(projected)), 'ORIGINAL_ROW_CHANGED')",None,'preservation_rejects',5,3),
            ('failure-sdk-endpoint',sdk,"and value['endpoint']==ENDPOINT and value['bucket']==BUCKET","and value['bucket']==BUCKET",'foreign_connection',6,2),
            ('failure-inspection-admission',native,"    require(listing.returncode==0,'INSPECTION_FAILED')","    if listing.returncode:return None",'indeterminate_docker_state',1,1),
            ('failure-receipt-cleanup',native,"            finally:cleanup()","            except OSError:raise\n            cleanup()",'receipt_failure_still',1,1),
-           ('restore-and-repeat',helper,None,None,None,43,0)]
+           ('restore-and-repeat',helper,None,None,None,45,0)]
     receipts=[]
     for name,target,defect,replacement,selection,tests,failures in cases:
         with tempfile.TemporaryDirectory(prefix='plane-restore-contract-',dir='/var/tmp') as folder:

@@ -16,7 +16,7 @@ verification decisions and FashionFindr `docs/testing/REPORT-TEMPLATE.md`.
 | REL-03 / destination | AC2/V1 | HLB-434 | tools/tests/test_asset_store_guards.py / foreign_connection | Foreign endpoint/bucket/default credentials/config rejected before S3 client import; fake external SDK marker remains absent | pytest/process | PASS source | source-controls |
 | REL-03 / execution mode | V1/V2 | HLB-434 | native_commands_deny_optimized_execution | Both native commands reject -O / PYTHONOPTIMIZE before protected operations | pytest/process | PASS source | source-controls |
 | REL-03 / inspection | V2 | HLB-434 | indeterminate_docker_state | Unavailable Docker state preserves private readbacks/config and cannot produce a clean receipt | pytest/CLI fake | PASS source | source-controls |
-| REL-03 / cleanup errors | V2 | HLB-434 | receipt_failure_still | Receipt I/O failure still removes owned readbacks/credential files and closes lease | pytest/filesystem | PASS source | source-controls |
+| REL-03 / cleanup errors | V2 | HLB-434 | receipt_failure_still, diagnostic_failure_still | Receipt I/O failure still removes owned readbacks/credential files and closes lease; failed diagnostic retrieval/storage cannot prevent confirmed-owned resource removal | pytest/filesystem | PASS source | source-controls |
 | REL-03 / real asset restore | AC2/V1/V2 | HLB-434 | native/asset_store_rehearsal.py + test_asset_store.py | Signed S3 restore and fresh GET readback: exact original/fixture keys, metadata and hashes; anonymous GET denied; corrupt fixture fails unchanged checksum assertion; restore repeats | authenticated S3 API/pytest | NOT RUN | native preparation only |
 | REL-03 / own database restore | AC2/V1 | HLB-434 | shared runtime fixture preparation | Own restored database and supported fixture-M identities/content preserved through independently read destination APIs | native DB/API | NOT RUN | HLB-433 evidence does not waive this row |
 | REL-03 / shared M integration | V1/V3 | HLB-434/435/436 | supported issue/module/cycle/wiki/asset fixture M | Literal identities/graph/order/assets and combined wiki/cycle reload | API/Playwright | NOT RUN | shared integration remains open |
@@ -77,21 +77,22 @@ while the migration rehearsal is open.
 
 | Behavior IDs | Check | Expected result | Actual result | Exit | Artifacts |
 |---|---|---|---|---|---|
-| Source rows above | Known state | PASS | 43 pass / 0 errors | 0 | artifacts/source-controls/pass-known-state.xml |
+| Source rows above | Known state | PASS | 45 pass / 0 errors | 0 | artifacts/source-controls/pass-known-state.xml |
 | Byte guard | Bypass readback checksum | Unchanged contract fails | 1 intended failure / 0 errors | 1 | failure-asset-checksum.xml |
 | Record guard | Bypass preservation comparison | Unchanged contracts fail | 3 intended failures of 5 cases / 0 errors | 1 | failure-record-preservation.xml |
 | Endpoint guard | Remove endpoint admission | Fake client marker reached; unchanged tests fail | 2 intended failures of 6 cases / 0 errors | 1 | failure-sdk-endpoint.xml |
 | Inspection guard | Treat permission failure as absence | Data-preservation assertion fails | 1 intended failure / 0 errors | 1 | failure-inspection-admission.xml |
 | Receipt cleanup | Skip cleanup after receipt error | Readback cleanup assertion fails | 1 intended failure / 0 errors | 1 | failure-receipt-cleanup.xml |
-| Source rows above | Restore and repeat | PASS | 43 pass / 0 errors | 0 | artifacts/source-controls/restore-and-repeat.xml |
+| Source rows above | Restore and repeat | PASS | 45 pass / 0 errors | 0 | artifacts/source-controls/restore-and-repeat.xml |
 | Real S3 rows | Known / corrupt / restored | PASS / intended checksum failure / PASS | NOT RUN | — | pending native receipts |
 
 Source controlled defects affect temporary copies only; all fixture directories
 are removed. They do not substitute for parent Control B against real restored
 asset bytes. Initial TDD red checks are pre-implementation assertions, separately
-retained and not counted as actual runtime fault controls. A later metadata-only
-addition records native image/isolation/code identity; final source CI remains a
-separate gate before runtime acceptance.
+retained and not counted as actual runtime fault controls. The reviewed source adds regression tests for diagnostic retrieval and storage
+failures. Both fail against the previous cleanup and pass after the fix; original
+archive bytes remain unchanged. Native image/isolation/code identity is recorded
+by the controller; exact-head CI remains a separate gate before acceptance.
 
 ## Error handling and recovery
 

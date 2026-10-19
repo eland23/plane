@@ -99,3 +99,44 @@ def test_receipt_failure_still_removes_readbacks_credentials_and_releases_lease(
     assert (root/'cleanup.json').exists()
     with pytest.raises(OSError) as error:os.fstat(lease)
     assert error.value.errno==errno.EBADF
+
+
+@pytest.mark.parametrize('failure',['retrieval','storage'])
+def test_diagnostic_failure_still_removes_confirmed_owned_resources(cleanup_scope,monkeypatch,failure):
+    module,root=cleanup_scope
+    state=root.parent/'docker-state';state.mkdir()
+    (state/'store').touch();(state/'network').touch()
+    docker=Path(os.environ['PATH'])/'docker'
+    docker.write_text('#!'+sys.executable+'''\nimport json,os,sys
+from pathlib import Path
+state=Path(os.environ['DOCKER_STATE'])
+args=sys.argv[1:];ns='plane-rehearsal-434-assets-20261018'
+label={'io.plane.rehearsal.owner':'HLB-434-assets-20261018'}
+if args[0]=='logs':
+    print('synthetic diagnostic');sys.exit(1 if os.environ['LOG_FAILURE']=='retrieval' else 0)
+if args[0]=='rm':(state/'store').unlink();sys.exit(0)
+if args[:2]==['network','rm']:(state/'network').unlink();sys.exit(0)
+kind,action=args[:2];present=(state/('store' if kind=='container' else 'network')).exists()
+name=ns+('-minio' if kind=='container' else '-net')
+if action=='ls':
+    if present:print(json.dumps({'Names' if kind=='container' else 'Name':name}))
+    sys.exit(0)
+if action=='inspect':
+    if not present or args[2]!=name:sys.exit(1)
+    print(json.dumps([{'Id':'owned-resource','Config':{'Labels':label},'Labels':label,'Containers':{}}]));sys.exit(0)
+raise RuntimeError('Unexpected boundary operation')
+''');docker.chmod(0o755)
+    monkeypatch.setenv('DOCKER_STATE',str(state));monkeypatch.setenv('LOG_FAILURE',failure)
+    if failure=='storage':
+        (root/'logs').rmdir();(root/'logs').write_text('unavailable diagnostic directory')
+    original=module.SOURCE.read_bytes()
+    module.cleanup()
+    assert not (state/'store').exists(),'Diagnostic failure must not leave the owned store running'
+    assert not (state/'network').exists()
+    assert not (root/'readbacks').exists()
+    assert not (root/'connection.json').exists()
+    assert not (root/'minio.env').exists()
+    assert module.SOURCE.read_bytes()==original
+    receipt=json.loads((root/'cleanup.json').read_text())
+    assert receipt['containers_remaining']==0
+    assert receipt['diagnostic_failures'],'Diagnostic loss must be reported'

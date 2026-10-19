@@ -30,6 +30,7 @@ NETWORK=NS+'-net'
 NAMES=[NS+'-minio',NS+'-sdk',NS+'-tests']
 SOURCE_TREE=Path(__file__).resolve().parents[4]
 OWNED=False
+DIAGNOSTIC_FAILURES=[]
 
 
 def require(condition,code):
@@ -64,7 +65,7 @@ def private(path,data):
         path.chmod(0o600);stream.write(data)
 
 
-def run(argv,timeout=120,accepted=(0,)):
+def run(argv,timeout=120,accepted=(0,),log_required=True):
     process=subprocess.Popen(argv,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
                              stdin=subprocess.DEVNULL,start_new_session=True)
     try:stdout,stderr=process.communicate(timeout=timeout)
@@ -72,7 +73,10 @@ def run(argv,timeout=120,accepted=(0,)):
         try:os.killpg(process.pid,signal.SIGKILL)
         except ProcessLookupError:pass
         process.wait()
-    private(ROOT/'logs'/(secrets.token_hex(8)+'.log'),stdout+stderr)
+    try:private(ROOT/'logs'/(secrets.token_hex(8)+'.log'),stdout+stderr)
+    except OSError:
+        if log_required:raise
+        DIAGNOSTIC_FAILURES.append('DIAGNOSTIC_WRITE_FAILED')
     require(process.returncode in accepted,'FIXTURE_COMMAND_FAILED')
     return subprocess.CompletedProcess(argv,process.returncode,stdout,stderr)
 
@@ -81,7 +85,7 @@ def remove(name):
     info=inspect('container',name)
     if info:
         require(info['Config']['Labels'].get('io.plane.rehearsal.owner')==OWNER,'FOREIGN_CONTAINER_DENIED')
-        run(['docker','rm','-f','-v',name])
+        run(['docker','rm','-f','-v',name],log_required=False)
         require(inspect('container',name) is None,'CLEANUP_FAILED')
 
 
@@ -190,18 +194,21 @@ def cleanup():
     store=inspect('container',NS+'-minio')
     if store:
         require(store['Config']['Labels'].get('io.plane.rehearsal.owner')==OWNER,'FOREIGN_CONTAINER_DENIED')
-        run(['docker','logs',NS+'-minio'])
+        try:run(['docker','logs',NS+'-minio'],log_required=False)
+        except (OSError,RuntimeError,subprocess.SubprocessError):
+            DIAGNOSTIC_FAILURES.append('STORE_LOG_COLLECTION_FAILED')
     for name in reversed(NAMES):remove(name)
     network=inspect('network',NETWORK)
     if network:
         require(network['Labels'].get('io.plane.rehearsal.owner')==OWNER and not network['Containers'],'FOREIGN_NETWORK_DENIED')
-        run(['docker','network','rm',NETWORK]);require(inspect('network',NETWORK) is None,'CLEANUP_FAILED')
+        run(['docker','network','rm',NETWORK],log_required=False);require(inspect('network',NETWORK) is None,'CLEANUP_FAILED')
     if (ROOT/'readbacks').exists():shutil.rmtree(ROOT/'readbacks',ignore_errors=False)
     for name in ['connection.json','minio.env']:(ROOT/name).unlink(missing_ok=True)
     require(hashlib.sha256(SOURCE.read_bytes()).hexdigest()==ARCHIVE_SHA,'ORIGINAL_ARCHIVE_CHANGED')
     private(ROOT/'cleanup.json',json.dumps({'containers_remaining':0,'network_removed':True,
         'ephemeral_object_store_removed':True,'readbacks_and_credential_files_removed':True,
-        'original_archive_preserved':True,'private_diagnostics_retained':True}).encode())
+        'original_archive_preserved':True,'private_diagnostics_retained':not DIAGNOSTIC_FAILURES,
+        'diagnostic_failures':DIAGNOSTIC_FAILURES}).encode())
 
 
 def finish(receipts,lease):
