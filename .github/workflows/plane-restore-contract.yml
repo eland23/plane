@@ -8,6 +8,7 @@ on:
       - tools/tests/test_asset_store_guards.py
       - tools/tests/test_database_restore_guards.py
       - tools/tests/test_database_runtime_observer.py
+      - tools/tests/test_shared_schema_control.py
       - tools/tests/test_shared_fixture_guards.py
       - docs/verification/HLB-434/**
       - .github/workflows/plane-restore-contract.yml

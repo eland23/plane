@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Isolated .130 database restore and real API record-integrity control.
+"""Isolated .130 shared restore with real schema and asset failure controls.
 
 Private source backup/snapshot inputs must already be staged at SOURCE. This is
-not a full deployment, asset restore, readiness or release-admission command.
+not a full deployment, browser, readiness or release-admission command.
 """
 import sys
 if not __debug__:
@@ -34,6 +34,7 @@ BACKEND = 'sha256:1c54c4fbe69d3a38740e1d05a6c0d31387050c351f0848e62c33c0a71a7c5a
 PG = 'sha256:468d34fefd6338031787c7b8e94078975b3aaf4d66c7ead25c39cd3ba46a15c6'
 REDIS = 'sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2'
 RUNNER = 'sha256:25c7d4cbb046e0929072c2197f074222e7fe9e5b1f09c75e2e3e8dc36635560f'
+FAULT_TAG=NS+'-fault:missing0123'
 REVISION = 'e5c7acf098a890436ab6300f0bc8491c7dd22725'
 NAMES = [NS + suffix for suffix in ['-db','-redis','-minio','-api','-cli','-sdk','-tests']]
 NETWORK = NS + '-net'
@@ -127,14 +128,14 @@ def pg(tool, database, extra=(), data=None):
     return run(['docker','exec','-i','-e','PGOPTIONS=-c timezone=UTC',NS+'-db','sh','-c',shell],data=data)
 
 
-def app_cli(code=None, args=None):
+def app_cli(code=None, args=None, image=BACKEND):
     env = ROOT/'app.env'
     command = ['docker','run','--rm','--name',NS+'-cli','--label','io.plane.rehearsal.owner='+OWNER,
         '--hostname',NS+'-cli','--network',NETWORK,'--memory','384m','--memory-swap','384m','--cpus','1','--pids-limit','128',
         '--read-only','--tmpfs','/tmp:rw,nosuid,size=32m','--tmpfs','/code/plane/logs:rw,nosuid,size=16m',
-        '--env-file',str(env),'-v',str(SOURCE_TREE/'docs/verification/HLB-434/native')+':/fixtures:ro',BACKEND]
+        '--env-file',str(env),'-v',str(SOURCE_TREE/'docs/verification/HLB-434/native')+':/fixtures:ro',image]
     if code is not None:
-        command.insert(command.index(BACKEND),'-i')
+        command.insert(command.index(image),'-i')
         command += ['python','-']
         return run(command,data=code.encode())
     return run(command + ['python','manage.py',*args])
@@ -150,9 +151,8 @@ def baseline(name,preserve_only=False):
     return json.loads(run(args).stdout)
 
 
-def start_api():
+def start_api(image=BACKEND):
     remove_container(NS+'-api')
-    image = BACKEND
     run(['docker','run','-d','--name',NS+'-api','--label','io.plane.rehearsal.owner='+OWNER,
         '--network',NETWORK,'--memory','384m','--memory-swap','384m','--cpus','1','--pids-limit','128',
         '--read-only','--tmpfs','/tmp:rw,nosuid,size=32m','--tmpfs','/code/plane/logs:rw,nosuid,size=16m',
@@ -168,7 +168,7 @@ def start_api():
     raise RuntimeError('API_BOOTSTRAP_FAILED')
 
 
-def test_phase(name, fault=False):
+def test_phase(name, fault=None):
     readback=ROOT/'readbacks'/name;readback.mkdir(mode=0o700)
     sdk('snapshot',readback)
     args=['docker','run','--rm','--name',NS+'-tests','--label','io.plane.rehearsal.owner='+OWNER,
@@ -184,14 +184,55 @@ def test_phase(name, fault=False):
     tree=ET.parse(ROOT/'evidence'/(name+'.xml'))
     suites=list(tree.getroot().iter('testsuite'))
     require(sum(int(s.get('errors','0')) for s in suites)==0,'API_TEST_SETUP_ERROR')
-    require(sum(int(s.get('failures','0')) for s in suites)==(2 if fault else 0),'WRONG_API_TEST_RESULT')
+    require(sum(int(s.get('failures','0')) for s in suites)==({'asset':2,'schema':1,None:0}[fault]),'WRONG_API_TEST_RESULT')
     require(sum(int(s.get('tests','0')) for s in suites)==30,'API_TEST_COUNT_CHANGED')
     require(sum(int(s.get('skipped','0')) for s in suites)==0,'API_TEST_SKIPPED')
-    if fault:
+    if fault=='schema':
+        failures=[case.get('name') for case in tree.getroot().iter('testcase') if case.find('failure') is not None]
+        require(failures==['test_document_is_discovered_from_issue_link_and_retains_association'],'WRONG_SCHEMA_FAULT_CASE')
+        require('Complete packaged schema must serve issue-linked document API; got 500' in (ROOT/'evidence'/(name+'.log')).read_text(),'WRONG_SCHEMA_FAULT_ASSERTION')
+    if fault=='asset':
         failures=[case.get('name') for case in tree.getroot().iter('testcase') if case.find('failure') is not None]
         require(sorted(failures)==sorted(['test_associated_assets_download_through_authenticated_api_and_match_golden_bytes[binary-1]','test_restored_asset_bytes_match_original_and_golden_hashes']),'WRONG_FAULT_CASES')
         require('Associated fixture asset bytes must match golden SHA-256' in (ROOT/'evidence'/(name+'.log')).read_text(),'WRONG_FAULT_ASSERTION')
-    return {'phase':name,'exit':result.returncode,'intended_asset_corruption_failure':fault}
+    return {'phase':name,'exit':result.returncode,'controlled_defect':fault}
+
+
+def make_schema_fault():
+    remove_container(NS+'-api')
+    app_cli(args=['migrate','db','0122','--noinput'])
+    base_tag='plane-rehearsal-migration-e5c-backend:'+REVISION
+    require(inspect('image',base_tag)['Id']==BACKEND,'BASE_TAG_CHANGED')
+    build=ROOT/'fault-build';build.mkdir(mode=0o700)
+    omitted=['0123_issue_link_source_identity.py','0124_module_milestones.py']
+    private_file(build/'Dockerfile',('FROM '+base_tag+'\nRUN rm '+' '.join('/code/plane/db/migrations/'+p for p in omitted)+'\n').encode())
+    run(['docker','build','--pull=false','--label','io.plane.rehearsal.owner='+OWNER,'-t',FAULT_TAG,str(build)])
+    base=inspect('image',BACKEND);fault=inspect('image',FAULT_TAG)
+    require(inspect('image',base_tag)['Id']==BACKEND,'BASE_TAG_CHANGED')
+    require(fault['Config']['Labels'].get('io.plane.rehearsal.owner')==OWNER and fault['Config']['Labels'].get('org.opencontainers.image.revision')==REVISION,'FAULT_IMAGE_IDENTITY_FAILED')
+    require(fault['RootFS']['Layers'][:-1]==base['RootFS']['Layers'],'FAULT_BASE_CHANGED')
+    probe="from pathlib import Path; import json; print(json.dumps([not (Path('/code/plane/db/migrations')/p).exists() for p in "+repr(omitted)+"]))"
+    require(json.loads(app_cli(code=probe,image=fault['Id']).stdout)==[True,True],'MIGRATION_OMISSION_NOT_OBSERVED')
+    # Run the real migrator with the truncated image; it cannot recreate the omitted schema.
+    app_cli(args=['migrate','--noinput'],image=fault['Id'])
+    schema=pg('psql','plane_fixture_m',('-X','-q','-A','-t','--set','ON_ERROR_STOP=1'),b"SELECT count(*) FROM information_schema.columns WHERE table_schema='public' AND table_name='issue_links' AND column_name IN ('external_source','external_id');").stdout
+    require(schema.strip()==b'0','SCHEMA_FAULT_NOT_ACTIVE')
+    start_api(image=fault['Id'])
+    actual=owned_container(NS+'-api')
+    require(actual['Image']==fault['Id'] and actual['State']['Running'],'FAULT_RUNTIME_IMAGE_MISMATCH')
+    private_file(ROOT/'fault-identity.json',json.dumps({'image':fault['Id'],'base_image':BACKEND,'application_revision':REVISION,'omitted_migrations':omitted,'database_leaf':'0122','missing_issue_link_columns':2,'actual_api_image_matches_fault':True,'full_fixture_suite_required':True},indent=2).encode())
+
+
+def restore_saved_database(label):
+    remove_container(NS+'-api')
+    pg('pg_restore','plane_fixture_m',('--clean','--if-exists','--no-owner','--no-acl','--exit-on-error'),(ROOT/'good-fixture.dump').read_bytes())
+    expected=ROOT/'readbacks/seeded-before-backup.jsonl'
+    baseline(label,preserve_only=True)
+    result=run([sys.executable,str(SOURCE_TREE/'tools/plane_restore.py'),'compare-database',
+        '--expected',str(expected),'--actual',str(ROOT/'readbacks'/(label+'.jsonl')),
+        '--expected-sha256',hashlib.sha256(expected.read_bytes()).hexdigest()])
+    private_file(ROOT/(label+'-integrity.json'),result.stdout)
+    start_api()
 
 
 def verify_runner():
@@ -229,7 +270,7 @@ def prepare():
     global OWNED_ROOT
     require(not ROOT.exists() and ROOT.resolve()==ROOT,'FIXTURE_OUTPUT_EXISTS_OR_SYMLINK')
     for name in NAMES:require(inspect('container',name) is None,'EXISTING_CONTAINER_DENIED')
-    require(inspect('network',NETWORK) is None,'EXISTING_RESOURCE_DENIED')
+    require(inspect('network',NETWORK) is None and inspect('image',FAULT_TAG) is None,'EXISTING_RESOURCE_DENIED')
     for filename,digest in INPUTS.items():
         p=SOURCE/filename
         require(p.is_file() and not p.is_symlink() and p.stat().st_mode&0o777==0o600 and p.stat().st_size<=64*1024**2,'PRIVATE_BACKUP_REQUIRED')
@@ -283,12 +324,17 @@ def cleanup():
         require(net['Labels'].get('io.plane.rehearsal.owner')==OWNER and not net['Containers'],'FOREIGN_NETWORK_DENIED')
         run(['docker','network','rm',NETWORK],log_required=False)
         require(inspect('network',NETWORK) is None,'NETWORK_CLEANUP_FAILED')
-    for name in ['pgdata','readbacks','scratch']:
+    fault=inspect('image',FAULT_TAG)
+    if fault:
+        require(fault['Config']['Labels'].get('io.plane.rehearsal.owner')==OWNER,'FOREIGN_IMAGE_DENIED')
+        run(['docker','image','rm',fault['Id']],log_required=False)
+        require(inspect('image',FAULT_TAG) is None,'FAULT_IMAGE_CLEANUP_FAILED')
+    for name in ['pgdata','readbacks','scratch','fault-build']:
         if (ROOT/name).exists():shutil.rmtree(ROOT/name)
     for name in ['app.env','db.env','minio.env','connection.json','fixture.json','good-fixture.dump']:(ROOT/name).unlink(missing_ok=True)
     for filename,digest in INPUTS.items():
         require(hashlib.sha256((SOURCE/filename).read_bytes()).hexdigest()==digest,'ORIGINAL_BACKUP_CHANGED')
-    private_file(ROOT/'cleanup.json',json.dumps({'containers_remaining':0,'network_removed':True,
+    private_file(ROOT/'cleanup.json',json.dumps({'containers_remaining':0,'network_removed':True,'fault_image_removed':True,
         'restored_database_readbacks_and_credentials_removed':True,'original_backups_preserved':True,
         'diagnostic_failures':DIAGNOSTIC_FAILURES}).encode())
 
@@ -327,19 +373,19 @@ def main():
              ['tools/plane_restore.py']+['docs/verification/HLB-434/native/'+n for n in
               ['shared_fixture_rehearsal.py','seed_shared_fixture.py','test_shared_fixture_m.py','inspect_shared_runtime.py','shared_fixture_m.json','shared_asset_sdk.py','asset_fixture.py','test_asset_store.py']]}}
         private_file(ROOT/'runtime-identity.json',json.dumps(identity,indent=2).encode())
+        (ROOT/'independent-runtime.json').rename(ROOT/'independent-runtime-known-state.json')
         receipts.append(test_phase('pass-known-state'))
+        make_schema_fault()
+        receipts.append(test_phase('failure-omitted-migration',fault='schema'))
+        restore_saved_database('restored-schema-from-saved-dump')
+        run([sys.executable,str(Path(__file__).with_name('inspect_shared_runtime.py'))])
+        (ROOT/'independent-runtime.json').rename(ROOT/'independent-runtime-restored-schema.json')
+        receipts.append(test_phase('restore-schema-and-repeat'))
         sdk('corrupt')
-        receipts.append(test_phase('failure-corrupt-associated-asset',fault=True))
+        receipts.append(test_phase('failure-corrupt-associated-asset',fault='asset'))
         sdk('restore-fixture')
-        remove_container(NS+'-api')
-        pg('pg_restore','plane_fixture_m',('--clean','--if-exists','--no-owner','--no-acl','--exit-on-error'),(ROOT/'good-fixture.dump').read_bytes())
-        expected=ROOT/'readbacks/seeded-before-backup.jsonl'
-        baseline('restored-from-saved-dump',preserve_only=True)
-        roundtrip=run([sys.executable,str(SOURCE_TREE/'tools/plane_restore.py'),'compare-database',
-            '--expected',str(expected),'--actual',str(ROOT/'readbacks/restored-from-saved-dump.jsonl'),
-            '--expected-sha256',hashlib.sha256(expected.read_bytes()).hexdigest()])
-        private_file(ROOT/'roundtrip-integrity.json',roundtrip.stdout)
-        start_api()
+        restore_saved_database('restored-assets-from-saved-dump')
+        run([sys.executable,str(Path(__file__).with_name('inspect_shared_runtime.py'))])
         receipts.append(test_phase('restore-and-repeat'))
         private_file(ROOT/'preservation.json',json.dumps(baseline('after-recovery',preserve_only=True)).encode())
     finally:finish(receipts,lease)

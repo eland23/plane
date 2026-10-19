@@ -114,7 +114,10 @@ def test_wiki_content_and_inline_asset_reference_survive():
 
 
 def test_document_is_discovered_from_issue_link_and_retains_association():
-    links=rows(P+'issues/'+G['issues'][2]['id']+'/issue-links/')
+    status,_,body=request(P+'issues/'+G['issues'][2]['id']+'/issue-links/')
+    assert status==200,f'Complete packaged schema must serve issue-linked document API; got {status}'
+    result=json.loads(body)
+    links=result if isinstance(result,list) else result['results']
     assert len(links)==1 and links[0]['id']==G['document']['link_id']
     location=urlsplit(links[0]['url'])
     assert location.hostname=='fixture-m.invalid'

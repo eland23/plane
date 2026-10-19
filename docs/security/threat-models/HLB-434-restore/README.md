@@ -77,3 +77,25 @@ The golden JSON contains synthetic FAS-like identifiers, never looked up in live
 Linear. Issue-linked project documents use existing IssueLink/PageLog fields;
 future portfolio, milestone and exclusive-label features are excluded by the
 parent runtime scope. Combined API/asset proof PASS at0a88a87:30PASS→2 intended checksum failures→30PASS, zero errors/skips. Mandatory four-service isolation readback, nine executed code hashes, exact saved dump equality, original-row preservation and independent cleanup PASS. Selected public artifacts were scanned for original values and signed/credential material. Browser journeys, combined Control A and ordered release/readiness remain pending.
+
+## Shared omitted-migration control (native execution pending)
+
+The shared rehearsal now applies Control A to the same isolated restored fixture.
+After the normal suite passes and a seeded dump is saved, the owned API stops.
+Only the cloned database is reversed to migration0122. A task-labelled image
+based on the verified backend omits0123/0124; a real file probe, migrator run and
+schema readback must confirm omission before the unchanged API assertion runs.
+The faulty API must use that exact image. Recovery restores the saved seeded
+dump and complete backend; exact logical equality precedes API startup, then
+strict isolation readback and the full unchanged suite repeat. Asset Control B
+runs afterward, with another dump recovery and unchanged suite repeat.
+
+This intentionally destructive schema control is fixed to the fresh .130 clone;
+it is not a general rollback command or production rollback authorization. The
+migration's imported-identity reversal guard remains active. Failure preserves
+root-only diagnostics and invokes owned cleanup. Task fault images are removed
+only after affirmative inspection of their owner label; foreign or indeterminate
+image state preserves private working data and cannot produce a clean receipt.
+No broad image/build cache pruning is performed. Cleanup boundary tests reproduce
+three failures on old code and pass after the guard/removal is added. Actual
+combined Control A evidence is pending and cannot be inferred from those tests.

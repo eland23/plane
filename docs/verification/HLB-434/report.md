@@ -242,3 +242,25 @@ and [ReactDoctor39195518517](https://github.com/eland23/plane/actions/runs/39195
 Final evidence-head CI is separate and tracked on PR13. Browser UI writes/reload,
 error/retry/cancel, combined missing-migration Control A and ordered release/worker
 readiness remain open. No production import, cutover, merge or full child completion.
+
+## Combined Control A preparation (NOT RUN)
+
+The saved shared rehearsal now adds the parent-defined omitted-migration control
+between the known-state pass and asset corruption. The intended five phases are:
+30PASS → one schema assertion failure of30 → 30PASS → two checksum failures of30
+→ 30PASS, zero errors/skips. The same test source/fixtures run in every phase.
+The document assertion now names the schema HTTP200 contract explicitly; its
+literal identity, content and association expectations remain unchanged.
+
+The isolated database is reversed to0122 only after a seeded dump is saved. A
+verified-base task image omits0123/0124; its real file probe and migrator cannot
+recreate the omitted schema. Exact API image and missing-column readback precede
+the normal suite. Restoring the saved dump and complete backend requires exact
+logical equality and fresh strict runtime observation before each restored suite.
+Foreign/unknown fault image cleanup must preserve data and never report success.
+Cleanup guard development receipts are3FAIL→3PASS at the Docker process boundary;
+these are source evidence, not native migration failure detection.
+
+The prior accepted shared API/asset run remains valid at its separate revision.
+Native combined Control A, browser journeys and ordered rollout/readiness remain
+open until their own receipts exist. No production schema rollback is authorized.
