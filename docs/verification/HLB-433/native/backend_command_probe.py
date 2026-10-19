@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 """Run over trusted SSH stdin on .130. No database, ports or external network."""
+import sys
+if not __debug__:
+    print("OPTIMIZED_EXECUTION_DENIED", file=sys.stderr)
+    raise SystemExit(2)
+
 import json
 import os
 from pathlib import Path
@@ -22,6 +27,8 @@ assert int(memory['MemAvailable'].split()[0]) >= 768 * 1024, 'Bounded CLI check 
 # This reservation is only for one short-lived CLI process. It does not admit a
 # full application deployment or establish application peak memory requirements.
 probe = '''
+if not __debug__:
+    raise SystemExit('OPTIMIZED_EXECUTION_DENIED')
 import django, json, os, subprocess
 from pathlib import Path
 django.setup()

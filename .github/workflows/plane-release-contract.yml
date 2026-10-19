@@ -6,6 +6,7 @@ on:
       - tools/plane_release.py
       - tools/check_plane_release.py
       - tools/tests/test_plane_release.py
+      - tools/tests/test_native_backend_probe_guard.py
       - tools/PLANE_RELEASE.md
       - docs/verification/HLB-433/**
       - docs/security/threat-models/HLB-429-plane-runtime/**
@@ -31,6 +32,8 @@ jobs:
         run: python3 -m pip install pytest==8.4.2
       - name: Pass, detect bounded defects, restore and repeat
         run: python3 tools/check_plane_release.py --output "$RUNNER_TEMP/plane-release-evidence"
+      - name: Deny optimized native-probe execution before commands
+        run: python3 -m pytest tools/tests/test_native_backend_probe_guard.py -q -o addopts= --junitxml="$RUNNER_TEMP/plane-release-evidence/native-probe-guard.xml"
       - name: Save JUnit and native receipts
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
